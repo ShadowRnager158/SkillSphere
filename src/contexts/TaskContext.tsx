@@ -1,37 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
-
-export interface Task {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  budget: number;
-  location: string;
-  status: 'open' | 'assigned' | 'completed';
-  createdAt: string;
-  createdBy: string;
-  creatorName: string;
-  creatorAvatar?: string;
-  assignedTo?: string;
-  assigneeName?: string;
-  assigneeAvatar?: string;
-  dueDate?: string;
-  isUrgent: boolean;
-  bids: Bid[];
-}
-
-export interface Bid {
-  id: string;
-  taskId: string;
-  skillerId: string;
-  skillerName: string;
-  skillerAvatar?: string;
-  amount: number;
-  message: string;
-  createdAt: string;
-  status: 'pending' | 'accepted' | 'rejected';
-}
+import { Task, Bid } from '@/types';
 
 interface TaskContextType {
   tasks: Task[];

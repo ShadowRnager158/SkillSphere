@@ -1,22 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  isSkiller: boolean;
-  createdAt: string;
-  avatar?: string;
-  // Extended fields for richer profile
-  headline?: string;
-  dob?: string;
-  education?: string;
-  gender?: string;
-  skills?: string[];
-  bio?: string;
-  location?: string;
-  phone?: string;
-}
+import { User } from '@/types';
 
 interface AuthContextType {
   user: User | null;
