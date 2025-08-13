@@ -177,7 +177,7 @@ export default function MessagesPage() {
                         key={filter.key}
                         variant={activeFilter === filter.key ? 'default' : 'outline'}
                         size="sm"
-                        onClick={() => setActiveFilter(filter.key as any)}
+                        onClick={() => setActiveFilter(filter.key as string)}
                         className="text-xs"
                       >
                         {filter.label}

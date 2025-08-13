@@ -168,31 +168,46 @@ export default function Navbar() {
     { name: 'Home', href: '/', icon: Home },
     { name: 'Browse Projects', href: '/tasks', icon: Briefcase },
     { name: 'How It Works', href: '/how-it-works', icon: Users },
+    { name: 'Success Stories', href: '/success-stories', icon: Star },
     { name: 'About', href: '/about', icon: FileText },
   ];
 
+  const companyMenu = [
+    { name: 'About Us', href: '/about', icon: FileText },
+    { name: 'Careers', href: '/careers', icon: Users },
+    { name: 'Press', href: '/press', icon: FileText },
+    { name: 'Partners', href: '/partners', icon: Users },
+  ];
+
+  const supportMenu = [
+    { name: 'Help Center', href: '/help', icon: FileText },
+    { name: 'Support', href: '/support', icon: Users },
+    { name: 'Community', href: '/community', icon: Users },
+    { name: 'Status', href: '/status', icon: Activity },
+  ];
+
   return (
-    <nav className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50 shadow-sm transition-colors duration-200">
+    <nav className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50 shadow-lg transition-all duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                <Sparkles className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300">
+                <Sparkles className="w-7 h-7 text-white" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
                   SkillSphere
                 </h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 -mt-1">Top 3% Talent</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 -mt-1 font-medium">Top 3% Talent</p>
               </div>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => (
+            {navigation.slice(0, 3).map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
@@ -206,6 +221,73 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
+
+            {/* Company Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all duration-200"
+                >
+                  <FileText className="w-4 h-4" />
+                  Company
+                  <ChevronDown className="w-3 h-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl rounded-lg" align="start">
+                {companyMenu.map((item) => (
+                  <DropdownMenuItem key={item.name} asChild>
+                    <Link
+                      to={item.href}
+                      className="flex items-center gap-3 p-3 hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer transition-colors duration-200"
+                    >
+                      <item.icon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      <span className="text-gray-900 dark:text-gray-100">{item.name}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Support Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all duration-200"
+                >
+                  <Users className="w-4 h-4" />
+                  Support
+                  <ChevronDown className="w-3 h-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl rounded-lg" align="start">
+                {supportMenu.map((item) => (
+                  <DropdownMenuItem key={item.name} asChild>
+                    <Link
+                      to={item.href}
+                      className="flex items-center gap-3 p-3 hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer transition-colors duration-200"
+                    >
+                      <item.icon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      <span className="text-gray-900 dark:text-gray-100">{item.name}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Success Stories Link */}
+            <Link
+              to="/success-stories"
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                isActive('/success-stories')
+                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
+                  : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10'
+              }`}
+            >
+              <Star className="w-4 h-4" />
+              Success Stories
+            </Link>
           </div>
 
           {/* Right side - Search, Actions, User */}
@@ -216,7 +298,7 @@ export default function Navbar() {
               <input
                 type="text"
                 placeholder="Search projects, skills..."
-                className="w-64 pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 transition-colors duration-200"
+                className="w-72 pl-10 pr-4 py-2.5 text-sm border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
               />
             </div>
 
@@ -310,7 +392,7 @@ export default function Navbar() {
                 {/* Post Project Button */}
                 <Button
                   onClick={() => navigate('/create-task')}
-                  className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white px-5 py-2.5 rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 font-medium"
                 >
                   <Plus className="w-4 h-4" />
                   Post Project
@@ -383,7 +465,7 @@ export default function Navbar() {
                 </Button>
                 <Button
                   onClick={() => navigate('/register')}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white px-6 py-2.5 rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 font-medium"
                 >
                   Get Started
                 </Button>
@@ -417,13 +499,13 @@ export default function Navbar() {
                   <input
                     type="text"
                     placeholder="Search projects, skills..."
-                    className="w-full pl-10 pr-4 py-3 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 transition-colors duration-200"
+                    className="w-full pl-10 pr-4 py-3 text-sm border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
                   />
                 </div>
               </div>
 
               {/* Navigation Links */}
-              {navigation.map((item) => (
+              {navigation.slice(0, 3).map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
@@ -439,6 +521,52 @@ export default function Navbar() {
                 </Link>
               ))}
 
+              {/* Success Stories Link */}
+              <Link
+                to="/success-stories"
+                className={`block px-3 py-2 rounded-lg text-base font-medium transition-all duration-200 ${
+                  isActive('/success-stories')
+                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
+                    : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Star className="w-5 h-5" />
+                Success Stories
+              </Link>
+
+              {/* Company Links */}
+              <div className="pt-2">
+                <h3 className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Company</h3>
+                {companyMenu.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all duration-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Support Links */}
+              <div className="pt-2">
+                <h3 className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Support</h3>
+                {supportMenu.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all duration-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+
               {/* User Actions for Mobile */}
               {user ? (
                 <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -448,7 +576,7 @@ export default function Navbar() {
                         navigate('/dashboard');
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full justify-start px-3 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                      className="w-full justify-start px-3 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white rounded-xl font-medium"
                     >
                       <Briefcase className="mr-3 h-5 w-5" />
                       Dashboard
@@ -458,7 +586,7 @@ export default function Navbar() {
                         navigate('/profile');
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full justify-start px-3 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                      className="w-full justify-start px-3 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white rounded-xl font-medium"
                     >
                       <User className="mr-3 h-5 w-5" />
                       Profile
@@ -468,7 +596,7 @@ export default function Navbar() {
                         navigate('/create-task');
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full justify-start px-3 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                      className="w-full justify-start px-3 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white rounded-xl font-medium"
                     >
                       <Plus className="mr-3 h-5 w-5" />
                       Post Project

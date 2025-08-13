@@ -101,8 +101,8 @@ export default function TaskDetailPage() {
       // Reset form
       setBidAmount('');
       setBidMessage('');
-    } catch (err: any) {
-      setError(err.message || 'Failed to place bid');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to place bid');
     } finally {
       setLoading(false);
     }
@@ -121,10 +121,10 @@ export default function TaskDetailPage() {
       // Refresh task data
       const updatedTask = getTaskById(task.id);
       if (updatedTask) setTask(updatedTask);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: "Error",
-        description: err.message || "Failed to accept bid",
+        description: (err as Error).message || "Failed to accept bid",
         variant: "destructive"
       });
     } finally {
@@ -145,10 +145,10 @@ export default function TaskDetailPage() {
       // Refresh task data
       const updatedTask = getTaskById(task.id);
       if (updatedTask) setTask(updatedTask);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: "Error",
-        description: err.message || "Failed to mark task as complete",
+        description: (err as Error).message || "Failed to mark task as complete",
         variant: "destructive"
       });
     } finally {

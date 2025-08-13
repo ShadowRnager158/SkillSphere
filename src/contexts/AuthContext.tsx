@@ -137,7 +137,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem('skillsphere_user', JSON.stringify(updated));
       // also update in users store
       const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
-      const idx = users.findIndex((u: any) => u.id === updated.id);
+      const idx = users.findIndex((u: User & { password: string }) => u.id === updated.id);
       if (idx >= 0) {
         users[idx] = { ...users[idx], ...updates };
         localStorage.setItem('skillsphere_users', JSON.stringify(users));

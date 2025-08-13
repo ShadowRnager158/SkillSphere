@@ -54,7 +54,7 @@ export default function ProfilePage() {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -86,7 +86,7 @@ export default function ProfilePage() {
     }));
   };
 
-  const handleAvatarChange = (e: any) => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0];
     if (file) {
       const previewUrl = URL.createObjectURL(file);
