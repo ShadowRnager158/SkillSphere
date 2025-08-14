@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAuth, User } from './AuthContext';
+import { useAuth } from './AuthContext';
+import type { User } from '@/types';
 
 export interface UserProfile extends User {
   bio?: string;

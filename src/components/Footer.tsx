@@ -28,11 +28,8 @@ export default function Footer() {
       setScrollProgress(Math.min(progress, 100));
     };
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 't') {
-        e.preventDefault();
-        scrollToTop();
-      }
+    const handleKeyDown = (_e: KeyboardEvent) => {
+      // keyboard shortcuts disabled
     };
 
     window.addEventListener('scroll', handleScroll);

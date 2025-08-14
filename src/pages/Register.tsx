@@ -27,8 +27,18 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   const { toast } = useToast();
+  
+  const navigateAfterAuth = () => {
+    const lastPath = localStorage.getItem('skillsphere_last_path');
+    if (lastPath && lastPath !== '/register') {
+      localStorage.removeItem('skillsphere_last_path');
+      navigate(lastPath);
+    } else {
+      navigate('/');
+    }
+  };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,9 +62,29 @@ export default function RegisterPage() {
         title: 'Registration Successful',
         description: `Welcome to SkillSphere! You've registered as a ${accountType}.`,
       });
-      navigate('/');
+      navigateAfterAuth();
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const mockGoogleUser = {
+        id: crypto.randomUUID(),
+        name: name || 'Google User',
+        email: email || 'google.user@example.com',
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email || 'google.user@example.com'}`,
+      };
+      await loginWithGoogle(mockGoogleUser);
+      toast({ title: 'Signed up with Google' });
+      navigateAfterAuth();
+    } catch (e) {
+      setError('Google sign-in failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -177,6 +207,15 @@ export default function RegisterPage() {
               disabled={isLoading}
             >
               {isLoading ? 'Creating account...' : 'Create Account'}
+            </Button>
+            <Button 
+              type="button"
+              variant="outline"
+              className="w-full mt-2"
+              onClick={handleGoogle}
+              disabled={isLoading}
+            >
+              Continue with Google
             </Button>
           </form>
         </CardContent>
