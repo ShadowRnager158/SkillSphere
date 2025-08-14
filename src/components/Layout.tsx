@@ -1,9 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Plus, MessageSquare, Briefcase, User, X, Bell, Search, Home, ArrowRight } from 'lucide-react';
+import { Plus, MessageSquare, Briefcase, User, X, Bell, Home, ArrowRight } from 'lucide-react';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import ChatWidget from './ChatWidget';
 
 const Layout = () => {
   const [showFAB, setShowFAB] = useState(false);
@@ -38,48 +37,10 @@ const Layout = () => {
       setScrollProgress(progress);
     };
 
-    const handleKeyPress = (e: KeyboardEvent) => {
-      // Ctrl/Cmd + K for search
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        const searchInput = document.querySelector('input[placeholder*="Search"]') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }
-      
-      // Ctrl/Cmd + H for home
-      if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
-        e.preventDefault();
-        window.location.href = '/';
-      }
-      
-      // Ctrl/Cmd + M for messages
-      if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
-        e.preventDefault();
-        window.location.href = '/messages';
-      }
-      
-      // Ctrl/Cmd + P for profile
-      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-        e.preventDefault();
-        window.location.href = '/profile';
-      }
-
-      // Ctrl/Cmd + T for scroll to top
-      if ((e.ctrlKey || e.metaKey) && e.key === 't') {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        showNotification('Scrolling to top...');
-      }
-    };
-
     window.addEventListener('scroll', handleScroll);
-    document.addEventListener('keydown', handleKeyPress);
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('keydown', handleKeyPress);
     };
   }, []);
 
@@ -88,92 +49,67 @@ const Layout = () => {
       {/* Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-gray-200/50 dark:bg-gray-700/50 backdrop-blur-sm z-50">
         <div 
-          className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 transition-all duration-150 ease-out shadow-lg"
+          className="h-full bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 transition-all duration-150" 
           style={{ width: `${scrollProgress}%` }}
         />
-        {scrollProgress > 0 && (
-          <div className="absolute right-4 top-1 text-xs text-gray-500 dark:text-gray-400 font-medium">
-            {Math.round(scrollProgress)}%
-          </div>
-        )}
       </div>
-      
+
       <Navbar />
-      <main className="flex-1 flex flex-col min-h-0">
-        <Outlet />
-      </main>
-      <Footer />
-      <ChatWidget />
-      
-      {/* Scroll to Top Button - Removed duplicate, using Footer version instead */}
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-32 right-6 sm:bottom-36 sm:right-8 z-40">
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          onClick={toggleFAB}
+          aria-label="Open quick actions"
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full w-14 h-14 shadow-2xl flex items-center justify-center transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
+        >
+          {showFAB ? <X className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
+        </button>
+
+        {/* FAB Menu */}
         {showFAB && (
-          <div className="mb-4 space-y-3 animate-in slide-in-from-bottom duration-300">
-            <button
-              onClick={() => handleNavigation('/create-task', 'Redirecting to Post Project...')}
-              className="w-12 h-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:via-indigo-600 dark:hover:to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 transition-all duration-500 hover:scale-110 hover:-translate-y-1 flex items-center justify-center group backdrop-blur-sm border border-white/20 dark:border-gray-300/20 relative overflow-hidden"
-              title="Post Project (Ctrl/Cmd + N)"
+          <div className="absolute bottom-16 right-0 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-3 w-60">
+            <button 
+              onClick={() => handleNavigation('/create-task', 'Opening Create Task...')}
+              className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <Briefcase className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 via-indigo-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <Briefcase className="w-5 h-5 text-blue-600" />
+              <span className="text-sm font-medium">Post a Task</span>
+              <ArrowRight className="w-4 h-4 ml-auto text-gray-400" />
             </button>
-            <button
-              onClick={() => handleNavigation('/messages', 'Redirecting to Messages...')}
-              className="w-12 h-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:via-indigo-600 dark:hover:to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 transition-all duration-500 hover:scale-110 hover:-translate-y-1 flex items-center justify-center group backdrop-blur-sm border border-white/20 dark:border-gray-300/20 relative overflow-hidden"
-              title="Messages (Ctrl/Cmd + M)"
+            <button 
+              onClick={() => handleNavigation('/messages', 'Opening Messages...')}
+              className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 via-indigo-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <MessageSquare className="w-5 h-5 text-green-600" />
+              <span className="text-sm font-medium">Messages</span>
+              <ArrowRight className="w-4 h-4 ml-auto text-gray-400" />
             </button>
-            <button
-              onClick={() => handleNavigation('/profile', 'Redirecting to Profile...')}
-              className="w-12 h-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:via-indigo-600 dark:hover:to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 transition-all duration-500 hover:scale-110 hover:-translate-y-1 flex items-center justify-center group backdrop-blur-sm border border-white/20 dark:border-gray-300/20 relative overflow-hidden"
-              title="Profile (Ctrl/Cmd + P)"
+            <button 
+              onClick={() => handleNavigation('/profile', 'Opening Profile...')}
+              className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <User className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 via-indigo-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <User className="w-5 h-5 text-purple-600" />
+              <span className="text-sm font-medium">Profile</span>
+              <ArrowRight className="w-4 h-4 ml-auto text-gray-400" />
             </button>
-            <button
-              onClick={() => handleNavigation('/tasks', 'Browsing Projects...')}
-              className="w-12 h-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:via-indigo-600 dark:hover:to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 transition-all duration-500 hover:scale-110 hover:-translate-y-1 flex items-center justify-center group backdrop-blur-sm border border-white/20 dark:border-gray-300/20 relative overflow-hidden"
-              title="Browse Projects"
+            <button 
+              onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); showNotification('Scrolling to top...'); }}
+              className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <Search className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 via-indigo-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <Home className="w-5 h-5 text-amber-600" />
+              <span className="text-sm font-medium">Top</span>
+              <ArrowRight className="w-4 h-4 ml-auto text-gray-400" />
             </button>
           </div>
         )}
-        <button
-          onClick={toggleFAB}
-          className="w-14 h-14 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:via-indigo-600 dark:hover:to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 transition-all duration-500 hover:scale-110 hover:-translate-y-1 flex items-center justify-center group backdrop-blur-sm border border-white/20 dark:border-gray-300/20 animate-pulse-slow"
-          title="Quick Actions"
-        >
-          {showFAB ? (
-            <X className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
-          ) : (
-            <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
-          )}
-        </button>
       </div>
-
-      {/* Loading Overlay */}
-      {isLoading && (
-        <div className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl flex flex-col items-center space-y-4 border border-gray-200 dark:border-gray-700">
-            <div className="w-16 h-16 border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin"></div>
-            <p className="text-lg font-medium text-gray-900 dark:text-gray-100">Loading...</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Please wait while we redirect you</p>
-          </div>
-        </div>
-      )}
 
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-20 right-6 z-50 animate-in slide-in-from-right duration-300">
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg px-4 py-3 flex items-center space-x-3 backdrop-blur-sm">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <Bell className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">{toastMessage}</span>
             <button
@@ -186,22 +122,23 @@ const Layout = () => {
         </div>
       )}
 
-      {/* Keyboard Shortcuts Help */}
-      <div className="fixed bottom-6 left-24 z-30 group">
-        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-400 shadow-lg transition-all duration-300 hover:bg-white dark:hover:bg-gray-800 hover:shadow-xl">
-          <div className="flex items-center space-x-4">
-            <span className="font-medium">⌘K: Search</span>
-            <span className="font-medium">⌘H: Home</span>
-            <span className="font-medium">⌘M: Messages</span>
-            <span className="font-medium">⌘P: Profile</span>
-            <span className="font-medium">⌘T: Top</span>
-          </div>
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            Keyboard Shortcuts
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-gray-900 dark:border-b-gray-100"></div>
+      {/* Main content */}
+      <main className="flex-1">
+        <Outlet />
+      </main>
+
+      <Footer />
+
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl flex flex-col items-center space-y-4 border border-gray-200 dark:border-gray-700">
+            <div className="w-16 h-16 border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin" />
+            <p className="text-lg font-medium text-gray-900 dark:text-gray-100">Loading...</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Please wait while we redirect you</p>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

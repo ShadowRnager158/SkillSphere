@@ -160,9 +160,23 @@ export default function PressPage() {
                 Contact Media Team
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
-              <Button size="lg" variant="outline" className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 px-8 py-3">
-                Download Press Kit
-              </Button>
+              <Button size="lg" variant="outline" className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 px-8 py-3"
+  onClick={() => {
+    try {
+      const blob = new Blob([`SkillSphere Press Kit\nGenerated: ${new Date().toISOString()}`], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'press-kit.pdf';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      window.print();
+    }
+  }}
+>
+  Download Press Kit
+</Button>
             </div>
           </div>
         </div>

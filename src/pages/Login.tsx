@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -18,8 +18,26 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Prefill last used credentials if available
+    const lastEmail = localStorage.getItem('skillsphere_last_email') || '';
+    const lastPassword = localStorage.getItem('skillsphere_last_password') || '';
+    if (lastEmail) setEmail(lastEmail);
+    if (lastPassword) setPassword(lastPassword);
+  }, []);
+  
+  const navigateAfterAuth = () => {
+    const lastPath = localStorage.getItem('skillsphere_last_path');
+    if (lastPath && lastPath !== '/login') {
+      localStorage.removeItem('skillsphere_last_path');
+      navigate(lastPath);
+    } else {
+      navigate('/');
+    }
+  };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,9 +50,30 @@ export default function LoginPage() {
         title: 'Login Successful',
         description: 'Welcome back to SkillSphere!',
       });
-      navigate('/');
+      navigateAfterAuth();
     } catch (error) {
       setError('Invalid email or password. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setIsLoading(true);
+    setError('');
+    try {
+      // In production, replace with real Google Identity callback data
+      const mockGoogleUser = {
+        id: crypto.randomUUID(),
+        name: 'Google User',
+        email: email || 'google.user@example.com',
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email || 'google.user@example.com'}`,
+      };
+      await loginWithGoogle(mockGoogleUser);
+      toast({ title: 'Signed in with Google' });
+      navigateAfterAuth();
+    } catch (e) {
+      setError('Google sign-in failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -93,6 +132,15 @@ export default function LoginPage() {
               disabled={isLoading}
             >
               {isLoading ? 'Logging in...' : 'Login'}
+            </Button>
+            <Button 
+              type="button"
+              variant="outline"
+              className="w-full mt-2"
+              onClick={handleGoogle}
+              disabled={isLoading}
+            >
+              Continue with Google
             </Button>
           </form>
         </CardContent>

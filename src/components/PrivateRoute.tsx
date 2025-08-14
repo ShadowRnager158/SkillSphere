@@ -12,11 +12,12 @@ const PrivateRoute = ({ children, skillerOnly = false }: PrivateRouteProps) => {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    // Redirect to login if not authenticated, saving the return path
+    try {
+      localStorage.setItem('skillsphere_last_path', location.pathname + location.search);
+    } catch {}
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
-  // If this route is for skillers only and user is not a skiller
   if (skillerOnly && !user?.isSkiller) {
     return <Navigate to="/dashboard" replace />;
   }

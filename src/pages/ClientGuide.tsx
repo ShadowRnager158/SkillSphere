@@ -21,8 +21,10 @@ import {
   MessageSquare,
   Eye
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function ClientGuidePage() {
+  const navigate = useNavigate();
   const guideSections = [
     {
       title: 'Getting Started',
@@ -269,6 +271,19 @@ export default function ClientGuidePage() {
                 size="lg"
                 variant="outline" 
                 className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold rounded-xl backdrop-blur-sm"
+                onClick={() => {
+                  try {
+                    const blob = new Blob([`Client Guide\nGenerated: ${new Date().toISOString()}`], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'client-guide.pdf';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  } catch {
+                    window.print();
+                  }
+                }}
               >
                 <Download className="w-5 h-5 mr-2" />
                 Download PDF Guide
@@ -276,6 +291,7 @@ export default function ClientGuidePage() {
               <Button 
                 size="lg"
                 className="bg-white text-blue-700 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-xl shadow-2xl"
+                onClick={() => navigate('/resources')}
               >
                 <ArrowRight className="w-5 h-5 mr-2" />
                 Start Your Project

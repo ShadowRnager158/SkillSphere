@@ -183,6 +183,21 @@ export default function ResourcesPage() {
     }
   };
 
+  const downloadAllPdf = () => {
+    try {
+      const content = filteredResources.map(r => `- ${r.title} (${r.type})`).join('\n');
+      const blob = new Blob([`Resources Summary\n\n${content}`], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'resources-summary.pdf';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      window.print();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -211,6 +226,10 @@ export default function ResourcesPage() {
                 <div className="text-2xl font-bold text-green-600 mb-1">{resources.filter(r => r.isFree).length}</div>
                 <div className="text-sm text-gray-600">Free</div>
               </div>
+              <Button variant="outline" className="ml-2" onClick={downloadAllPdf}>
+                <Download className="w-4 h-4 mr-2" />
+                Download All as PDF
+              </Button>
             </div>
           </div>
         </div>
