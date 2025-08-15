@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTask } from '@/contexts/TaskContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select"
 import { 
   Search, 
   Filter, 
@@ -25,6 +33,7 @@ import {
 
 export default function TasksPage() {
   const { tasks } = useTask();
+  const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -139,19 +148,29 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+    <div className={`min-h-screen transition-colors duration-300 ${
+      isDarkMode 
+        ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900' 
+        : 'bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50'
+    }`}>
       <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Discover Amazing Projects</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <h1 className={`text-4xl font-bold mb-4 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>Discover Amazing Projects</h1>
+          <p className={`text-xl max-w-2xl mx-auto ${
+            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          }`}>
             Find the perfect project that matches your skills and interests. 
             From startups to enterprises, there's something for everyone.
           </p>
         </div>
 
         {/* Search and Filters */}
-        <Card className="border-0 shadow-xl mb-8">
+        <Card className={`border-0 shadow-xl mb-8 backdrop-blur-sm transition-colors duration-300 ${
+          isDarkMode ? 'bg-gray-800/80 border-gray-700/50' : 'bg-white/80 border-white/20'
+        }`}>
           <CardContent className="p-6">
             <div className="space-y-6">
               {/* Search Bar */}
@@ -162,145 +181,149 @@ export default function TasksPage() {
                   placeholder="Search for projects, skills, or keywords..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-3 text-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-xl"
+                  className="pl-10 pr-4 py-3 text-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-xl dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-blue-400"
                 />
               </div>
 
-              {/* Filter Controls */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Category Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                  <select
-                    value={category}
-                    onChange={(e) => handleCategoryChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    {categories.map((cat) => (
-                      <option key={cat.name} value={cat.name === 'All Categories' ? '' : cat.name}>
-                        {cat.name} ({cat.count})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Filter Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Filter</label>
-                  <select
-                    value={filter}
-                    onChange={(e) => handleFilterChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="all">All Projects</option>
-                    <option value="urgent">Urgent Only</option>
-                    <option value="recent">Recent (7 days)</option>
-                  </select>
-                </div>
-
-                {/* Sort By */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'newest' | 'budget-high' | 'budget-low')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="newest">Newest First</option>
-                    <option value="budget-high">Highest Budget</option>
-                    <option value="budget-low">Lowest Budget</option>
-                  </select>
-                </div>
-
-                {/* View Mode */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">View</label>
-                  <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+              {/* Category Pills */}
+              <div className="space-y-3">
+                <label className={`block text-sm font-medium ${
+                  isDarkMode ? 'text-gray-200' : 'text-gray-700'
+                }`}>Categories</label>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((cat) => (
                     <Button
-                      variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                      key={cat.name}
+                      variant={category === cat.name ? "default" : "outline"}
                       size="sm"
+                      onClick={() => handleCategoryChange(cat.name === 'All Categories' ? '' : cat.name)}
+                      className={`flex items-center gap-2 transition-all duration-200 rounded-xl ${
+                        category === cat.name 
+                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' 
+                          : 'hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
+                      }`}
+                    >
+                      <span className="text-lg">{cat.icon}</span>
+                      <span>{cat.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Filters */}
+              <div className="space-y-3">
+                <label className={`block text-sm font-medium ${
+                  isDarkMode ? 'text-gray-200' : 'text-gray-700'
+                }`}>Filters</label>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant={filter === 'all' ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleFilterChange('all')}
+                    className={`flex items-center gap-2 rounded-xl ${
+                      filter === 'all' 
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white' 
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
+                    }`}
+                  >
+                    <Filter className="w-4 h-4" />
+                    All
+                  </Button>
+                  <Button
+                    variant={filter === 'urgent' ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleFilterChange('urgent')}
+                    className={`flex items-center gap-2 rounded-xl ${
+                      filter === 'urgent' 
+                        ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white' 
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
+                    }`}
+                  >
+                    <Zap className="w-4 h-4" />
+                    Urgent
+                  </Button>
+                  <Button
+                    variant={filter === 'recent' ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleFilterChange('recent')}
+                    className={`flex items-center gap-2 rounded-xl ${
+                      filter === 'recent' 
+                        ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
+                    }`}
+                  >
+                    <Clock className="w-4 h-4" />
+                    Recent
+                  </Button>
+                </div>
+              </div>
+
+              {/* Sort and View */}
+              <div className="flex flex-wrap gap-4 items-center justify-between">
+                <div className="space-y-3 flex-1">
+                  <label className={`block text-sm font-medium ${
+                    isDarkMode ? 'text-gray-200' : 'text-gray-700'
+                  }`}>Sort By</label>
+                  <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'newest' | 'budget-high' | 'budget-low')}>
+                    <SelectTrigger className="w-full rounded-xl dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                      <SelectValue placeholder="Sort by" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="newest">Newest First</SelectItem>
+                      <SelectItem value="budget-high">Budget: High to Low</SelectItem>
+                      <SelectItem value="budget-low">Budget: Low to High</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-3 flex-1">
+                  <label className={`block text-sm font-medium ${
+                    isDarkMode ? 'text-gray-200' : 'text-gray-700'
+                  }`}>Price Range</label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      value={priceRange[0]}
+                      onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                      placeholder="Min"
+                      className="w-1/2 rounded-xl dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                    />
+                    <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>-</span>
+                    <Input
+                      type="number"
+                      value={priceRange[1]}
+                      onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                      placeholder="Max"
+                      className="w-1/2 rounded-xl dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <label className={`block text-sm font-medium ${
+                    isDarkMode ? 'text-gray-200' : 'text-gray-700'
+                  }`}>View</label>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={viewMode === 'grid' ? 'default' : 'outline'}
+                      size="icon"
                       onClick={() => setViewMode('grid')}
-                      className="flex-1 rounded-none border-0"
+                      className="rounded-xl dark:border-gray-600 dark:text-gray-100"
                     >
                       <Grid3X3 className="w-4 h-4" />
                     </Button>
                     <Button
-                      variant={viewMode === 'list' ? 'default' : 'ghost'}
-                      size="sm"
+                      variant={viewMode === 'list' ? 'default' : 'outline'}
+                      size="icon"
                       onClick={() => setViewMode('list')}
-                      className="flex-1 rounded-none border-0"
+                      className="rounded-xl dark:border-gray-600 dark:text-gray-100"
                     >
                       <List className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
               </div>
-
-              {/* Price Range */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Budget Range</label>
-                <div className="flex items-center gap-4">
-                  <Input
-                    type="number"
-                    placeholder="Min"
-                    value={priceRange[0]}
-                    onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
-                    className="w-24 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <span className="text-gray-500">to</span>
-                  <Input
-                    type="number"
-                    placeholder="Max"
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 10000])}
-                    className="w-24 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <span className="text-gray-500 text-sm">USD</span>
-                </div>
-              </div>
-
-              {/* Clear Filters */}
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-600">
-                  Showing <span className="font-semibold">{filteredTasks.length}</span> of <span className="font-semibold">{tasks.length}</span> projects
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={clearFilters}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:border-gray-400"
-                >
-                  <FilterX className="w-4 h-4 mr-2" />
-                  Clear Filters
-                </Button>
-              </div>
             </div>
           </CardContent>
         </Card>
-
-        {/* Categories Grid */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Browse by Category</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {categories.map((cat) => (
-              <Card
-                key={cat.name}
-                className={`cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2 ${
-                  category === cat.name ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-                }`}
-                onClick={() => handleCategoryChange(cat.name === 'All Categories' ? '' : cat.name)}
-              >
-                <CardContent className="p-4 text-center">
-                  <div className="text-3xl mb-2">{cat.icon}</div>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1 group-hover:text-blue-600 transition-colors">
-                    {cat.name}
-                  </h3>
-                  <p className="text-xs text-gray-600">{cat.count} projects</p>
-                  <div className={`w-full h-1 mt-2 rounded-full bg-gradient-to-r ${cat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
 
         {/* Tasks Grid/List */}
         {filteredTasks.length > 0 ? (
@@ -308,22 +331,24 @@ export default function TasksPage() {
             {filteredTasks.map((task) => (
               <Card
                 key={task.id}
-                className={`cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2 ${
+                className={`cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2 rounded-xl overflow-hidden ${
                   viewMode === 'list' ? 'flex flex-row' : ''
-                }`}
+                } ${isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white'}`}
                 onClick={() => navigate(`/tasks/${task.id}`)}
               >
                 <CardContent className={`p-6 ${viewMode === 'list' ? 'flex-1' : ''}`}>
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 text-lg mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                      <h3 className={`font-semibold text-lg mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 ${
+                        isDarkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
                         {task.title || 'Untitled Project'}
                       </h3>
                       <div className="flex items-center gap-2 mb-3">
                         <Badge 
                           variant="secondary" 
-                          className="bg-blue-100 text-blue-700 border-blue-200"
+                          className={`${isDarkMode ? 'bg-blue-900/50 text-blue-200 border-blue-700' : 'bg-blue-100 text-blue-700 border-blue-200'}`}
                         >
                           {task.category || 'Uncategorized'}
                         </Badge>
@@ -337,47 +362,59 @@ export default function TasksPage() {
                     </div>
                     {viewMode === 'list' && (
                       <div className="text-right ml-4">
-                        <div className="text-2xl font-bold text-green-600">
+                        <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                           ${task.budget ? task.budget.toLocaleString() : '0'}
                         </div>
-                        <p className="text-sm text-gray-600">Budget</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Budget</p>
                       </div>
                     )}
                   </div>
 
                   {/* Description */}
-                  <p className="text-gray-600 mb-4 line-clamp-3">
+                  <p className={`mb-4 line-clamp-3 ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
                     {task.description || 'No description available'}
                   </p>
 
                   {/* Details */}
                   <div className={`grid ${viewMode === 'list' ? 'grid-cols-3' : 'grid-cols-2'} gap-4 text-sm`}>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <MapPin className="w-4 h-4 text-blue-500" />
+                    <div className={`flex items-center gap-2 ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>
+                      <MapPin className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                       <span>{task.location || 'Remote'}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <DollarSign className="w-4 h-4 text-green-500" />
-                      <span className="font-semibold text-green-600">
+                    <div className={`flex items-center gap-2 ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>
+                      <DollarSign className="w-4 h-4 text-green-500 dark:text-green-400" />
+                      <span className="font-semibold text-green-600 dark:text-green-400">
                         ${task.budget ? task.budget.toLocaleString() : '0'}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Clock className="w-4 h-4 text-purple-500" />
+                    <div className={`flex items-center gap-2 ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>
+                      <Clock className="w-4 h-4 text-purple-500 dark:text-purple-400" />
                       <span>{task.createdAt ? new Date(task.createdAt).toLocaleDateString() : 'N/A'}</span>
                     </div>
                     {viewMode === 'list' && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Star className="w-4 h-4 text-yellow-500" />
+                      <div className={`flex items-center gap-2 ${
+                        isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                      }`}>
+                        <Star className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
                         <span>New Project</span>
                       </div>
                     )}
                   </div>
 
                   {/* Action Button */}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
+                  <div className={`mt-4 pt-4 border-t ${
+                    isDarkMode ? 'border-gray-700' : 'border-gray-100'
+                  }`}>
                     <Button 
-                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl"
                       size="sm"
                     >
                       View Details
@@ -389,19 +426,25 @@ export default function TasksPage() {
             ))}
           </div>
         ) : (
-          <Card className="border-0 shadow-lg text-center py-16">
+          <Card className={`border-0 shadow-lg text-center py-16 transition-colors duration-300 ${
+            isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white'
+          }`}>
             <CardContent>
-              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center">
-                <Briefcase className="h-10 w-10 text-blue-600" />
+              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded-2xl flex items-center justify-center">
+                <Briefcase className="h-10 w-10 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No projects found</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className={`text-xl font-semibold mb-2 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>No projects found</h3>
+              <p className={`mb-6 ${
+                isDarkMode ? 'text-gray-300' : 'text-gray-600'
+              }`}>
                 Try adjusting your filters or search terms to find more projects
               </p>
               <Button 
                 onClick={clearFilters}
                 variant="outline"
-                className="border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400"
+                className="border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-400 dark:hover:border-blue-500 rounded-xl"
               >
                 <FilterX className="w-4 h-4 mr-2" />
                 Clear All Filters
@@ -412,17 +455,17 @@ export default function TasksPage() {
 
         {/* Call to Action */}
         <div className="mt-16 text-center">
-          <Card className="border-0 shadow-xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+          <Card className="border-0 shadow-xl bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-800 dark:to-indigo-800 text-white transition-colors duration-300">
             <CardContent className="p-12">
               <h2 className="text-3xl font-bold mb-4">Ready to Start Your Project?</h2>
-              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-blue-100 dark:text-blue-200 mb-8 max-w-2xl mx-auto">
                 Can't find the right project? Create your own and let talented professionals come to you!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
                   size="lg" 
                   onClick={() => navigate('/create-task')}
-                  className="bg-white text-blue-700 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-xl shadow-2xl"
+                  className="bg-white dark:bg-gray-100 text-blue-700 dark:text-blue-800 hover:bg-gray-100 dark:hover:bg-gray-200 px-8 py-4 text-lg font-semibold rounded-xl shadow-2xl"
                 >
                   <TrendingUp className="w-5 h-5 mr-2" />
                   Post a Project
@@ -431,7 +474,7 @@ export default function TasksPage() {
                   size="lg"
                   variant="outline" 
                   onClick={() => navigate('/register')}
-                  className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold rounded-xl backdrop-blur-sm"
+                  className="border-white/30 text-white hover:bg-white/10 dark:hover:bg-white/20 px-8 py-4 text-lg font-semibold rounded-xl backdrop-blur-sm"
                 >
                   Become a Skiller
                 </Button>

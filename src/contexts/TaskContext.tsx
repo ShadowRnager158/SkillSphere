@@ -20,7 +20,7 @@ const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
 export const useTask = () => {
   const context = useContext(TaskContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useTask must be used within a TaskProvider');
   }
   return context;
@@ -31,263 +31,211 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
 
   useEffect(() => {
-    // Load tasks from localStorage on initial load
-    const storedTasks = localStorage.getItem('skillsphere_tasks');
-    if (storedTasks) {
-      setTasks(JSON.parse(storedTasks));
+    const stored = localStorage.getItem('skillsphere_tasks');
+    if (stored) {
+      setTasks(JSON.parse(stored));
     } else {
-      // Initialize with some sample data if none exists
-      const sampleTasks = getSampleTasks();
-      setTasks(sampleTasks);
-      localStorage.setItem('skillsphere_tasks', JSON.stringify(sampleTasks));
+      const sample = getSampleTasks();
+      setTasks(sample);
+      localStorage.setItem('skillsphere_tasks', JSON.stringify(sample));
     }
   }, []);
 
-  // Filter tasks created by the current user
-  const userTasks = user ? tasks.filter(task => task.createdBy === user.id) : [];
-  
-  // Filter bids placed by the current user (if they are a Skiller)
-  const userBids = user?.isSkiller 
-    ? tasks.flatMap(task => 
-        task.bids.filter(bid => bid.skillerId === user.id)
+  const saveTasks = (updated: Task[]) => {
+    setTasks(updated);
+    localStorage.setItem('skillsphere_tasks', JSON.stringify(updated));
+  };
+
+  const userTasks = user ? tasks.filter(t => t.createdBy === user.id) : [];
+
+  const userBids = user?.isSkiller
+    ? tasks.flatMap(task =>
+        task.bids
+          .filter(bid => bid.skillerId === user.id)
           .map(bid => ({ ...bid, taskId: task.id }))
       )
     : [];
 
-  const saveTasks = (updatedTasks: Task[]) => {
-    setTasks(updatedTasks);
-    localStorage.setItem('skillsphere_tasks', JSON.stringify(updatedTasks));
-  };
-
   const createTask = async (taskData: Omit<Task, 'id' | 'createdAt' | 'status' | 'bids'>) => {
     if (!user) throw new Error('You must be logged in to create a task');
-    
+
     const newTask: Task = {
       id: crypto.randomUUID(),
       ...taskData,
       createdAt: new Date().toISOString(),
       status: 'open',
       bids: [],
-      creatorName: user.name,
-      creatorAvatar: user.avatar
     };
-    
-    const updatedTasks = [...tasks, newTask];
-    saveTasks(updatedTasks);
+
+    const updated = [...tasks, newTask];
+    saveTasks(updated);
     return newTask;
   };
 
   const updateTask = async (taskId: string, updates: Partial<Task>) => {
-    const taskIndex = tasks.findIndex(task => task.id === taskId);
-    if (taskIndex === -1) throw new Error('Task not found');
-    
-    const updatedTask = { ...tasks[taskIndex], ...updates };
-    const updatedTasks = [...tasks];
-    updatedTasks[taskIndex] = updatedTask;
-    
-    saveTasks(updatedTasks);
+    const index = tasks.findIndex(t => t.id === taskId);
+    if (index === -1) throw new Error('Task not found');
+
+    const updatedTask: Task = { ...tasks[index], ...updates };
+    const updatedList = [...tasks];
+    updatedList[index] = updatedTask;
+
+    saveTasks(updatedList);
     return updatedTask;
   };
 
-  const getTaskById = (taskId: string) => {
-    return tasks.find(task => task.id === taskId);
-  };
+  const getTaskById = (taskId: string) => tasks.find(t => t.id === taskId);
 
   const placeBid = async (taskId: string, amount: number, message: string) => {
     if (!user) throw new Error('You must be logged in to place a bid');
     if (!user.isSkiller) throw new Error('Only Skillers can place bids');
-    
-    const taskIndex = tasks.findIndex(task => task.id === taskId);
+
+    const taskIndex = tasks.findIndex(t => t.id === taskId);
     if (taskIndex === -1) throw new Error('Task not found');
-    
+
     const task = tasks[taskIndex];
     if (task.status !== 'open') throw new Error('This task is no longer accepting bids');
-    
-    // Check if user already placed a bid
-    const existingBidIndex = task.bids.findIndex(bid => bid.skillerId === user.id);
-    
+
+    const existingBidIndex = task.bids.findIndex(b => b.skillerId === user.id);
+
     const newBid: Bid = {
       id: crypto.randomUUID(),
       taskId,
       skillerId: user.id,
       skillerName: user.name,
-      skillerAvatar: user.avatar,
+      skillerAvatar: user.avatar || '',
       amount,
       message,
       createdAt: new Date().toISOString(),
-      status: 'pending'
+      status: 'pending', // ✅ literal type
     };
-    
-    const updatedTasks = [...tasks];
-    
+
+    const updatedList = [...tasks];
     if (existingBidIndex >= 0) {
-      // Update existing bid
-      updatedTasks[taskIndex].bids[existingBidIndex] = newBid;
+      updatedList[taskIndex].bids[existingBidIndex] = newBid;
     } else {
-      // Add new bid
-      updatedTasks[taskIndex].bids.push(newBid);
+      updatedList[taskIndex].bids.push(newBid);
     }
-    
-    saveTasks(updatedTasks);
+
+    saveTasks(updatedList);
     return newBid;
   };
 
   const acceptBid = async (taskId: string, bidId: string) => {
-    const taskIndex = tasks.findIndex(task => task.id === taskId);
+    const taskIndex = tasks.findIndex(t => t.id === taskId);
     if (taskIndex === -1) throw new Error('Task not found');
-    
+
     const task = tasks[taskIndex];
-    const bidIndex = task.bids.findIndex(bid => bid.id === bidId);
+    const bidIndex = task.bids.findIndex(b => b.id === bidId);
     if (bidIndex === -1) throw new Error('Bid not found');
-    
+
     const bid = task.bids[bidIndex];
-    
-    // Update bid status
-    const updatedBids = task.bids.map(b => ({
+
+    const updatedBids: Bid[] = task.bids.map(b => ({
       ...b,
-      status: b.id === bidId ? 'accepted' : 'rejected'
+      status: b.id === bidId ? 'accepted' : 'rejected',
     }));
-    
-    // Update task status and assign to Skiller
+
     const updatedTask: Task = {
       ...task,
       status: 'assigned',
       assignedTo: bid.skillerId,
       assigneeName: bid.skillerName,
       assigneeAvatar: bid.skillerAvatar,
-      bids: updatedBids
+      bids: updatedBids,
     };
-    
-    const updatedTasks = [...tasks];
-    updatedTasks[taskIndex] = updatedTask;
-    
-    saveTasks(updatedTasks);
+
+    const updatedList = [...tasks];
+    updatedList[taskIndex] = updatedTask;
+
+    saveTasks(updatedList);
     return updatedTask;
   };
 
   const completeTask = async (taskId: string) => {
-    const taskIndex = tasks.findIndex(task => task.id === taskId);
-    if (taskIndex === -1) throw new Error('Task not found');
-    
-    const updatedTask: Task = {
-      ...tasks[taskIndex],
-      status: 'completed'
-    };
-    
-    const updatedTasks = [...tasks];
-    updatedTasks[taskIndex] = updatedTask;
-    
-    saveTasks(updatedTasks);
+    const index = tasks.findIndex(t => t.id === taskId);
+    if (index === -1) throw new Error('Task not found');
+
+    const updatedTask: Task = { ...tasks[index], status: 'completed' };
+    const updatedList = [...tasks];
+    updatedList[index] = updatedTask;
+
+    saveTasks(updatedList);
     return updatedTask;
   };
 
-  const getTasksByCategory = (category: string) => {
-    return tasks.filter(task => 
-      task.category === category && 
-      task.status === 'open'
-    );
-  };
+  const getTasksByCategory = (category: string) =>
+    tasks.filter(t => t.category === category && t.status === 'open');
 
-  const getUrgentTasks = () => {
-    return tasks.filter(task => 
-      task.isUrgent && 
-      task.status === 'open'
-    );
-  };
+  const getUrgentTasks = () =>
+    tasks.filter(t => t.isUrgent && t.status === 'open');
 
   return (
-    <TaskContext.Provider value={{
-      tasks,
-      userTasks,
-      userBids,
-      createTask,
-      updateTask,
-      getTaskById,
-      placeBid,
-      acceptBid,
-      completeTask,
-      getTasksByCategory,
-      getUrgentTasks
-    }}>
+    <TaskContext.Provider
+      value={{
+        tasks,
+        userTasks,
+        userBids,
+        createTask,
+        updateTask,
+        getTaskById,
+        placeBid,
+        acceptBid,
+        completeTask,
+        getTasksByCategory,
+        getUrgentTasks,
+      }}
+    >
       {children}
     </TaskContext.Provider>
   );
 };
 
-// Sample data generator function
+// ✅ Clean sample data so TS is happy
 function getSampleTasks(): Task[] {
   return [
     {
-      id: "task1",
-      title: "Help with moving furniture",
-      description: "Need help moving a couch and table from first floor to second floor apartment",
-      category: "Moving",
+      id: 'task1',
+      title: 'Help with moving furniture',
+      description:
+        'Need help moving a couch and table from first floor to second floor apartment. Looking for someone strong and careful.',
+      category: 'Moving',
       budget: 50,
-      location: "Downtown",
-      status: "open",
-      createdAt: "2025-07-15T15:00:00Z",
-      createdBy: "user1",
-      creatorName: "John Doe",
-      creatorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=john@example.com",
+      location: 'Downtown',
+      status: 'open',
+      createdAt: '2025-07-15T15:00:00Z',
+      createdBy: 'user1',
+      creatorName: 'John Doe',
+      creatorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=john@example.com',
       isUrgent: true,
       bids: [
         {
-          id: "bid1",
-          taskId: "task1",
-          skillerId: "skiller1",
-          skillerName: "Mike Smith",
-          skillerAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=mike@example.com",
+          id: 'bid1',
+          taskId: 'task1',
+          skillerId: 'skiller1',
+          skillerName: 'Mike Smith',
+          skillerAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=mike@example.com',
           amount: 60,
-          message: "I can help you today after 3pm. I have experience with moving heavy furniture.",
-          createdAt: "2025-07-15T17:30:00Z",
-          status: "pending"
-        }
-      ]
+          message: 'I can help you today after 3pm. I have experience with moving heavy furniture.',
+          createdAt: '2025-07-15T17:30:00Z',
+          status: 'pending',
+        },
+      ],
     },
     {
-      id: "task2",
-      title: "Spanish conversation practice",
-      description: "Looking for a fluent Spanish speaker to practice conversation with twice a week",
-      category: "Language",
+      id: 'task2',
+      title: 'Spanish conversation practice',
+      description: 'Looking for a fluent Spanish speaker to practice conversation with twice a week.',
+      category: 'Language',
       budget: 25,
-      location: "Online",
-      status: "open",
-      createdAt: "2025-07-16T10:15:00Z",
-      createdBy: "user2",
-      creatorName: "Sarah Johnson",
-      creatorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah@example.com",
+      location: 'Online',
+      status: 'open',
+      createdAt: '2025-07-16T10:00:00Z',
+      createdBy: 'user2',
+      creatorName: 'Sarah Johnson',
+      creatorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sarah@example.com',
       isUrgent: false,
-      bids: []
+      bids: [],
     },
-    {
-      id: "task3",
-      title: "Fix leaking kitchen faucet",
-      description: "The kitchen faucet has been leaking for a few days and needs repair",
-      category: "Plumbing",
-      budget: 75,
-      location: "Westside",
-      status: "assigned",
-      createdAt: "2025-07-14T09:20:00Z",
-      createdBy: "user3",
-      creatorName: "Emily Chen",
-      creatorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=emily@example.com",
-      assignedTo: "skiller2",
-      assigneeName: "David Wilson",
-      assigneeAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david@example.com",
-      isUrgent: false,
-      bids: [
-        {
-          id: "bid2",
-          taskId: "task3",
-          skillerId: "skiller2",
-          skillerName: "David Wilson",
-          skillerAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david@example.com",
-          amount: 80,
-          message: "I'm a certified plumber with 5 years of experience. I can fix this easily.",
-          createdAt: "2025-07-14T10:45:00Z",
-          status: "accepted"
-        }
-      ]
-    }
   ];
 }

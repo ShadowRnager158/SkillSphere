@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Label } from '@/components/ui/label';
 import { 
   Search, 
   Send, 
@@ -14,7 +15,8 @@ import {
   Star,
   Mail,
   Filter,
-  Plus
+  Plus,
+  X
 } from 'lucide-react';
 
 interface Message {
@@ -36,6 +38,12 @@ export default function MessagesPage() {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'unread' | 'project' | 'support'>('all');
+  const [isComposing, setIsComposing] = useState(false);
+  const [composeData, setComposeData] = useState({
+    to: '',
+    subject: '',
+    message: ''
+  });
 
   const messages: Message[] = [
     {
@@ -96,18 +104,34 @@ export default function MessagesPage() {
     }
   ];
 
-  const filteredMessages = messages.filter(message => {
+    const filteredMessages = messages.filter(message => {
     const matchesSearch = message.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         message.sender.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         message.preview.toLowerCase().includes(searchTerm.toLowerCase());
+      message.sender.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      message.preview.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesFilter = activeFilter === 'all' || 
-                         (activeFilter === 'unread' && !message.isRead) ||
-                         (activeFilter === 'project' && message.category === 'project') ||
-                         (activeFilter === 'support' && message.category === 'support');
+      (activeFilter === 'unread' && !message.isRead) ||
+      (activeFilter === 'project' && message.category === 'project') ||
+      (activeFilter === 'support' && message.category === 'support');
     
     return matchesSearch && matchesFilter;
   });
+
+  const handleCompose = () => {
+    setIsComposing(true);
+  };
+
+  const handleSendMessage = () => {
+    // Here you would typically send the message
+    console.log('Sending message:', composeData);
+    setIsComposing(false);
+    setComposeData({ to: '', subject: '', message: '' });
+  };
+
+  const handleComposeChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setComposeData(prev => ({ ...prev, [name]: value }));
+  };
 
   const unreadCount = messages.filter(m => !m.isRead).length;
 
@@ -115,16 +139,16 @@ export default function MessagesPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
-                  <Mail className="h-6 w-6 text-white" />
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 flex items-center gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
+                  <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
                 <div>
                   <div>Messages</div>
-                  <div className="text-lg font-normal text-gray-600 mt-1">
+                  <div className="text-base sm:text-lg font-normal text-gray-600 mt-1">
                     {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}
                   </div>
                 </div>
@@ -139,6 +163,7 @@ export default function MessagesPage() {
                 Filter
               </Button>
               <Button 
+                onClick={handleCompose}
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -148,7 +173,7 @@ export default function MessagesPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Message List */}
           <div className="lg:col-span-1">
             <Card className="border-0 shadow-lg">
@@ -165,28 +190,42 @@ export default function MessagesPage() {
                     />
                   </div>
 
-                  {/* Filters */}
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      { key: 'all', label: 'All', count: messages.length },
-                      { key: 'unread', label: 'Unread', count: unreadCount },
-                      { key: 'project', label: 'Project', count: messages.filter(m => m.category === 'project').length },
-                      { key: 'support', label: 'Support', count: messages.filter(m => m.category === 'support').length }
-                    ].map(filter => (
-                      <Button
-                        key={filter.key}
-                        variant={activeFilter === filter.key ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setActiveFilter(filter.key as string)}
-                        className="text-xs"
-                      >
-                        {filter.label}
-                        <Badge variant="secondary" className="ml-2 text-xs">
-                          {filter.count}
-                        </Badge>
-                      </Button>
-                    ))}
-                  </div>
+                                     {/* Filters */}
+                   <div className="flex flex-wrap gap-2">
+                     {[
+                       { key: 'all', label: 'All', count: messages.length },
+                       { key: 'unread', label: 'Unread', count: unreadCount },
+                       { key: 'project', label: 'Project', count: messages.filter(m => m.category === 'project').length },
+                       { key: 'support', label: 'Support', count: messages.filter(m => m.category === 'support').length }
+                     ].map(filter => (
+                       <Button
+                         key={filter.key}
+                         variant={activeFilter === filter.key ? 'default' : 'outline'}
+                         size="sm"
+                         onClick={() => setActiveFilter(filter.key as string)}
+                         className="text-xs"
+                       >
+                         {filter.label}
+                         <Badge variant="secondary" className="ml-2 text-xs">
+                           {filter.count}
+                         </Badge>
+                       </Button>
+                     ))}
+                     {(activeFilter !== 'all' || searchTerm) && (
+                       <Button
+                         variant="ghost"
+                         size="sm"
+                         onClick={() => {
+                           setActiveFilter('all');
+                           setSearchTerm('');
+                         }}
+                         className="text-xs text-gray-500 hover:text-gray-700"
+                       >
+                         <X className="w-3 h-3 mr-1" />
+                         Clear Filters
+                       </Button>
+                     )}
+                   </div>
                 </div>
               </CardHeader>
               <CardContent className="p-0">
@@ -347,6 +386,87 @@ export default function MessagesPage() {
             )}
           </div>
         </div>
+
+        {/* Compose Message Modal */}
+        {isComposing && (
+          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <div className="p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Compose New Message</h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsComposing(false)}
+                    className="w-8 h-8"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="to" className="text-gray-700 font-medium">To</Label>
+                    <Input
+                      id="to"
+                      name="to"
+                      placeholder="Enter recipient email or name"
+                      value={composeData.to}
+                      onChange={handleComposeChange}
+                      className="mt-2"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="subject" className="text-gray-700 font-medium">Subject</Label>
+                    <Input
+                      id="subject"
+                      name="subject"
+                      placeholder="Enter message subject"
+                      value={composeData.subject}
+                      onChange={handleComposeChange}
+                      className="mt-2"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="message" className="text-gray-700 font-medium">Message</Label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      placeholder="Type your message here..."
+                      value={composeData.message}
+                      onChange={handleComposeChange}
+                      rows={8}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none mt-2"
+                    />
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-4">
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Attach File
+                      </Button>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                      <Button variant="outline" onClick={() => setIsComposing(false)} className="w-full sm:w-auto">
+                        Cancel
+                      </Button>
+                      <Button 
+                        onClick={handleSendMessage}
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 w-full sm:w-auto"
+                      >
+                        <Send className="w-4 h-4 mr-2" />
+                        Send Message
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

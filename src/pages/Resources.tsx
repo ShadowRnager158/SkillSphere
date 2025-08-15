@@ -44,96 +44,7 @@ export default function ResourcesPage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
 
   const resources: Resource[] = [
-    {
-      id: '1',
-      title: 'Complete React Developer Course 2024',
-      description: 'Master React from basics to advanced concepts including hooks, context, and modern patterns.',
-      type: 'course',
-      category: 'Frontend Development',
-      difficulty: 'Intermediate',
-      duration: '12 hours',
-      rating: 4.8,
-      students: 15420,
-      isFree: false,
-      thumbnail: 'https://images.unsplash.com/photo-1633356122544-f13434a7d4e3?w=400&h=250&fit=crop',
-      url: '#',
-      tags: ['React', 'JavaScript', 'Frontend', 'Hooks']
-    },
-    {
-      id: '2',
-      title: 'UI/UX Design Fundamentals',
-      description: 'Learn the principles of good design, user research, and creating intuitive interfaces.',
-      type: 'video',
-      category: 'Design',
-      difficulty: 'Beginner',
-      duration: '45 min',
-      rating: 4.6,
-      students: 8920,
-      isFree: true,
-      thumbnail: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=250&fit=crop',
-      url: '#',
-      tags: ['Design', 'UX', 'UI', 'Research']
-    },
-    {
-      id: '3',
-      title: 'Python for Data Science',
-      description: 'Comprehensive guide to using Python for data analysis, visualization, and machine learning.',
-      type: 'ebook',
-      category: 'Data Science',
-      difficulty: 'Advanced',
-      duration: '300 pages',
-      rating: 4.9,
-      students: 12350,
-      isFree: false,
-      thumbnail: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=400&h=250&fit=crop',
-      url: '#',
-      tags: ['Python', 'Data Science', 'ML', 'Analytics']
-    },
-    {
-      id: '4',
-      title: 'DevOps Best Practices',
-      description: 'Essential DevOps practices including CI/CD, containerization, and cloud deployment.',
-      type: 'tutorial',
-      category: 'DevOps',
-      difficulty: 'Intermediate',
-      duration: '2 hours',
-      rating: 4.7,
-      students: 6780,
-      isFree: true,
-      thumbnail: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=250&fit=crop',
-      url: '#',
-      tags: ['DevOps', 'CI/CD', 'Docker', 'Cloud']
-    },
-    {
-      id: '5',
-      title: 'JavaScript ES6+ Masterclass',
-      description: 'Deep dive into modern JavaScript features and best practices for professional development.',
-      type: 'course',
-      category: 'Programming',
-      difficulty: 'Intermediate',
-      duration: '8 hours',
-      rating: 4.8,
-      students: 18920,
-      isFree: false,
-      thumbnail: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=250&fit=crop',
-      url: '#',
-      tags: ['JavaScript', 'ES6', 'Modern JS', 'Programming']
-    },
-    {
-      id: '6',
-      title: 'Product Management Essentials',
-      description: 'Learn product strategy, user research, and agile methodologies for successful product development.',
-      type: 'article',
-      category: 'Product Management',
-      difficulty: 'Beginner',
-      duration: '15 min read',
-      rating: 4.5,
-      students: 4560,
-      isFree: true,
-      thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop',
-      url: '#',
-      tags: ['Product', 'Strategy', 'Agile', 'Research']
-    }
+    // ... existing code ...
   ];
 
   const categories = ['all', 'Frontend Development', 'Design', 'Data Science', 'DevOps', 'Programming', 'Product Management'];
@@ -183,6 +94,21 @@ export default function ResourcesPage() {
     }
   };
 
+  const downloadAllPdf = () => {
+    try {
+      const content = filteredResources.map(r => `- ${r.title} (${r.type})`).join('\n');
+      const blob = new Blob([`Resources Summary\n\n${content}`], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'resources-summary.pdf';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      window.print();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -211,12 +137,16 @@ export default function ResourcesPage() {
                 <div className="text-2xl font-bold text-green-600 mb-1">{resources.filter(r => r.isFree).length}</div>
                 <div className="text-sm text-gray-600">Free</div>
               </div>
+              <Button variant="outline" className="ml-2" onClick={downloadAllPdf}>
+                <Download className="w-4 h-4 mr-2" />
+                Download All as PDF
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Search and Filters */}
-        <Card className="border-0 shadow-xl mb-8">
+{/* Search and Filters */}
+<Card className="border-0 shadow-xl mb-8">
           <CardContent className="p-6">
             <div className="space-y-6">
               {/* Search Bar */}
@@ -476,3 +406,4 @@ export default function ResourcesPage() {
     </div>
   );
 }
+

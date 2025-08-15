@@ -21,7 +21,8 @@ import {
   ArrowUpRight,
   Plus,
   Eye,
-  Star
+  Star,
+  Brain
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -69,12 +70,21 @@ export default function DashboardPage() {
     }
   }, [tasks, user]);
 
-  // Calculate metrics with fallbacks
+  // Calculate metrics with fallbacks - Fresh start for new users
   const completedTasks = userTasks?.filter(task => task?.status === 'completed')?.length || 0;
   const activeTasks = userTasks?.filter(task => task?.status === 'open')?.length || 0;
   const totalEarnings = userTasks
     ?.filter(task => task?.status === 'completed')
     ?.reduce((sum, task) => sum + (task?.budget || 0), 0) || 0;
+  
+  // AI-powered insights for new users
+  const isNewUser = completedTasks === 0 && activeTasks === 0;
+  const aiRecommendations = isNewUser ? [
+    { id: 1, type: 'skill', text: 'Complete your skill assessment to get better matches', priority: 'high' },
+    { id: 2, type: 'profile', text: 'Upload a professional photo to increase visibility', priority: 'medium' },
+    { id: 3, type: 'project', text: 'Browse trending projects in your field', priority: 'medium' },
+    { id: 4, type: 'network', text: 'Connect with other professionals in your industry', priority: 'low' }
+  ] : [];
 
   // Profile completion
   const profileFields = ['name', 'headline', 'dob', 'education', 'gender', 'skills', 'bio', 'location', 'phone', 'avatar'];
@@ -200,7 +210,7 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-orange-600 mb-1">Success Rate</p>
-                  <p className="text-3xl font-bold text-orange-900">98%</p>
+                  <p className="text-3xl font-bold text-orange-900">{isNewUser ? '0%' : '98%'}</p>
                 </div>
                 <div className="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center">
                   <Award className="h-6 w-6 text-white" />
@@ -209,6 +219,45 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* AI Recommendations for New Users */}
+        {isNewUser && (
+          <Card className="border-0 shadow-lg mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+            <CardHeader>
+              <CardTitle className="text-xl text-blue-900 flex items-center gap-2">
+                <Brain className="h-5 w-5 text-blue-600" />
+                AI-Powered Recommendations
+              </CardTitle>
+              <CardDescription className="text-blue-700">
+                Get started with these personalized recommendations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {aiRecommendations.map((rec) => (
+                  <div 
+                    key={rec.id}
+                    className="p-4 bg-white rounded-xl border border-blue-200 hover:shadow-md transition-all duration-200 cursor-pointer"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`w-3 h-3 rounded-full mt-2 ${
+                        rec.priority === 'high' ? 'bg-red-500' : 
+                        rec.priority === 'medium' ? 'bg-yellow-500' : 
+                        'bg-green-500'
+                      }`}></div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900 mb-1">{rec.text}</p>
+                        <Badge variant="outline" className="text-xs">
+                          {rec.priority} priority
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Main Content Tabs */}
         <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-8">

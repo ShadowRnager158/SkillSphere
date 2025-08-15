@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,10 +17,20 @@ import {
   Users,
   Zap,
   CheckCircle,
-  ExternalLink
+  ExternalLink,
+  Mail,
+  Phone,
+  Clock,
+  Bot,
+  Brain,
+  Sparkles
 } from 'lucide-react';
 
 export default function HelpCenterPage() {
+  const { isDarkMode } = useTheme();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
   const helpCategories = [
     {
       title: "Getting Started",
@@ -96,6 +108,20 @@ export default function HelpCenterPage() {
   ];
 
   const supportOptions = [
+    {
+      title: "Email Support",
+      description: "Get help via email within 24 hours",
+      icon: Mail,
+      responseTime: "24 hours",
+      color: "from-blue-500 to-blue-600"
+    },
+    {
+      title: "Phone Support",
+      description: "Speak directly with our support team",
+      icon: Phone,
+      responseTime: "Immediate",
+      color: "from-green-500 to-green-600"
+    },
     {
       title: "Live Chat",
       description: "Get instant help from our support team",

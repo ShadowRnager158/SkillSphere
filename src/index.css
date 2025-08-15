@@ -431,4 +431,46 @@
   .delay-300 { animation-delay: 300ms; }
   .delay-400 { animation-delay: 400ms; }
   .delay-500 { animation-delay: 500ms; }
+
+  /* Added: Forced-colors overrides for high-contrast mode (replaces -ms-high-contrast) */
+  @media (forced-colors: active) {
+    body {
+      background: Canvas;
+      color: CanvasText;
+    }
+    .text-primary {
+      color: ButtonText;
+    }
+    .border {
+      border-color: ButtonBorder;
+    }
+    .focus-ring {
+      outline-color: Highlight;
+    }
+  }
+
+  @media (forced-colors: active) and (prefers-color-scheme: light) {
+    /* Light high-contrast adjustments */
+    .bg-primary {
+      background: Canvas;
+    }
+  }
+
+  @media (forced-colors: active) and (prefers-color-scheme: dark) {
+    /* Dark high-contrast adjustments */
+    .bg-primary {
+      background: Canvas;
+    }
+  }
+
+  /* Added: Cool rainbow gradient text utility */
+  .text-gradient-rainbow {
+    @apply bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 bg-clip-text text-transparent animate-gradient;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 }

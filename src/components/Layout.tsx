@@ -99,7 +99,7 @@ const Layout = () => {
       </div>
       
       <Navbar />
-      <main className="flex-1 flex flex-col min-h-0">
+      <main className="flex-1 flex flex-col min-h-0 pt-16">
         <Outlet />
       </main>
       <Footer />

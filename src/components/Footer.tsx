@@ -14,12 +14,16 @@ import {
   Shield,
   Users,
   Award,
-  Zap
+  Zap,
+  CheckCircle
 } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const [scrollProgress, setScrollProgress] = React.useState(0);
+  const [email, setEmail] = React.useState('');
+  const [isSubscribed, setIsSubscribed] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -49,6 +53,31 @@ export default function Footer() {
       top: 0,
       behavior: 'smooth'
     });
+  };
+
+  const handleNewsletterSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    
+    setIsLoading(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Here you would typically send the email to your backend
+      console.log('Subscribing email:', email);
+      
+      setIsSubscribed(true);
+      setEmail('');
+      
+      // Reset subscription status after 5 seconds
+      setTimeout(() => setIsSubscribed(false), 5000);
+    } catch (error) {
+      console.error('Failed to subscribe:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const footerSections = [
@@ -153,11 +182,11 @@ export default function Footer() {
           {/* Stats */}
           <div className="lg:col-span-2">
             <h3 className="text-xl font-semibold text-white mb-6">Platform Impact</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-2xl font-bold text-blue-400 mb-1">{stat.value}</div>
-                  <div className="text-sm text-gray-300">{stat.label}</div>
+                  <div className="text-xl md:text-2xl font-bold text-blue-400 mb-1">{stat.value}</div>
+                  <div className="text-xs md:text-sm text-gray-300">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -165,16 +194,16 @@ export default function Footer() {
         </div>
 
         {/* Navigation Links */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8 mb-8 md:mb-12">
           {footerSections.map((section) => (
             <div key={section.title}>
-              <h4 className="text-lg font-semibold text-white mb-4">{section.title}</h4>
-              <ul className="space-y-3">
+              <h4 className="text-base md:text-lg font-semibold text-white mb-3 md:mb-4">{section.title}</h4>
+              <ul className="space-y-2 md:space-y-3">
                 {section.links.map((link) => (
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-gray-300 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline"
+                      className="text-gray-300 hover:text-blue-400 transition-colors duration-200 text-xs md:text-sm hover:underline"
                     >
                       {link.name}
                     </Link>
@@ -194,16 +223,48 @@ export default function Footer() {
               <p className="text-gray-300 mb-4">
                 Get the latest insights on remote work, freelancing, and industry trends.
               </p>
-              <div className="flex space-x-3">
+              
+              {isSubscribed ? (
+                <div className="p-4 bg-green-600/20 border border-green-500/30 rounded-lg">
+                  <div className="flex items-center gap-2 text-green-400">
+                    <CheckCircle className="w-5 h-5" />
+                    <span className="font-medium">Successfully subscribed!</span>
+                  </div>
+                  <p className="text-green-300 text-sm mt-1">
+                    You'll receive our newsletter with the latest updates and insights.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleNewsletterSubscribe} className="space-y-3">
+                                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                 <input
                   type="email"
                   placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                   className="flex-1 px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 />
-                <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
-                  Subscribe
+                <button 
+                  type="submit"
+                  disabled={isLoading}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Subscribing...</span>
+                    </div>
+                  ) : (
+                    'Subscribe'
+                  )}
                 </button>
               </div>
+                  <p className="text-xs text-gray-400">
+                    We respect your privacy. Unsubscribe at any time.
+                  </p>
+                </form>
+              )}
             </div>
 
             {/* Social Links */}
@@ -235,8 +296,21 @@ export default function Footer() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             {/* Copyright */}
-            <div className="flex items-center space-x-4 text-sm text-gray-400">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 text-sm text-gray-400">
               <span>© {currentYear} SkillSphere. All rights reserved.</span>
+              <div className="flex sm:hidden items-center space-x-4">
+                <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">
+                  Privacy
+                </Link>
+                <span>•</span>
+                <Link to="/terms-of-service" className="hover:text-blue-400 transition-colors">
+                  Terms
+                </Link>
+                <span>•</span>
+                <Link to="/cookie-policy" className="hover:text-blue-400 transition-colors">
+                  Cookies
+                </Link>
+              </div>
               <div className="hidden sm:flex items-center space-x-4">
                 <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">
                   Privacy
@@ -253,7 +327,7 @@ export default function Footer() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex items-center space-x-6 text-sm text-gray-400">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-gray-400">
               <div className="flex items-center space-x-2">
                 <Shield className="w-4 h-4 text-green-400" />
                 <span>Secure & Trusted</span>

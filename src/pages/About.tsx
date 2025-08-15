@@ -109,7 +109,7 @@ export default function AboutPage() {
         
         <div className="grid md:grid-cols-4 gap-8">
           {[
-            {name: "Sarah Johnson", title: "CEO & Co-Founder", background: "bg-blue-100"},
+            {name: "Bello Abdul Rahman", title: "CEO & Co-Founder", background: "bg-blue-100"},
             {name: "Michael Chen", title: "CTO & Co-Founder", background: "bg-green-100"},
             {name: "Aisha Patel", title: "COO", background: "bg-yellow-100"},
             {name: "David Kim", title: "Head of AI Research", background: "bg-purple-100"},

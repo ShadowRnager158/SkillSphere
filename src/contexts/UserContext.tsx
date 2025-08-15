@@ -1,28 +1,16 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAuth, User } from './AuthContext';
-
-export interface UserProfile extends User {
-  bio?: string;
-  skills?: string[];
-  rating?: number;
-  completedTasks?: number;
-  location?: string;
-  phoneNumber?: string;
-  hourlyRate?: number;
-  portfolio?: {
-    id: string;
-    title: string;
-    description: string;
-    imageUrl: string;
-  }[];
-}
+import type { User } from '@/types';
 
 interface UserContextType {
-  userProfile: UserProfile | null;
-  updateProfile: (updates: Partial<UserProfile>) => Promise<UserProfile>;
-  getAllSkillers: () => UserProfile[];
-  getSkillerById: (skillerId: string) => UserProfile | undefined;
-  getSkillersBySkill: (skill: string) => UserProfile[];
+  user: User | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, isSkiller: boolean) => Promise<void>;
+  loginWithGoogle: (googleUser: { id: string; name: string; email: string; avatar?: string }) => Promise<void>;
+  logout: () => void;
+  isAuthenticated: boolean;
+  updateUser?: (updates: Partial<User>) => Promise<void>;
+  getUserRole: () => 'skiller' | 'user' | null;  // Added: Simple role getter
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -36,181 +24,175 @@ export const useUser = () => {
 };
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [profiles, setProfiles] = useState<UserProfile[]>([]);
-  const { user } = useAuth();
-
-  const userProfile = user ? 
-    profiles.find(profile => profile.id === user.id) || 
-    (user ? { ...user } : null) : 
-    null;
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load user profiles from localStorage on initial load
-    const storedProfiles = localStorage.getItem('skillsphere_profiles');
-    if (storedProfiles) {
-      setProfiles(JSON.parse(storedProfiles));
-    } else {
-      // Initialize with some sample data if none exists
-      const sampleProfiles = getSampleProfiles();
-      setProfiles(sampleProfiles);
-      localStorage.setItem('skillsphere_profiles', JSON.stringify(sampleProfiles));
+    // Check for user in localStorage on initial load
+    const storedUser = localStorage.getItem('skillsphere_user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
+    setLoading(false);
   }, []);
 
-  const saveProfiles = (updatedProfiles: UserProfile[]) => {
-    setProfiles(updatedProfiles);
-    localStorage.setItem('skillsphere_profiles', JSON.stringify(updatedProfiles));
+  const persistCurrentPath = () => {
+    try {
+      const path = window.location.pathname + window.location.search;
+      localStorage.setItem('skillsphere_last_path', path);
+    } catch {}
   };
 
-  const updateProfile = async (updates: Partial<UserProfile>) => {
-    if (!user) throw new Error('You must be logged in to update your profile');
-    
-    const profileIndex = profiles.findIndex(profile => profile.id === user.id);
-    
-    let updatedProfile: UserProfile;
-    
-    if (profileIndex >= 0) {
-      // Update existing profile
-      updatedProfile = {
-        ...profiles[profileIndex],
-        ...updates
-      };
-      
-      const updatedProfiles = [...profiles];
-      updatedProfiles[profileIndex] = updatedProfile;
-      saveProfiles(updatedProfiles);
-    } else {
-      // Create new profile
-      updatedProfile = {
-        ...user,
-        ...updates
-      };
-      
-      saveProfiles([...profiles, updatedProfile]);
+  const saveLastCredentials = (email: string, password: string) => {
+    try {
+      localStorage.setItem('skillsphere_last_email', email);
+      localStorage.setItem('skillsphere_last_password', password);
+    } catch {}
+  };
+
+  const login = async (email: string, password: string) => {
+    setLoading(true);
+    try {
+      // simulated login with localStorage
+      const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
+      const foundUser = users.find((u: User & { password: string }) => u.email === email);
+
+      if (!foundUser || foundUser.password !== password) {
+        throw new Error('Invalid email or password');
+      }
+
+      const { password: _, ...userWithoutPassword } = foundUser;
+      setUser(userWithoutPassword);
+      localStorage.setItem('skillsphere_user', JSON.stringify(userWithoutPassword));
+
+      // remember last used credentials
+      saveLastCredentials(email, password);
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
-    
-    return updatedProfile;
   };
 
-  const getAllSkillers = () => {
-    return profiles.filter(profile => profile.isSkiller);
+  const loginWithGoogle = async (googleUser: { id: string; name: string; email: string; avatar?: string }) => {
+    setLoading(true);
+    try {
+      const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
+      let existing = users.find((u: User & { password?: string }) => u.email === googleUser.email);
+
+      if (!existing) {
+        existing = {
+          id: googleUser.id,
+          name: googleUser.name,
+          email: googleUser.email,
+          password: undefined,
+          isSkiller: false,
+          createdAt: new Date().toISOString(),
+          avatar: googleUser.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${googleUser.email}`,
+          authProvider: 'google',
+        } as unknown as User & { password?: string };
+        users.push(existing);
+        localStorage.setItem('skillsphere_users', JSON.stringify(users));
+      }
+
+      const { password: _pw, ...userWithoutPassword } = existing as any;
+      setUser(userWithoutPassword);
+      localStorage.setItem('skillsphere_user', JSON.stringify(userWithoutPassword));
+      localStorage.setItem('skillsphere_last_email', googleUser.email);
+      localStorage.removeItem('skillsphere_last_password');
+    } catch (error) {
+      console.error('Google login error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getSkillerById = (skillerId: string) => {
-    return profiles.find(profile => profile.id === skillerId && profile.isSkiller);
+  const register = async (name: string, email: string, password: string, isSkiller: boolean) => {
+    setLoading(true);
+    try {
+      const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
+
+      if (users.some((user: User & { password: string }) => user.email === email)) {
+        throw new Error('Email already in use');
+      }
+
+      const newUser = {
+        id: crypto.randomUUID(),
+        name,
+        email,
+        password, // simulated storage
+        isSkiller,
+        createdAt: new Date().toISOString(),
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
+        headline: '',
+        dob: '',
+        education: '',
+        gender: '',
+        skills: [],
+        bio: '',
+        location: '',
+        phone: '',
+        authProvider: 'local',
+      };
+
+      users.push(newUser);
+      localStorage.setItem('skillsphere_users', JSON.stringify(users));
+
+      const { password: _, ...userWithoutPassword } = newUser as any;
+      setUser(userWithoutPassword);
+      localStorage.setItem('skillsphere_user', JSON.stringify(userWithoutPassword));
+
+      // remember last used credentials
+      saveLastCredentials(email, password);
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getSkillersBySkill = (skill: string) => {
-    return profiles.filter(
-      profile => 
-        profile.isSkiller && 
-        profile.skills?.some(s => s.toLowerCase().includes(skill.toLowerCase()))
-    );
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('skillsphere_user');
+    persistCurrentPath();
+  };
+
+  const updateUser = async (updates: Partial<User>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, ...updates } as User;
+      localStorage.setItem('skillsphere_user', JSON.stringify(updated));
+      const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
+      const idx = users.findIndex((u: User & { password: string }) => u.id === updated.id);
+      if (idx >= 0) {
+        users[idx] = { ...users[idx], ...updates };
+        localStorage.setItem('skillsphere_users', JSON.stringify(users));
+      }
+      return updated;
+    });
+  };
+
+  const getUserRole = () => {  // Added: Returns role based on isSkiller
+    if (!user) return null;
+    return user.isSkiller ? 'skiller' : 'user';
   };
 
   return (
     <UserContext.Provider value={{
-      userProfile,
-      updateProfile,
-      getAllSkillers,
-      getSkillerById,
-      getSkillersBySkill
+      user,
+      loading,
+      login,
+      register,
+      loginWithGoogle,
+      logout,
+      isAuthenticated: !!user,
+      updateUser,
+      getUserRole
     }}>
       {children}
     </UserContext.Provider>
   );
 };
-
-// Sample data generator function
-function getSampleProfiles(): UserProfile[] {
-  return [
-    {
-      id: "skiller1",
-      email: "mike@example.com",
-      name: "Mike Smith",
-      isSkiller: true,
-      createdAt: "2025-07-01T10:00:00Z",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=mike@example.com",
-      bio: "Professional mover with 3 years of experience. I can help with any heavy lifting or furniture arrangement.",
-      skills: ["Moving", "Furniture Assembly", "Heavy Lifting"],
-      rating: 4.8,
-      completedTasks: 27,
-      location: "Downtown",
-      hourlyRate: 25,
-      phoneNumber: "555-123-4567",
-      portfolio: [
-        {
-          id: "port1",
-          title: "Office Move",
-          description: "Helped relocate a small business office in under 4 hours",
-          imageUrl: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-        }
-      ]
-    },
-    {
-      id: "skiller2",
-      email: "david@example.com",
-      name: "David Wilson",
-      isSkiller: true,
-      createdAt: "2025-07-02T14:30:00Z",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david@example.com",
-      bio: "Certified plumber with 5 years of experience. I specialize in fixing leaks, replacing fixtures, and minor installations.",
-      skills: ["Plumbing", "Home Repair", "Installation"],
-      rating: 4.9,
-      completedTasks: 42,
-      location: "Eastside",
-      hourlyRate: 35,
-      phoneNumber: "555-987-6543",
-      portfolio: [
-        {
-          id: "port2",
-          title: "Bathroom Renovation",
-          description: "Installed new sink, toilet, and shower fixtures",
-          imageUrl: "https://images.unsplash.com/photo-1595514535415-bcad19103c19?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-        }
-      ]
-    },
-    {
-      id: "skiller3",
-      email: "elena@example.com",
-      name: "Elena Rodriguez",
-      isSkiller: true,
-      createdAt: "2025-07-03T09:15:00Z",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=elena@example.com",
-      bio: "Native Spanish speaker offering language lessons and conversation practice. I have 3 years of teaching experience.",
-      skills: ["Spanish", "Teaching", "Translation"],
-      rating: 5.0,
-      completedTasks: 18,
-      location: "Online",
-      hourlyRate: 30,
-      phoneNumber: "555-456-7890"
-    },
-    {
-      id: "user1",
-      email: "john@example.com",
-      name: "John Doe",
-      isSkiller: false,
-      createdAt: "2025-07-10T11:20:00Z",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=john@example.com",
-      location: "Downtown"
-    },
-    {
-      id: "user2",
-      email: "sarah@example.com",
-      name: "Sarah Johnson",
-      isSkiller: false,
-      createdAt: "2025-07-11T16:45:00Z",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah@example.com",
-      location: "Northside"
-    },
-    {
-      id: "user3",
-      email: "emily@example.com",
-      name: "Emily Chen",
-      isSkiller: false,
-      createdAt: "2025-07-12T13:10:00Z",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=emily@example.com",
-      location: "Westside"
-    }
-  ];
-}

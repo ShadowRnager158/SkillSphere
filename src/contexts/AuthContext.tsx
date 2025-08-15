@@ -9,6 +9,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   updateUser?: (updates: Partial<User>) => Promise<void>;
+  loginWithGoogle: (googleUser: { id: string; name: string; email: string; avatar: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,7 +27,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for user in localStorage on initial load
     const storedUser = localStorage.getItem('skillsphere_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -37,10 +37,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // In a real app with Supabase, we would authenticate here
-      // For now, simulate login with localStorage
-      
-      // Check if the user exists in our mock database
       const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
       const foundUser = users.find((u: User & { password: string }) => u.email === email);
       
@@ -48,9 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error('Invalid email or password');
       }
       
-      // Remove password before storing in state/localStorage
       const { password: _, ...userWithoutPassword } = foundUser;
-      
       setUser(userWithoutPassword);
       localStorage.setItem('skillsphere_user', JSON.stringify(userWithoutPassword));
     } catch (error) {
@@ -64,24 +58,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (name: string, email: string, password: string, isSkiller: boolean) => {
     setLoading(true);
     try {
-      // In a real app with Supabase, we would register the user here
-      // For now, simulate registration with localStorage
-      
       const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
       
-      // Check if email already exists
       if (users.some((user: User & { password: string }) => user.email === email)) {
         throw new Error('Email already in use');
       }
       
-      const newUser = {
+      const newUser: User & { password: string } = {
         id: crypto.randomUUID(),
         name,
+        username: email.split('@')[0],
         email,
-        password, // In a real app, this would be hashed
-        isSkiller,
-        createdAt: new Date().toISOString(),
+        password, // Added password property
         avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
+        isSkiller,
+        userType: isSkiller ? 'skiller' : 'client',
+        createdAt: new Date().toISOString(),
         headline: '',
         dob: '',
         education: '',
@@ -89,19 +81,81 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         skills: [],
         bio: '',
         location: '',
-        phone: ''
+        phone: '',
+        resume: '',
+        stats: {
+          projectsCompleted: 0,
+          totalEarnings: 0,
+          clientRating: 0,
+          responseTime: '',
+          skillsVerified: 0,
+          portfolioItems: 0
+        },
+        socialLinks: { linkedin: '', github: '' },
+        isPublic: false,
+        subscription: undefined,
       };
       
-      // Add to users array
       users.push(newUser);
       localStorage.setItem('skillsphere_users', JSON.stringify(users));
       
-      // Log user in (without password in state)
       const { password: _, ...userWithoutPassword } = newUser;
       setUser(userWithoutPassword);
       localStorage.setItem('skillsphere_user', JSON.stringify(userWithoutPassword));
     } catch (error) {
       console.error('Registration error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginWithGoogle = async (googleUser: { id: string; name: string; email: string; avatar: string }) => {
+    setLoading(true);
+    try {
+      const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
+      
+      if (users.some((user: User & { password: string }) => user.email === googleUser.email)) {
+        throw new Error('Email already in use');
+      }
+      
+      const newUser: User = {
+        id: googleUser.id,
+        name: googleUser.name,
+        username: googleUser.email.split('@')[0],
+        email: googleUser.email,
+        avatar: googleUser.avatar,
+        isSkiller: false,
+        userType: 'client',
+        createdAt: new Date().toISOString(),
+        headline: '',
+        dob: '',
+        education: '',
+        gender: '',
+        skills: [],
+        bio: '',
+        location: '',
+        phone: '',
+        resume: '',
+        stats: {
+          projectsCompleted: 0,
+          totalEarnings: 0,
+          clientRating: 0,
+          responseTime: '',
+          skillsVerified: 0,
+          portfolioItems: 0
+        },
+        socialLinks: { linkedin: '', github: '' },
+        isPublic: false,
+        subscription: undefined,
+      };
+      
+      users.push(newUser);
+      localStorage.setItem('skillsphere_users', JSON.stringify(users));
+      setUser(newUser);
+      localStorage.setItem('skillsphere_user', JSON.stringify(newUser));
+    } catch (error) {
+      console.error('Google login error:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -118,7 +172,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!prev) return prev;
       const updated = { ...prev, ...updates };
       localStorage.setItem('skillsphere_user', JSON.stringify(updated));
-      // also update in users store
       const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
       const idx = users.findIndex((u: User & { password: string }) => u.id === updated.id);
       if (idx >= 0) {
@@ -137,7 +190,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       register,
       logout,
       isAuthenticated: !!user,
-      updateUser
+      updateUser,
+      loginWithGoogle
     }}>
       {children}
     </AuthContext.Provider>
