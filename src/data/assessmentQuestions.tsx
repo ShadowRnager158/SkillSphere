@@ -1,13 +1,4 @@
-export interface Question {
-  id: number;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
-  category: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-  points: number;
-}
+import { type Question } from '@/types';
 
 export const questionsMap: { [key: string]: Question[] } = {
   'JavaScript': [

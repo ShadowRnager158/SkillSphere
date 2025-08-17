@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTask } from '@/contexts/TaskContext';
 import { useNavigate } from 'react-router-dom';
+import { getUserAssessmentStats } from '@/services/assessmentService';
 import { 
   Bell, 
   Briefcase, 
@@ -62,11 +63,23 @@ export default function DashboardPage() {
   
   const [userTasks, setUserTasks] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
+  const [assessmentStats, setAssessmentStats] = useState({
+    totalAssessments: 0,
+    passedAssessments: 0,
+    averageScore: 0,
+    totalCertifications: 0,
+    activeCertifications: 0,
+    skillsAssessed: []
+  });
 
   useEffect(() => {
     if (tasks && user?.id) {
       const filteredTasks = tasks.filter(task => task?.creatorId === user.id);
       setUserTasks(filteredTasks);
+      
+      // Load assessment stats
+      const stats = getUserAssessmentStats(user.id);
+      setAssessmentStats(stats);
     }
   }, [tasks, user]);
 
@@ -162,7 +175,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -214,6 +227,21 @@ export default function DashboardPage() {
                 </div>
                 <div className="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center">
                   <Award className="h-6 w-6 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-50 to-emerald-100">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-emerald-600 mb-1">Assessments</p>
+                  <p className="text-3xl font-bold text-emerald-900">{assessmentStats.totalAssessments}</p>
+                  <p className="text-xs text-emerald-700">{assessmentStats.passedAssessments} passed</p>
+                </div>
+                <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center">
+                  <Brain className="h-6 w-6 text-white" />
                 </div>
               </div>
             </CardContent>

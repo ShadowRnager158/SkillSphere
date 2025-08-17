@@ -9,8 +9,13 @@ import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Upload, User, Calendar, GraduationCap, MapPin, Phone, Briefcase, Edit, Save, X, Camera, Award, Star, Globe, Mail, Shield, Zap, BarChart3, CheckCircle, DollarSign, Clock, TrendingUp, Users, Heart, Eye, Lock, Unlock, Settings, Palette, Moon, Sun, Monitor, Plus, AtSign, FileText, Bell, LayoutGrid, List, Github, Linkedin 
+  Upload, User, Calendar, GraduationCap, MapPin, Phone, Briefcase, Edit, Save, X, Camera, Award, Star, Globe, Mail, Shield, Zap, BarChart3, CheckCircle, DollarSign, Clock, TrendingUp, Users, Heart, Eye, Lock, Unlock, Settings, Palette, Moon, Sun, Monitor, Plus, AtSign, FileText, Bell, LayoutGrid, List, Github, Linkedin, Brain, Trophy 
 } from 'lucide-react';
+import { 
+  getUserAssessmentResults, 
+  getUserCertifications, 
+  getUserAssessmentStats 
+} from '@/services/assessmentService';
 import { useState, useRef, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -73,6 +78,18 @@ export default function ProfilePage() {
     { id: 2, title: 'Mobile App Design', description: 'UI/UX design for fitness tracking application', category: 'UI/UX', tags: ['Figma', 'UI/UX'], date: '2023-08-20' },
   ]);
 
+  // Assessment-related state
+  const [assessmentResults, setAssessmentResults] = useState([]);
+  const [certifications, setCertifications] = useState([]);
+  const [assessmentStats, setAssessmentStats] = useState({
+    totalAssessments: 0,
+    passedAssessments: 0,
+    averageScore: 0,
+    totalCertifications: 0,
+    activeCertifications: 0,
+    skillsAssessed: []
+  });
+
   // Predefined skills
   const availableSkills = [
     'React', 'TypeScript', 'Node.js', 'Python', 'JavaScript', 
@@ -110,6 +127,15 @@ export default function ProfilePage() {
       setAvatarPreview(user.avatar || 'https://via.placeholder.com/100');
       setResumePreview(user.resume || '');
       setLocalUser(user);
+
+      // Load assessment data
+      const results = getUserAssessmentResults(user.id);
+      const certs = getUserCertifications(user.id);
+      const stats = getUserAssessmentStats(user.id);
+      
+      setAssessmentResults(results);
+      setCertifications(certs);
+      setAssessmentStats(stats);
     }
   }, [user]);
 
@@ -584,6 +610,20 @@ export default function ProfilePage() {
                 </div>
                 <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formData.stats.portfolioItems}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Portfolio</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Brain className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{assessmentStats.totalAssessments}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Assessments</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Trophy className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{assessmentStats.activeCertifications}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Certifications</p>
               </div>
             </div>
             {isEditing && (
@@ -1230,6 +1270,82 @@ export default function ProfilePage() {
                         <p className="text-xs text-gray-600 dark:text-gray-400">Fields</p>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-0 shadow-lg dark:bg-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-lg text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                      <Brain className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      Assessment Results
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {assessmentStats.totalAssessments > 0 ? (
+                      <>
+                        <div className="text-center p-4 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900 dark:to-green-900 rounded-xl">
+                          <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">
+                            {Math.round(assessmentStats.averageScore)}%
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Average Score</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 text-center">
+                          <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                              {assessmentStats.passedAssessments}/{assessmentStats.totalAssessments}
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">Passed</p>
+                          </div>
+                          <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                              {assessmentStats.activeCertifications}
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">Certifications</p>
+                          </div>
+                        </div>
+                        {certifications.length > 0 && (
+                          <div className="space-y-2">
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                              <Trophy className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                              Recent Certifications
+                            </h4>
+                            <div className="space-y-2">
+                              {certifications.slice(0, 3).map((cert: any) => (
+                                <div key={cert.id} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                  <div>
+                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                      {cert.assessmentTitle}
+                                    </p>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                                      Score: {cert.score}% | Grade: {cert.grade}
+                                    </p>
+                                  </div>
+                                  <Badge 
+                                    variant={cert.status === 'active' ? 'default' : 'secondary'}
+                                    className="text-xs"
+                                  >
+                                    {cert.status}
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="text-center p-6">
+                        <Brain className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                        <p className="text-gray-600 dark:text-gray-400 mb-3">
+                          No assessments completed yet
+                        </p>
+                        <Button 
+                          onClick={() => navigate('/assessment')}
+                          className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
+                        >
+                          Take Your First Assessment
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 

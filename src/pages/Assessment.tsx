@@ -7,49 +7,19 @@ import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { getTopicQuestions, type Question } from '@/data/assessmentQuestions';
+import { getTopicQuestions } from '@/data/assessmentQuestions';
+import { type Question, type Assessment, type AssessmentResult } from '@/types';
+import { useUser } from '@/contexts/UserContext';
+import { 
+  saveAssessmentResult, 
+  createCertification, 
+  updateUserSkillLevels 
+} from '@/services/assessmentService';
 import { 
   Brain, Code, Cpu, Server, Database, Palette, BarChart3, 
   Play, Timer, ArrowRight, Trophy, AlertCircle, RotateCcw,
   Zap, Cloud, Eye, Gamepad2, Shield, Target
 } from 'lucide-react';
-
-interface Assessment {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  totalQuestions: number;
-  timeLimit: number;
-  cutoffScore: number;
-  questions: Question[];
-  icon: any;
-  color: string;
-}
-
-interface AssessmentResult {
-  assessmentId: string;
-  totalScore: number;
-  maxScore: number;
-  percentage: number;
-  grade: string;
-  passed: boolean;
-  timeTaken: number;
-  questionsAnswered: number;
-  correctAnswers: number;
-  wrongAnswers: number;
-  mistakes: {
-    questionId: number;
-    userAnswer: number;
-    correctAnswer: number;
-    explanation: string;
-  }[];
-  recommendations: string[];
-  skillLevel: string;
-  completedAt: Date;
-  category: string;
-  assessmentTitle: string;
-}
 
 // Generate questions for each topic using the imported function
 const generateQuestions = (topic: string, count: number): Question[] => {
@@ -94,6 +64,7 @@ const generateQuestions = (topic: string, count: number): Question[] => {
 
 export default function AssessmentPage() {
   const { isDarkMode } = useTheme();
+  const { user } = useUser();
   const [selectedAssessment, setSelectedAssessment] = useState<string | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<{ [key: number]: number }>({});
@@ -396,7 +367,10 @@ export default function AssessmentPage() {
     const recommendations = getRecommendations(percentage, assessment.category, mistakes);
     
     const result: AssessmentResult = {
+      id: '', // Will be set by the service
       assessmentId: selectedAssessment,
+      assessmentTitle: assessment.title,
+      userId: user?.id || 'anonymous',
       totalScore,
       maxScore,
       percentage,
@@ -410,9 +384,21 @@ export default function AssessmentPage() {
       recommendations,
       skillLevel,
       completedAt: new Date(),
-      category: assessment.category,
-      assessmentTitle: assessment.title
+      category: assessment.category
     };
+    
+    // Save assessment result
+    saveAssessmentResult(result);
+    
+    // Update user skill levels if user is logged in
+    if (user?.id) {
+      updateUserSkillLevels(user.id, result);
+      
+      // Create certification if assessment was passed
+      if (result.passed) {
+        createCertification(result);
+      }
+    }
     
     setResults(result);
     setShowResults(true);
