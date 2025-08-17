@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { getTopicQuestions, shuffleArray } from '@/data/assessmentQuestions';
-import { type Question, type Assessment, type AssessmentResult } from '@/types';
+import { type Assessment, type AssessmentResult } from '@/types';
 import { useUser } from '@/contexts/UserContext';
 import { 
   saveAssessmentResult, 
@@ -21,6 +21,29 @@ import {
   Zap, Cloud, Eye, Gamepad2, Shield, Target, Download, Share,
   CheckCircle, XCircle, Clock, Star, Award, FileText, Printer
 } from 'lucide-react';
+
+// Define Question interface locally
+interface Question {
+  id: number;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+  category: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  points: number;
+}
+
+// Define extended mistake type
+interface Mistake {
+  questionId: number;
+  userAnswer: number;
+  correctAnswer: number;
+  explanation: string;
+  question: string;
+  options: string[];
+  difficulty: 'easy' | 'medium' | 'hard';
+}
 
 export default function AssessmentPage() {
   const { isDarkMode } = useTheme();
@@ -303,7 +326,7 @@ export default function AssessmentPage() {
     let totalScore = 0;
     let correctAnswers = 0;
     let wrongAnswers = 0;
-    const mistakes: any[] = [];
+    const mistakes: Mistake[] = [];
     const scoreBreakdown = { easy: 0, medium: 0, hard: 0 };
     
     assessment.questions.forEach(q => {
@@ -397,7 +420,7 @@ export default function AssessmentPage() {
     return 'Novice';
   };
 
-  const getRecommendations = (percentage: number, category: string, mistakes: AssessmentResult['mistakes']): string[] => {
+  const getRecommendations = (percentage: number, category: string, mistakes: Mistake[]): string[] => {
     const recommendations: string[] = [];
     
     if (percentage < 60) {
