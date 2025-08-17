@@ -79,7 +79,7 @@ const generateQuestions = (topic: string, count: number): Question[] => {
   
   // If we have enough questions, use them directly
   if (topicQuestions.length >= count) {
-    return topicQuestions.slice(0, count);
+    return topicQuestions.slice(0, count).map((q, index) => ({ ...q, id: index + 1 }));
   }
   
   // If we don't have enough questions, generate additional ones
@@ -98,6 +98,7 @@ const generateQuestions = (topic: string, count: number): Question[] => {
   }
   
   return questions;
+};
 };
 
 // Generate additional questions when we need more
