@@ -17,7 +17,7 @@ import {
   Mail, Phone, Video, GraduationCap, Briefcase, Home,
   Heart, DollarSign, ShoppingCart, Truck, CreditCard, Calculator,
   ChartBar, PieChart, LineChart, Map, Navigation,
-  Wifi, Bluetooth, Cloud, Leaf, Sun, Moon
+  Wifi, Bluetooth, Cloud, Leaf, Sun, Moon, Gamepad2
 } from 'lucide-react';
 
 interface Question {
@@ -104,6 +104,26 @@ const generateQuestions = (topic: string, count: number): Question[] => {
 // Generate additional questions when we need more
 const generateAdditionalQuestion = (topic: string, questionNumber: number): Question => {
   const baseQuestions = getTopicQuestions(topic);
+  
+  // Safety check - if no base questions exist, create a generic question
+  if (!baseQuestions || baseQuestions.length === 0) {
+    return {
+      id: questionNumber,
+      question: `What is a key concept in ${topic}?`,
+      options: [
+        'A fundamental principle',
+        'A programming language',
+        'A database system',
+        'A testing tool'
+      ],
+      correctAnswer: 0,
+      explanation: `This question tests basic knowledge of ${topic} concepts.`,
+      category: 'Basics',
+      difficulty: 'easy',
+      points: 5
+    };
+  }
+  
   const baseQuestion = baseQuestions[questionNumber % baseQuestions.length];
   
   // Create variations of existing questions
@@ -662,8 +682,1602 @@ const generateAdditionalQuestion = (topic: string, questionNumber: number): Ques
       ]
     };
     
-    // Return questions for the specific topic, or default questions if topic not found
-    return questionsMap[topic] || questionsMap['JavaScript'];
+      'Node.js': [
+        {
+          id: 1,
+          question: 'What is Node.js?',
+          options: [
+            'A frontend framework',
+            'A JavaScript runtime built on Chrome\'s V8 engine',
+            'A database system',
+            'A testing tool'
+          ],
+          correctAnswer: 1,
+          explanation: 'Node.js is a server-side JavaScript runtime environment.',
+          category: 'Basics',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is NPM?',
+          options: [
+            'Node Package Manager',
+            'New Project Maker',
+            'Node Process Manager',
+            'Network Protocol Manager'
+          ],
+          correctAnswer: 0,
+          explanation: 'NPM is the default package manager for Node.js.',
+          category: 'Tools',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 3,
+          question: 'What is the purpose of module.exports in Node.js?',
+          options: [
+            'To import modules',
+            'To export functions or objects from a module',
+            'To create servers',
+            'To handle errors'
+          ],
+          correctAnswer: 1,
+          explanation: 'module.exports is used to make functions and objects available outside the module file.',
+          category: 'Modules',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 4,
+          question: 'What is Express.js?',
+          options: [
+            'A web framework for Node.js',
+            'A database for Node.js',
+            'A testing library',
+            'A frontend library'
+          ],
+          correctAnswer: 0,
+          explanation: 'Express.js is a minimal and flexible Node.js web application framework.',
+          category: 'Frameworks',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 5,
+          question: 'What is middleware in Express?',
+          options: [
+            'Functions that have access to request and response objects',
+            'A type of route',
+            'A database connector',
+            'A template engine'
+          ],
+          correctAnswer: 0,
+          explanation: 'Middleware functions can execute code, modify requests/responses, end the request-response cycle, or call the next middleware.',
+          category: 'Frameworks',
+          difficulty: 'hard',
+          points: 10
+        }
+      ],
+      'SQL': [
+        {
+          id: 1,
+          question: 'What does SQL stand for?',
+          options: [
+            'Structured Query Language',
+            'Standard Query Language',
+            'Sequential Query Language',
+            'Simple Query Language'
+          ],
+          correctAnswer: 0,
+          explanation: 'SQL is Structured Query Language used for managing relational databases.',
+          category: 'Basics',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is a primary key?',
+          options: [
+            'A unique identifier for a record',
+            'A foreign key',
+            'A index',
+            'A view'
+          ],
+          correctAnswer: 0,
+          explanation: 'Primary key uniquely identifies each record in a table.',
+          category: 'Keys',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 3,
+          question: 'What is normalization?',
+          options: [
+            'Process to reduce data redundancy',
+            'To denormalize data',
+            'To add data',
+            'To delete data'
+          ],
+          correctAnswer: 0,
+          explanation: 'Normalization organizes data to minimize redundancy and dependency.',
+          category: 'Design',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 4,
+          question: 'What is a JOIN in SQL?',
+          options: [
+            'To combine rows from two or more tables',
+            'To delete rows',
+            'To insert rows',
+            'To update rows'
+          ],
+          correctAnswer: 0,
+          explanation: 'JOIN clause is used to combine rows based on a related column.',
+          category: 'Queries',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 5,
+          question: 'What is the difference between INNER JOIN and LEFT JOIN?',
+          options: [
+            'INNER JOIN returns matching rows, LEFT JOIN returns all from left and matching from right',
+            'No difference',
+            'LEFT JOIN is faster',
+            'INNER JOIN is for updates'
+          ],
+          correctAnswer: 0,
+          explanation: 'INNER JOIN returns only matching rows, LEFT JOIN returns all rows from left table.',
+          category: 'Joins',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'UI/UX': [
+        {
+          id: 1,
+          question: 'What is Fitts\'s Law in UI/UX?',
+          options: [
+            'A law about color usage',
+            'Predicts the time required to move to a target area',
+            'A typography rule',
+            'A grid system'
+          ],
+          correctAnswer: 1,
+          explanation: 'Fitts\'s Law models the time to acquire a target based on distance and size.',
+          category: 'UX Principles',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is A/B testing in UX?',
+          options: [
+            'Testing two versions of a design',
+            'Alphabetical sorting',
+            'Accessibility benchmarking',
+            'Animation blending'
+          ],
+          correctAnswer: 0,
+          explanation: 'A/B testing compares two versions to see which performs better.',
+          category: 'Testing',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is the Hick\'s Law in UX design?',
+          options: [
+            'The time it takes to make a decision increases with the number of choices',
+            'The time to reach a target decreases with size',
+            'Color contrast must be high',
+            'Layouts should be grid-based'
+          ],
+          correctAnswer: 0,
+          explanation: 'Hick\'s Law states that the time to make a decision increases logarithmically with the number of choices.',
+          category: 'UX Principles',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 4,
+          question: 'What is the purpose of user personas in UX?',
+          options: [
+            'To represent archetypal users',
+            'To draw pictures',
+            'To code the UI',
+            'To choose colors'
+          ],
+          correctAnswer: 0,
+          explanation: 'User personas are fictional characters that represent different user types.',
+          category: 'Research',
+          difficulty: 'easy',
+          points: 5
+        }
+      ],
+      'Graphic Design': [
+        {
+          id: 1,
+          question: 'What is typography in graphic design?',
+          options: [
+            'The art of arranging type',
+            'Drawing images',
+            'Color selection',
+            'Layout design'
+          ],
+          correctAnswer: 0,
+          explanation: 'Typography is the art and technique of arranging type to make written language legible and appealing.',
+          category: 'Basics',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is the rule of thirds?',
+          options: [
+            'A composition guideline dividing the image into thirds',
+            'A color rule',
+            'A typography rule',
+            'A printing technique'
+          ],
+          correctAnswer: 0,
+          explanation: 'The rule of thirds is a composition guideline that places the subject in the left or right third of an image.',
+          category: 'Composition',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is CMYK?',
+          options: [
+            'Color model for printing',
+            'Color model for screens',
+            'A font type',
+            'A design software'
+          ],
+          correctAnswer: 0,
+          explanation: 'CMYK is Cyan, Magenta, Yellow, Key (black) used in color printing.',
+          category: 'Color',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 4,
+          question: 'What is RGB?',
+          options: [
+            'Color model for digital displays',
+            'Color model for printing',
+            'A resolution type',
+            'A file format'
+          ],
+          correctAnswer: 0,
+          explanation: 'RGB is Red, Green, Blue used for on-screen colors.',
+          category: 'Color',
+          difficulty: 'easy',
+          points: 5
+        }
+      ],
+      'Web Design': [
+        {
+          id: 1,
+          question: 'What is HTML?',
+          options: [
+            'HyperText Markup Language',
+            'High Text Markup Language',
+            'Hyper Transfer Markup Language',
+            'None'
+          ],
+          correctAnswer: 0,
+          explanation: 'HTML is the standard markup language for creating web pages.',
+          category: 'Basics',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is CSS?',
+          options: [
+            'Cascading Style Sheets',
+            'Computer Style Sheets',
+            'Creative Style Sheets',
+            'Colorful Style Sheets'
+          ],
+          correctAnswer: 0,
+          explanation: 'CSS is used to style the layout of web pages.',
+          category: 'Basics',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 3,
+          question: 'What is responsive web design?',
+          options: [
+            'Design that adapts to device size',
+            'Design with responses',
+            'Fast design',
+            'Colorful design'
+          ],
+          correctAnswer: 0,
+          explanation: 'Responsive design uses flexible layouts and media queries.',
+          category: 'Responsive',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 4,
+          question: 'What is a media query in CSS?',
+          options: [
+            'A technique to apply styles based on device characteristics',
+            'A query for media files',
+            'A database query',
+            'A JavaScript function'
+          ],
+          correctAnswer: 0,
+          explanation: 'Media queries enable content rendering to adapt to different conditions.',
+          category: 'CSS',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Data Science': [
+        {
+          id: 1,
+          question: 'What is data science?',
+          options: [
+            'Interdisciplinary field using scientific methods to extract knowledge from data',
+            'Programming only',
+            'Database management',
+            'Web development'
+          ],
+          correctAnswer: 0,
+          explanation: 'Data science combines statistics, data analysis, and machine learning.',
+          category: 'Basics',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is machine learning?',
+          options: [
+            'Algorithms that learn from data',
+            'Manual data entry',
+            'Database querying',
+            'Web scraping'
+          ],
+          correctAnswer: 0,
+          explanation: 'Machine learning is a subset of AI that enables systems to learn from data.',
+          category: 'ML',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 3,
+          question: 'What is supervised learning?',
+          options: [
+            'Learning with labeled data',
+            'Learning without labels',
+            'Reinforcement learning',
+            'Clustering'
+          ],
+          correctAnswer: 0,
+          explanation: 'Supervised learning uses labeled datasets to train algorithms.',
+          category: 'ML Types',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 4,
+          question: 'What is unsupervised learning?',
+          options: [
+            'Learning without labeled data',
+            'Learning with labels',
+            'Reward-based learning',
+            'Classification only'
+          ],
+          correctAnswer: 0,
+          explanation: 'Unsupervised learning finds hidden patterns in unlabeled data.',
+          category: 'ML Types',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Machine Learning': [
+        {
+          id: 1,
+          question: 'What is reinforcement learning?',
+          options: [
+            'Learning from rewards and punishments',
+            'Supervised learning',
+            'Unsupervised learning',
+            'Semi-supervised learning'
+          ],
+          correctAnswer: 0,
+          explanation: 'Reinforcement learning is based on rewarding desired behaviors.',
+          category: 'Types',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is deep learning?',
+          options: [
+            'Subset of ML using neural networks with many layers',
+            'Shallow learning',
+            'Basic regression',
+            'Rule-based system'
+          ],
+          correctAnswer: 0,
+          explanation: 'Deep learning uses artificial neural networks with multiple layers.',
+          category: 'Deep Learning',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is a neural network?',
+          options: [
+            'Interconnected nodes inspired by brain',
+            'A tree structure',
+            'A linear model',
+            'A cluster'
+          ],
+          correctAnswer: 0,
+          explanation: 'Neural networks consist of layers of interconnected nodes.',
+          category: 'Algorithms',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 4,
+          question: 'What is overfitting in machine learning?',
+          options: [
+            'Model performs well on training data but poorly on new data',
+            'Model performs poorly on training data',
+            'Model is too simple',
+            'Model has no bias'
+          ],
+          correctAnswer: 0,
+          explanation: 'Overfitting occurs when a model learns noise in the training data.',
+          category: 'ML Concepts',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Business Analytics': [
+        {
+          id: 1,
+          question: 'What is business analytics?',
+          options: [
+            'Using data to make business decisions',
+            'Selling analytics',
+            'Business management',
+            'Financial accounting'
+          ],
+          correctAnswer: 0,
+          explanation: 'Business analytics involves exploring data to find patterns for decision making.',
+          category: 'Basics',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is a KPI?',
+          options: [
+            'Key Performance Indicator',
+            'Key Process Input',
+            'Key Product Index',
+            'Key Project Indicator'
+          ],
+          correctAnswer: 0,
+          explanation: 'KPIs are measurable values that demonstrate how effectively a company is achieving key business objectives.',
+          category: 'Metrics',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 3,
+          question: 'What is data visualization?',
+          options: [
+            'Presenting data in graphical format',
+            'Storing data',
+            'Cleaning data',
+            'Analyzing data'
+          ],
+          correctAnswer: 0,
+          explanation: 'Data visualization helps in understanding complex data through graphical representation.',
+          category: 'Visualization',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Mobile Development': [
+        {
+          id: 1,
+          question: 'What is React Native?',
+          options: [
+            'A framework for building mobile apps with React',
+            'A native iOS framework',
+            'A native Android framework',
+            'A web framework'
+          ],
+          correctAnswer: 0,
+          explanation: 'React Native allows you to build mobile apps using React and JavaScript.',
+          category: 'Frameworks',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is Flutter?',
+          options: [
+            'Google\'s UI toolkit for building apps',
+            'A database',
+            'A programming language',
+            'A testing tool'
+          ],
+          correctAnswer: 0,
+          explanation: 'Flutter is Google\'s UI toolkit for building natively compiled applications.',
+          category: 'Frameworks',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is a mobile app lifecycle?',
+          options: [
+            'The stages an app goes through from launch to termination',
+            'App development process',
+            'App testing process',
+            'App deployment process'
+          ],
+          correctAnswer: 0,
+          explanation: 'Mobile app lifecycle includes states like active, background, suspended, and terminated.',
+          category: 'Concepts',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'iOS Development': [
+        {
+          id: 1,
+          question: 'What is Swift?',
+          options: [
+            'Apple\'s programming language for iOS',
+            'A database',
+            'A framework',
+            'A testing tool'
+          ],
+          correctAnswer: 0,
+          explanation: 'Swift is Apple\'s modern programming language for iOS, macOS, watchOS, and tvOS.',
+          category: 'Language',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is UIKit?',
+          options: [
+            'iOS framework for user interface',
+            'A database framework',
+            'A networking framework',
+            'A testing framework'
+          ],
+          correctAnswer: 0,
+          explanation: 'UIKit provides the core infrastructure for iOS apps.',
+          category: 'Frameworks',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is Core Data?',
+          options: [
+            'iOS framework for data persistence',
+            'A networking framework',
+            'A UI framework',
+            'A testing framework'
+          ],
+          correctAnswer: 0,
+          explanation: 'Core Data is Apple\'s framework for managing the model layer objects in your application.',
+          category: 'Data',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Android Development': [
+        {
+          id: 1,
+          question: 'What is Kotlin?',
+          options: [
+            'Modern programming language for Android',
+            'A database',
+            'A framework',
+            'A testing tool'
+          ],
+          correctAnswer: 0,
+          explanation: 'Kotlin is the modern programming language for Android development.',
+          category: 'Language',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is Jetpack Compose?',
+          options: [
+            'Modern UI toolkit for Android',
+            'A database',
+            'A networking library',
+            'A testing framework'
+          ],
+          correctAnswer: 0,
+          explanation: 'Jetpack Compose is Android\'s modern toolkit for building native UI.',
+          category: 'UI',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is Room database?',
+          options: [
+            'Android persistence library',
+            'A UI library',
+            'A networking library',
+            'A testing library'
+          ],
+          correctAnswer: 0,
+          explanation: 'Room is a persistence library that provides an abstraction layer over SQLite.',
+          category: 'Data',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Digital Marketing': [
+        {
+          id: 1,
+          question: 'What is SEO?',
+          options: [
+            'Search Engine Optimization',
+            'Search Engine Organization',
+            'Search Engine Operation',
+            'Search Engine Output'
+          ],
+          correctAnswer: 0,
+          explanation: 'SEO is the practice of optimizing websites to rank higher in search engine results.',
+          category: 'SEO',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is SEM?',
+          options: [
+            'Search Engine Marketing',
+            'Search Engine Management',
+            'Search Engine Monitoring',
+            'Search Engine Metrics'
+          ],
+          correctAnswer: 0,
+          explanation: 'SEM involves paid advertising to increase visibility in search engine results.',
+          category: 'Marketing',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is social media marketing?',
+          options: [
+            'Using social platforms to promote products',
+            'Social networking',
+            'Social media management',
+            'Social media analytics'
+          ],
+          correctAnswer: 0,
+          explanation: 'Social media marketing uses social platforms to connect with audiences and promote products.',
+          category: 'Social Media',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'SEO': [
+        {
+          id: 1,
+          question: 'What is on-page SEO?',
+          options: [
+            'Optimizing elements on your website',
+            'Building backlinks',
+            'Social media optimization',
+            'Content marketing'
+          ],
+          correctAnswer: 0,
+          explanation: 'On-page SEO involves optimizing elements directly on your website.',
+          category: 'On-Page',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is off-page SEO?',
+          options: [
+            'Actions taken outside your website',
+            'Internal linking',
+            'Meta tags optimization',
+            'Content optimization'
+          ],
+          correctAnswer: 0,
+          explanation: 'Off-page SEO involves actions taken outside your website to improve rankings.',
+          category: 'Off-Page',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is keyword density?',
+          options: [
+            'Percentage of times a keyword appears',
+            'Keyword research',
+            'Keyword placement',
+            'Keyword analysis'
+          ],
+          correctAnswer: 0,
+          explanation: 'Keyword density is the percentage of times a keyword appears in content.',
+          category: 'Keywords',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Content Writing': [
+        {
+          id: 1,
+          question: 'What is copywriting?',
+          options: [
+            'Writing persuasive content for marketing',
+            'Copying content',
+            'Content editing',
+            'Content planning'
+          ],
+          correctAnswer: 0,
+          explanation: 'Copywriting is writing persuasive content that encourages people to take action.',
+          category: 'Writing',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is content strategy?',
+          options: [
+            'Planning and managing content',
+            'Content writing',
+            'Content editing',
+            'Content publishing'
+          ],
+          correctAnswer: 0,
+          explanation: 'Content strategy involves planning and managing content to achieve business goals.',
+          category: 'Strategy',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is storytelling in content?',
+          options: [
+            'Using narrative to engage readers',
+            'Fictional writing',
+            'Technical writing',
+            'Academic writing'
+          ],
+          correctAnswer: 0,
+          explanation: 'Storytelling uses narrative techniques to make content more engaging and memorable.',
+          category: 'Techniques',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'DevOps': [
+        {
+          id: 1,
+          question: 'What is CI/CD?',
+          options: [
+            'Continuous Integration/Continuous Deployment',
+            'Code Integration/Code Deployment',
+            'Continuous Input/Continuous Data',
+            'Code Input/Code Data'
+          ],
+          correctAnswer: 0,
+          explanation: 'CI/CD automates the process of integrating code changes and deploying them.',
+          category: 'Automation',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is infrastructure as code?',
+          options: [
+            'Managing infrastructure through code',
+            'Writing code for infrastructure',
+            'Infrastructure documentation',
+            'Infrastructure planning'
+          ],
+          correctAnswer: 0,
+          explanation: 'Infrastructure as code manages and provisions infrastructure through code.',
+          category: 'Infrastructure',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is Docker?',
+          options: [
+            'Containerization platform',
+            'A programming language',
+            'A database',
+            'A testing tool'
+          ],
+          correctAnswer: 0,
+          explanation: 'Docker is a platform for developing, shipping, and running applications in containers.',
+          category: 'Containers',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'AWS': [
+        {
+          id: 1,
+          question: 'What is EC2?',
+          options: [
+            'Elastic Compute Cloud',
+            'Elastic Container Cloud',
+            'Elastic Code Cloud',
+            'Elastic Compute Container'
+          ],
+          correctAnswer: 0,
+          explanation: 'EC2 provides scalable computing capacity in the cloud.',
+          category: 'Compute',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is S3?',
+          options: [
+            'Simple Storage Service',
+            'Simple Server Service',
+            'Simple Storage System',
+            'Simple Server System'
+          ],
+          correctAnswer: 0,
+          explanation: 'S3 is Amazon\'s object storage service.',
+          category: 'Storage',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is Lambda?',
+          options: [
+            'Serverless computing service',
+            'A database service',
+            'A storage service',
+            'A networking service'
+          ],
+          correctAnswer: 0,
+          explanation: 'Lambda is AWS\'s serverless computing service.',
+          category: 'Serverless',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Docker & K8s': [
+        {
+          id: 1,
+          question: 'What is Kubernetes?',
+          options: [
+            'Container orchestration platform',
+            'A container runtime',
+            'A programming language',
+            'A database'
+          ],
+          correctAnswer: 0,
+          explanation: 'Kubernetes is an open-source container orchestration platform.',
+          category: 'Orchestration',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is a Docker image?',
+          options: [
+            'A template for creating containers',
+            'A running container',
+            'A virtual machine',
+            'A programming language'
+          ],
+          correctAnswer: 0,
+          explanation: 'A Docker image is a template used to create containers.',
+          category: 'Images',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is a pod in Kubernetes?',
+          options: [
+            'Smallest deployable unit',
+            'A container',
+            'A service',
+            'A node'
+          ],
+          correctAnswer: 0,
+          explanation: 'A pod is the smallest deployable unit in Kubernetes.',
+          category: 'Pods',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Cybersecurity': [
+        {
+          id: 1,
+          question: 'What is a vulnerability?',
+          options: [
+            'A weakness in a system',
+            'A type of virus',
+            'A security tool',
+            'A firewall'
+          ],
+          correctAnswer: 0,
+          explanation: 'A vulnerability is a weakness that can be exploited by attackers.',
+          category: 'Basics',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is encryption?',
+          options: [
+            'Converting data into unreadable format',
+            'Compressing data',
+            'Backing up data',
+            'Deleting data'
+          ],
+          correctAnswer: 0,
+          explanation: 'Encryption converts data into an unreadable format to protect it.',
+          category: 'Cryptography',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is a firewall?',
+          options: [
+            'Network security device',
+            'A virus scanner',
+            'A password manager',
+            'A backup system'
+          ],
+          correctAnswer: 0,
+          explanation: 'A firewall is a network security device that monitors and controls traffic.',
+          category: 'Network Security',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Network Security': [
+        {
+          id: 1,
+          question: 'What is a VPN?',
+          options: [
+            'Virtual Private Network',
+            'Virtual Public Network',
+            'Virtual Personal Network',
+            'Virtual Protected Network'
+          ],
+          correctAnswer: 0,
+          explanation: 'VPN creates a secure connection over a public network.',
+          category: 'Networking',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is intrusion detection?',
+          options: [
+            'Monitoring for suspicious activity',
+            'Preventing attacks',
+            'Backing up data',
+            'Encrypting data'
+          ],
+          correctAnswer: 0,
+          explanation: 'Intrusion detection monitors network traffic for suspicious activity.',
+          category: 'Monitoring',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is a DMZ?',
+          options: [
+            'Demilitarized Zone - network segment',
+            'A firewall',
+            'A VPN',
+            'A router'
+          ],
+          correctAnswer: 0,
+          explanation: 'DMZ is a network segment that contains and exposes external-facing services.',
+          category: 'Architecture',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Agile': [
+        {
+          id: 1,
+          question: 'What is Scrum?',
+          options: [
+            'Agile framework for managing work',
+            'A programming language',
+            'A testing methodology',
+            'A project management tool'
+          ],
+          correctAnswer: 0,
+          explanation: 'Scrum is an agile framework for managing complex work.',
+          category: 'Frameworks',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is a sprint?',
+          options: [
+            'Time-boxed iteration in Scrum',
+            'A race',
+            'A meeting',
+            'A tool'
+          ],
+          correctAnswer: 0,
+          explanation: 'A sprint is a time-boxed iteration in Scrum methodology.',
+          category: 'Sprints',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is Kanban?',
+          options: [
+            'Visual workflow management method',
+            'A programming language',
+            'A testing tool',
+            'A database'
+          ],
+          correctAnswer: 0,
+          explanation: 'Kanban is a visual workflow management method.',
+          category: 'Methods',
+          difficulty: 'medium',
+          points: 8
+        }
+      ],
+      'Project Management': [
+        {
+          id: 1,
+          question: 'What is a project charter?',
+          options: [
+            'Document that authorizes a project',
+            'A project plan',
+            'A budget document',
+            'A timeline'
+          ],
+          correctAnswer: 0,
+          explanation: 'A project charter formally authorizes the existence of a project.',
+          category: 'Planning',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 2,
+          question: 'What is risk management?',
+          options: [
+            'Identifying and managing project risks',
+            'Avoiding all risks',
+            'Ignoring risks',
+            'Accepting all risks'
+          ],
+          correctAnswer: 0,
+          explanation: 'Risk management involves identifying, analyzing, and responding to project risks.',
+          category: 'Risk',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is a stakeholder?',
+          options: [
+            'Person with interest in project',
+            'A team member',
+            'A manager',
+            'A client'
+          ],
+          correctAnswer: 0,
+          explanation: 'A stakeholder is anyone with an interest in the project outcome.',
+          category: 'Stakeholders',
+          difficulty: 'easy',
+          points: 5
+        }
+             ],
+       'Blockchain': [
+         {
+           id: 1,
+           question: 'What is a blockchain?',
+           options: [
+             'A distributed ledger technology',
+             'A type of database',
+             'A programming language',
+             'A cryptocurrency'
+           ],
+           correctAnswer: 0,
+           explanation: 'Blockchain is a distributed ledger technology that maintains a continuously growing list of records.',
+           category: 'Basics',
+           difficulty: 'easy',
+           points: 5
+         },
+         {
+           id: 2,
+           question: 'What is a smart contract?',
+           options: [
+             'Self-executing contracts with code',
+             'Legal contracts',
+             'Business agreements',
+             'Insurance policies'
+           ],
+           correctAnswer: 0,
+           explanation: 'Smart contracts are self-executing contracts with the terms directly written into code.',
+           category: 'Smart Contracts',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 3,
+           question: 'What is Web3?',
+           options: [
+             'Decentralized web using blockchain',
+             'Web 3.0 standards',
+             'A programming language',
+             'A database system'
+           ],
+           correctAnswer: 0,
+           explanation: 'Web3 refers to a decentralized web that uses blockchain technology.',
+           category: 'Web3',
+           difficulty: 'medium',
+           points: 8
+         }
+       ],
+       'Advanced ML': [
+         {
+           id: 1,
+           question: 'What is transfer learning?',
+           options: [
+             'Using pre-trained models for new tasks',
+             'Learning to transfer data',
+             'Transferring files',
+             'Learning transfer functions'
+           ],
+           correctAnswer: 0,
+           explanation: 'Transfer learning leverages models trained on large datasets for new problems.',
+           category: 'Techniques',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 2,
+           question: 'What is a GAN?',
+           options: [
+             'Generative Adversarial Network',
+             'General Adversarial Network',
+             'Global Attention Network',
+             'Grouped Attention Network'
+           ],
+           correctAnswer: 0,
+           explanation: 'GANs consist of generator and discriminator networks.',
+           category: 'Deep Learning',
+           difficulty: 'hard',
+           points: 10
+         },
+         {
+           id: 3,
+           question: 'What is reinforcement learning?',
+           options: [
+             'Learning from rewards and punishments',
+             'Supervised learning',
+             'Unsupervised learning',
+             'Semi-supervised learning'
+           ],
+           correctAnswer: 0,
+           explanation: 'Reinforcement learning is based on rewarding desired behaviors.',
+           category: 'Types',
+           difficulty: 'medium',
+           points: 8
+         }
+       ],
+       'Cloud Architecture': [
+         {
+           id: 1,
+           question: 'What is microservices architecture?',
+           options: [
+             'Breaking applications into small services',
+             'Using small servers',
+             'Micro databases',
+             'Small applications'
+           ],
+           correctAnswer: 0,
+           explanation: 'Microservices architecture breaks applications into small, independent services.',
+           category: 'Architecture',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 2,
+           question: 'What is serverless computing?',
+           options: [
+             'Running code without managing servers',
+             'No servers needed',
+             'Server-free applications',
+             'Cloud-only computing'
+           ],
+           correctAnswer: 0,
+           explanation: 'Serverless computing allows running code without managing server infrastructure.',
+           category: 'Serverless',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 3,
+           question: 'What is a load balancer?',
+           options: [
+             'Distributes traffic across servers',
+             'Balances data',
+             'Loads applications',
+             'Balances databases'
+           ],
+           correctAnswer: 0,
+           explanation: 'Load balancers distribute incoming traffic across multiple servers.',
+           category: 'Infrastructure',
+           difficulty: 'medium',
+           points: 8
+         }
+       ],
+       'Data Engineering': [
+         {
+           id: 1,
+           question: 'What is ETL?',
+           options: [
+             'Extract, Transform, Load',
+             'Enter, Test, Leave',
+             'Extract, Test, Load',
+             'Enter, Transform, Leave'
+           ],
+           correctAnswer: 0,
+           explanation: 'ETL is the process of extracting, transforming, and loading data.',
+           category: 'Processes',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 2,
+           question: 'What is a data warehouse?',
+           options: [
+             'Centralized repository for data',
+             'Data storage facility',
+             'Database system',
+             'Data backup'
+           ],
+           correctAnswer: 0,
+           explanation: 'A data warehouse is a centralized repository for integrated data.',
+           category: 'Storage',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 3,
+           question: 'What is Apache Spark?',
+           options: [
+             'In-memory data processing engine',
+             'A database',
+             'A programming language',
+             'A visualization tool'
+           ],
+           correctAnswer: 0,
+           explanation: 'Apache Spark is an in-memory data processing engine.',
+           category: 'Tools',
+           difficulty: 'medium',
+           points: 8
+         }
+       ],
+       'Advanced Frontend': [
+         {
+           id: 1,
+           question: 'What is code splitting?',
+           options: [
+             'Breaking code into smaller chunks',
+             'Splitting files',
+             'Dividing functions',
+             'Separating components'
+           ],
+           correctAnswer: 0,
+           explanation: 'Code splitting breaks code into smaller chunks for better performance.',
+           category: 'Performance',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 2,
+           question: 'What is lazy loading?',
+           options: [
+             'Loading components on demand',
+             'Slow loading',
+             'Loading images',
+             'Loading data'
+           ],
+           correctAnswer: 0,
+           explanation: 'Lazy loading loads components only when needed.',
+           category: 'Performance',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 3,
+           question: 'What is a virtual DOM?',
+           options: [
+             'Lightweight copy of real DOM',
+             'Virtual reality DOM',
+             'Fake DOM',
+             'Test DOM'
+           ],
+           correctAnswer: 0,
+           explanation: 'Virtual DOM is a lightweight copy of the real DOM for efficient updates.',
+           category: 'React',
+           difficulty: 'medium',
+           points: 8
+         }
+       ],
+       'Backend Architecture': [
+         {
+           id: 1,
+           question: 'What is REST API?',
+           options: [
+             'Representational State Transfer',
+             'Remote State Transfer',
+             'Representational Server Transfer',
+             'Remote Server Transfer'
+           ],
+           correctAnswer: 0,
+           explanation: 'REST is Representational State Transfer, an architectural style for APIs.',
+           category: 'APIs',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 2,
+           question: 'What is GraphQL?',
+           options: [
+             'Query language for APIs',
+             'Database query language',
+             'Graph database',
+             'API framework'
+           ],
+           correctAnswer: 0,
+           explanation: 'GraphQL is a query language for APIs.',
+           category: 'APIs',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 3,
+           question: 'What is caching?',
+           options: [
+             'Storing frequently accessed data',
+             'Saving files',
+             'Backing up data',
+             'Compressing data'
+           ],
+           correctAnswer: 0,
+           explanation: 'Caching stores frequently accessed data for faster retrieval.',
+           category: 'Performance',
+           difficulty: 'medium',
+           points: 8
+         }
+       ],
+       'Product Management': [
+         {
+           id: 1,
+           question: 'What is a product roadmap?',
+           options: [
+             'Strategic plan for product development',
+             'Product timeline',
+             'Feature list',
+             'Project plan'
+           ],
+           correctAnswer: 0,
+           explanation: 'A product roadmap is a strategic plan for product development.',
+           category: 'Strategy',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 2,
+           question: 'What is user research?',
+           options: [
+             'Understanding user needs and behaviors',
+             'User testing',
+             'User interviews',
+             'User surveys'
+           ],
+           correctAnswer: 0,
+           explanation: 'User research involves understanding user needs and behaviors.',
+           category: 'Research',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 3,
+           question: 'What is a MVP?',
+           options: [
+             'Minimum Viable Product',
+             'Most Valuable Product',
+             'Maximum Viable Product',
+             'Minimum Valuable Product'
+           ],
+           correctAnswer: 0,
+           explanation: 'MVP is Minimum Viable Product with core features.',
+           category: 'Strategy',
+           difficulty: 'medium',
+           points: 8
+         }
+       ],
+       'UX Research': [
+         {
+           id: 1,
+           question: 'What is usability testing?',
+           options: [
+             'Testing how easy a product is to use',
+             'Testing functionality',
+             'Testing performance',
+             'Testing security'
+           ],
+           correctAnswer: 0,
+           explanation: 'Usability testing evaluates how easy a product is to use.',
+           category: 'Testing',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 2,
+           question: 'What is user journey mapping?',
+           options: [
+             'Visualizing user experience',
+             'User path',
+             'User flow',
+             'User story'
+           ],
+           correctAnswer: 0,
+           explanation: 'User journey mapping visualizes the user experience.',
+           category: 'Research',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 3,
+           question: 'What is A/B testing?',
+           options: [
+             'Comparing two versions',
+             'Testing A and B',
+             'Alpha beta testing',
+             'Acceptance testing'
+           ],
+           correctAnswer: 0,
+           explanation: 'A/B testing compares two versions to see which performs better.',
+           category: 'Testing',
+           difficulty: 'medium',
+           points: 8
+         }
+       ],
+       'Game Development': [
+         {
+           id: 1,
+           question: 'What is Unity?',
+           options: [
+             'Game development engine',
+             'Programming language',
+             '3D modeling software',
+             'Animation tool'
+           ],
+           correctAnswer: 0,
+           explanation: 'Unity is a popular game development engine.',
+           category: 'Engines',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 2,
+           question: 'What is Unreal Engine?',
+           options: [
+             'Game development platform',
+             '3D software',
+             'Animation tool',
+             'Programming language'
+           ],
+           correctAnswer: 0,
+           explanation: 'Unreal Engine is a game development platform.',
+           category: 'Engines',
+           difficulty: 'medium',
+           points: 8
+         },
+         {
+           id: 3,
+           question: 'What is game physics?',
+           options: [
+             'Simulation of physical laws in games',
+             'Game mechanics',
+             'Game rules',
+             'Game logic'
+           ],
+           correctAnswer: 0,
+           explanation: 'Game physics simulates physical laws in games.',
+           category: 'Physics',
+           difficulty: 'medium',
+           points: 8
+         }
+       ],
+       'Advanced Security': [
+         {
+           id: 1,
+           question: 'What is penetration testing?',
+           options: [
+             'Authorized security testing',
+             'Hacking',
+             'Security audit',
+             'Vulnerability scan'
+           ],
+           correctAnswer: 0,
+           explanation: 'Penetration testing is authorized security testing.',
+           category: 'Testing',
+           difficulty: 'hard',
+           points: 10
+         },
+         {
+           id: 2,
+           question: 'What is zero-day vulnerability?',
+           options: [
+             'Unknown security flaw',
+             'Zero security',
+             'Day zero attack',
+             'New vulnerability'
+           ],
+           correctAnswer: 0,
+           explanation: 'Zero-day vulnerability is an unknown security flaw.',
+           category: 'Vulnerabilities',
+           difficulty: 'hard',
+           points: 10
+         },
+         {
+           id: 3,
+           question: 'What is social engineering?',
+           options: [
+             'Manipulating people for information',
+             'Social networking',
+             'Social media',
+             'Social skills'
+           ],
+           correctAnswer: 0,
+           explanation: 'Social engineering manipulates people to gain information.',
+           category: 'Attacks',
+           difficulty: 'medium',
+           points: 8
+         }
+       ]
+     };
+     
+     // Return questions for the specific topic, or default questions if topic not found
+     return questionsMap[topic] || questionsMap['JavaScript'];
   };
 
 export default function AssessmentPage() {
@@ -983,6 +2597,128 @@ export default function AssessmentPage() {
       color: 'from-blue-500 to-indigo-500',
       icon: Target,
       questions: generateQuestions('Project Management', 22)
+    },
+    
+    // Additional Specialized Assessments
+    {
+      id: 'blockchain-development',
+      title: 'Blockchain & Web3 Development',
+      description: 'Test your knowledge of blockchain technology, smart contracts, and decentralized applications',
+      category: 'Emerging Tech',
+      totalQuestions: 20,
+      timeLimit: 25,
+      cutoffScore: 75,
+      color: 'from-purple-600 to-indigo-600',
+      icon: Zap,
+      questions: generateQuestions('Blockchain', 20)
+    },
+    {
+      id: 'ai-ml-advanced',
+      title: 'Advanced AI & Machine Learning',
+      description: 'Test your advanced knowledge of AI algorithms, deep learning, and neural networks',
+      category: 'AI/ML',
+      totalQuestions: 30,
+      timeLimit: 40,
+      cutoffScore: 80,
+      color: 'from-pink-600 to-purple-600',
+      icon: Brain,
+      questions: generateQuestions('Advanced ML', 30)
+    },
+    {
+      id: 'cloud-architecture',
+      title: 'Cloud Architecture & Design',
+      description: 'Test your knowledge of cloud computing, microservices, and distributed systems',
+      category: 'Cloud',
+      totalQuestions: 25,
+      timeLimit: 30,
+      cutoffScore: 75,
+      color: 'from-blue-600 to-cyan-600',
+      icon: Cloud,
+      questions: generateQuestions('Cloud Architecture', 25)
+    },
+    {
+      id: 'data-engineering',
+      title: 'Data Engineering & ETL',
+      description: 'Test your knowledge of data pipelines, ETL processes, and data warehousing',
+      category: 'Data',
+      totalQuestions: 25,
+      timeLimit: 30,
+      cutoffScore: 75,
+      color: 'from-green-600 to-teal-600',
+      icon: Database,
+      questions: generateQuestions('Data Engineering', 25)
+    },
+    {
+      id: 'frontend-advanced',
+      title: 'Advanced Frontend Development',
+      description: 'Test your advanced frontend skills including performance optimization and modern frameworks',
+      category: 'Frontend',
+      totalQuestions: 28,
+      timeLimit: 35,
+      cutoffScore: 80,
+      color: 'from-orange-500 to-red-500',
+      icon: Code,
+      questions: generateQuestions('Advanced Frontend', 28)
+    },
+    {
+      id: 'backend-architecture',
+      title: 'Backend Architecture & Design',
+      description: 'Test your knowledge of backend design patterns, APIs, and system architecture',
+      category: 'Backend',
+      totalQuestions: 25,
+      timeLimit: 30,
+      cutoffScore: 75,
+      color: 'from-gray-600 to-slate-600',
+      icon: Server,
+      questions: generateQuestions('Backend Architecture', 25)
+    },
+    {
+      id: 'product-management',
+      title: 'Product Management',
+      description: 'Test your product management skills including strategy, roadmapping, and user research',
+      category: 'Management',
+      totalQuestions: 22,
+      timeLimit: 25,
+      cutoffScore: 70,
+      color: 'from-emerald-500 to-green-500',
+      icon: Target,
+      questions: generateQuestions('Product Management', 22)
+    },
+    {
+      id: 'ux-research',
+      title: 'UX Research & Testing',
+      description: 'Test your UX research skills including user testing, analytics, and research methods',
+      category: 'Design',
+      totalQuestions: 20,
+      timeLimit: 25,
+      cutoffScore: 70,
+      color: 'from-violet-500 to-purple-500',
+      icon: Eye,
+      questions: generateQuestions('UX Research', 20)
+    },
+    {
+      id: 'game-development',
+      title: 'Game Development',
+      description: 'Test your game development knowledge including game engines, physics, and game design',
+      category: 'Gaming',
+      totalQuestions: 25,
+      timeLimit: 30,
+      cutoffScore: 75,
+      color: 'from-yellow-500 to-orange-500',
+      icon: Gamepad2,
+      questions: generateQuestions('Game Development', 25)
+    },
+    {
+      id: 'cybersecurity-advanced',
+      title: 'Advanced Cybersecurity',
+      description: 'Test your advanced cybersecurity knowledge including penetration testing and security architecture',
+      category: 'Security',
+      totalQuestions: 30,
+      timeLimit: 35,
+      cutoffScore: 80,
+      color: 'from-red-600 to-pink-600',
+      icon: Shield,
+      questions: generateQuestions('Advanced Security', 30)
     }
   ];
 
@@ -1962,6 +3698,35 @@ Generated on: ${new Date().toLocaleString()}
   if (!assessment) return null;
 
   const currentQ = assessment.questions[currentQuestion];
+  
+  // Safety check - if currentQ is undefined, return to assessment selection
+  if (!currentQ) {
+    return (
+      <div className={`min-h-screen py-8 transition-colors duration-300 ${
+        isDarkMode 
+          ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900' 
+          : 'bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50'
+      }`}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className={`text-2xl font-bold mb-4 ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>Assessment Error</h1>
+            <p className={`mb-6 ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>There was an issue loading the assessment questions. Please try again.</p>
+            <Button 
+              onClick={() => window.location.reload()}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+            >
+              <RotateCcw className="w-5 h-5 mr-2" />
+              Restart Assessment
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen py-8 transition-colors duration-300 ${
@@ -2013,25 +3778,25 @@ Generated on: ${new Date().toLocaleString()}
                   isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>Question {currentQuestion + 1}</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Badge className={getDifficultyColor(currentQ.difficulty)}>
-                    {currentQ.difficulty}
+                  <Badge className={getDifficultyColor(currentQ?.difficulty || 'medium')}>
+                    {currentQ?.difficulty || 'medium'}
                   </Badge>
                   <Badge variant="secondary">
-                    {currentQ.points} points
+                    {currentQ?.points || 5} points
                   </Badge>
                 </div>
               </div>
               <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                {currentQ.question}
+                {currentQ?.question || 'Question not available'}
               </p>
             </CardHeader>
             <CardContent>
               <RadioGroup
-                value={answers[currentQ.id]?.toString() || ''}
-                onValueChange={(value) => handleAnswerSelect(currentQ.id, parseInt(value))}
+                value={answers[currentQ?.id || 0]?.toString() || ''}
+                onValueChange={(value) => handleAnswerSelect(currentQ?.id || 0, parseInt(value))}
                 className="space-y-4"
               >
-                {currentQ.options.map((option, index) => (
+                {(currentQ?.options || ['Option A', 'Option B', 'Option C', 'Option D']).map((option, index) => (
                   <div key={index} className="flex items-center space-x-3">
                     <RadioGroupItem value={index.toString()} id={`option-${index}`} />
                     <Label 
