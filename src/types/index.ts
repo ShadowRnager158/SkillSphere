@@ -98,6 +98,16 @@ export interface Assessment {
   color: string;
 }
 
+export interface Mistake {
+  questionId: number;
+  userAnswer: number;
+  correctAnswer: number;
+  explanation: string;
+  question: string;
+  options: string[];
+  difficulty: 'easy' | 'medium' | 'hard';
+}
+
 export interface AssessmentResult {
   id: string;
   assessmentId: string;
@@ -112,15 +122,7 @@ export interface AssessmentResult {
   questionsAnswered: number;
   correctAnswers: number;
   wrongAnswers: number;
-  mistakes: {
-    questionId: number;
-    userAnswer: number;
-    correctAnswer: number;
-    explanation: string;
-    question: string;
-    options: string[];
-    difficulty: 'easy' | 'medium' | 'hard';
-  }[];
+  mistakes: Mistake[];
   recommendations: string[];
   skillLevel: string;
   completedAt: Date;
