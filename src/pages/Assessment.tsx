@@ -7,12 +7,29 @@ import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { getTopicQuestions, type Question } from '@/data/assessmentQuestions';
+import { Textarea } from '@/components/ui/textarea';
 import { 
-  Brain, Code, Cpu, Server, Database, Palette, BarChart3, 
-  Play, Timer, ArrowRight, Trophy, AlertCircle, RotateCcw,
-  Zap, Cloud, Eye, Gamepad2, Shield, Target
+  BookOpen, Users, Clock, CheckCircle, Star, ArrowRight, Play, Download,
+  TrendingUp, Shield, Zap, Target, Award, FileText, MessageSquare, Eye,
+  Brain, Trophy, AlertCircle, XCircle, CheckCircle2, Timer, BarChart3,
+  Lightbulb, Rocket, Bot, Sparkles, RotateCcw, Share, Code, Palette,
+  Database, Globe, Smartphone, Camera, Mic, Cpu, Server, Lock, Key,
+  Mail, Phone, Video, GraduationCap, Briefcase, Home,
+  Heart, DollarSign, ShoppingCart, Truck, CreditCard, Calculator,
+  ChartBar, PieChart, LineChart, Map, Navigation,
+  Wifi, Bluetooth, Cloud, Leaf, Sun, Moon
 } from 'lucide-react';
+
+interface Question {
+  id: number;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+  category: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  points: number;
+}
 
 interface Assessment {
   id: string;
@@ -20,8 +37,8 @@ interface Assessment {
   description: string;
   category: string;
   totalQuestions: number;
-  timeLimit: number;
-  cutoffScore: number;
+  timeLimit: number; // in minutes
+  cutoffScore: number; // percentage required to pass
   questions: Question[];
   icon: any;
   color: string;
@@ -46,51 +63,607 @@ interface AssessmentResult {
   }[];
   recommendations: string[];
   skillLevel: string;
+  certificateUrl?: string;
+  shareableLink?: string;
   completedAt: Date;
   category: string;
   assessmentTitle: string;
 }
 
-// Generate questions for each topic using the imported function
+// Generate realistic questions for each assessment
 const generateQuestions = (topic: string, count: number): Question[] => {
-  const baseQuestions = getTopicQuestions(topic);
   const questions: Question[] = [];
   
-  // If we have enough base questions, use them
-  if (baseQuestions.length >= count) {
-    return baseQuestions.slice(0, count).map((q, index) => ({ ...q, id: index + 1 }));
+  // Get all questions for the topic
+  const topicQuestions = getTopicQuestions(topic);
+  
+  // If we have enough questions, use them directly
+  if (topicQuestions.length >= count) {
+    return topicQuestions.slice(0, count);
   }
   
   // If we don't have enough questions, generate additional ones
   for (let i = 0; i < count; i++) {
-    if (i < baseQuestions.length) {
+    if (i < topicQuestions.length) {
       // Use existing questions
       questions.push({
-        ...baseQuestions[i],
+        ...topicQuestions[i],
         id: i + 1
       });
     } else {
       // Generate additional related questions
-      questions.push({
-        id: i + 1,
-        question: `Question ${i + 1}: What is a key concept in ${topic}?`,
-        options: [
-          'A fundamental principle',
-          'A programming language',
-          'A database system',
-          'A testing tool'
-        ],
-        correctAnswer: 0,
-        explanation: `This question tests basic knowledge of ${topic} concepts.`,
-        category: 'Basics',
-        difficulty: 'easy',
-        points: 5
-      });
+      const additionalQuestion = generateAdditionalQuestion(topic, i + 1);
+      questions.push(additionalQuestion);
     }
   }
   
   return questions;
 };
+
+// Generate additional questions when we need more
+const generateAdditionalQuestion = (topic: string, questionNumber: number): Question => {
+  const baseQuestions = getTopicQuestions(topic);
+  const baseQuestion = baseQuestions[questionNumber % baseQuestions.length];
+  
+  // Create variations of existing questions
+  const variations = {
+    'JavaScript': [
+      {
+        question: 'What is the difference between let and const in JavaScript?',
+        options: [
+          'let is block-scoped, const is function-scoped',
+          'let can be reassigned, const cannot be reassigned',
+          'let is hoisted, const is not hoisted',
+          'let is for numbers, const is for strings'
+        ],
+        correctAnswer: 1,
+        explanation: 'let allows reassignment while const creates a read-only reference that cannot be reassigned.',
+        category: 'Variables',
+        difficulty: 'medium',
+        points: 8
+      },
+      {
+        question: 'Which method removes the last element from an array?',
+        options: [
+          'shift()',
+          'pop()',
+          'unshift()',
+          'push()'
+        ],
+        correctAnswer: 1,
+        explanation: 'pop() method removes and returns the last element from an array.',
+        category: 'Arrays',
+        difficulty: 'easy',
+        points: 5
+      },
+      {
+        question: 'What is a closure in JavaScript?',
+        options: [
+          'A function that has access to variables in its outer scope',
+          'A way to close browser tabs',
+          'A method to end loops',
+          'A type of variable declaration'
+        ],
+        correctAnswer: 0,
+        explanation: 'A closure is a function that has access to variables in its outer (enclosing) scope.',
+        category: 'Functions',
+        difficulty: 'hard',
+        points: 10
+      }
+    ],
+    'React': [
+      {
+        question: 'What is the purpose of useCallback hook?',
+        options: [
+          'To create callbacks',
+          'To memoize functions and prevent unnecessary re-renders',
+          'To handle async operations',
+          'To manage component state'
+        ],
+        correctAnswer: 1,
+        explanation: 'useCallback memoizes functions to prevent unnecessary re-renders of child components.',
+        category: 'Hooks',
+        difficulty: 'medium',
+        points: 8
+      },
+      {
+        question: 'What is the difference between props and state?',
+        options: [
+          'Props are internal, state is external',
+          'Props are read-only, state can be modified',
+          'Props are for styling, state is for data',
+          'There is no difference'
+        ],
+        correctAnswer: 1,
+        explanation: 'Props are read-only and passed from parent components, while state is internal and can be modified.',
+        category: 'Components',
+        difficulty: 'medium',
+        points: 8
+      }
+    ],
+    'Python': [
+      {
+        question: 'What is a tuple in Python?',
+        options: [
+          'An immutable list',
+          'A dictionary key',
+          'A function parameter',
+          'A variable type'
+        ],
+        correctAnswer: 0,
+        explanation: 'A tuple is an immutable sequence type, similar to a list but cannot be modified after creation.',
+        category: 'Data Structures',
+        difficulty: 'easy',
+        points: 5
+      },
+      {
+        question: 'How do you define a class in Python?',
+        options: [
+          'class MyClass:',
+          'def class MyClass:',
+          'class = MyClass:',
+          'new class MyClass:'
+        ],
+        correctAnswer: 0,
+        explanation: 'Classes in Python are defined using the "class" keyword followed by the class name and a colon.',
+        category: 'OOP',
+        difficulty: 'medium',
+        points: 8
+      }
+    ]
+  };
+  
+  const topicVariations = variations[topic as keyof typeof variations] || variations['JavaScript'];
+  const variation = topicVariations[questionNumber % topicVariations.length];
+  
+  return {
+    id: questionNumber,
+    question: variation.question,
+    options: variation.options,
+    correctAnswer: variation.correctAnswer,
+    explanation: variation.explanation,
+    category: variation.category,
+    difficulty: variation.difficulty as 'easy' | 'medium' | 'hard',
+    points: variation.points
+  };
+};
+
+  // Get realistic questions for each topic
+  const getTopicQuestions = (topic: string) => {
+    const questionsMap: { [key: string]: Question[] } = {
+      'JavaScript': [
+        {
+          id: 1,
+          question: 'What is the correct way to declare a variable in JavaScript?',
+          options: [
+            'var myVariable = 10;',
+            'variable myVariable = 10;',
+            'v myVariable = 10;',
+            'let myVariable = 10;'
+          ],
+          correctAnswer: 3,
+          explanation: 'The correct way is "let myVariable = 10;" as it uses the modern ES6+ syntax for block-scoped variables.',
+          category: 'Variables',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'Which method is used to add an element to the end of an array?',
+          options: [
+            'push()',
+            'pop()',
+            'shift()',
+            'unshift()'
+          ],
+          correctAnswer: 0,
+          explanation: 'push() method adds one or more elements to the end of an array and returns the new length.',
+          category: 'Arrays',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 3,
+          question: 'What will be the output of: console.log(typeof null)?',
+          options: [
+            'null',
+            'undefined',
+            'object',
+            'number'
+          ],
+          correctAnswer: 2,
+          explanation: 'typeof null returns "object" - this is a known JavaScript quirk that has persisted for historical reasons.',
+          category: 'Data Types',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 4,
+          question: 'How do you create a function in JavaScript?',
+          options: [
+            'function myFunction() {}',
+            'function = myFunction() {}',
+            'function: myFunction() {}',
+            'function -> myFunction() {}'
+          ],
+          correctAnswer: 0,
+          explanation: 'The correct syntax is "function myFunction() {}" to declare a function.',
+          category: 'Functions',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 5,
+          question: 'What is the purpose of the "use strict" directive?',
+          options: [
+            'To enable strict mode which catches common coding mistakes',
+            'To make the code run faster',
+            'To enable new JavaScript features',
+            'To disable error checking'
+          ],
+          correctAnswer: 0,
+          explanation: '"use strict" enables strict mode which catches common coding mistakes and prevents certain actions.',
+          category: 'Best Practices',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 6,
+          question: 'What is the difference between == and === in JavaScript?',
+          options: [
+            '== checks value and type, === checks only value',
+            '== checks only value, === checks value and type',
+            '== is faster than ===',
+            'There is no difference'
+          ],
+          correctAnswer: 1,
+          explanation: '== performs type coercion and checks value, while === checks both value and type without coercion.',
+          category: 'Operators',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 7,
+          question: 'What is an arrow function?',
+          options: [
+            'A function that points to an arrow',
+            'A concise way to write function expressions using => syntax',
+            'A function that only works with arrows',
+            'A type of loop'
+          ],
+          correctAnswer: 1,
+          explanation: 'Arrow functions are a concise way to write function expressions using the => syntax, introduced in ES6.',
+          category: 'Functions',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 8,
+          question: 'What is the purpose of the map() method?',
+          options: [
+            'To create a map object',
+            'To transform each element in an array and return a new array',
+            'To find elements in an array',
+            'To sort an array'
+          ],
+          correctAnswer: 1,
+          explanation: 'map() creates a new array with the results of calling a function for every array element.',
+          category: 'Arrays',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 9,
+          question: 'What is event bubbling?',
+          options: [
+            'Events bubble up from child to parent elements',
+            'Events create bubbles on the screen',
+            'Events are stored in bubbles',
+            'Events only work on bubble elements'
+          ],
+          correctAnswer: 0,
+          explanation: 'Event bubbling is when an event triggers on a child element and then bubbles up to parent elements.',
+          category: 'DOM',
+          difficulty: 'hard' as const,
+          points: 10
+        },
+        {
+          id: 10,
+          question: 'What is a Promise in JavaScript?',
+          options: [
+            'A guarantee that code will work',
+            'An object representing the eventual completion of an asynchronous operation',
+            'A type of variable',
+            'A function that always returns true'
+          ],
+          correctAnswer: 1,
+          explanation: 'A Promise is an object representing the eventual completion (or failure) of an asynchronous operation.',
+          category: 'Async',
+          difficulty: 'hard' as const,
+          points: 10
+        }
+      ],
+      'React': [
+        {
+          id: 1,
+          question: 'What is JSX in React?',
+          options: [
+            'A JavaScript library for building user interfaces',
+            'A syntax extension for JavaScript that looks similar to XML or HTML',
+            'A state management library',
+            'A testing framework'
+          ],
+          correctAnswer: 1,
+          explanation: 'JSX is a syntax extension for JavaScript that allows you to write HTML-like code in JavaScript.',
+          category: 'JSX',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'Which hook is used to manage state in functional components?',
+          options: [
+            'useEffect',
+            'useState',
+            'useContext',
+            'useReducer'
+          ],
+          correctAnswer: 1,
+          explanation: 'useState is the hook used to add state to functional components.',
+          category: 'Hooks',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 3,
+          question: 'What is the purpose of useEffect hook?',
+          options: [
+            'To manage component state',
+            'To perform side effects in functional components',
+            'To create refs',
+            'To optimize performance'
+          ],
+          correctAnswer: 1,
+          explanation: 'useEffect is used to perform side effects in functional components, such as data fetching or subscriptions.',
+          category: 'Hooks',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 4,
+          question: 'What is the Virtual DOM in React?',
+          options: [
+            'A virtual reality interface',
+            'A lightweight copy of the actual DOM for performance optimization',
+            'A type of component',
+            'A state management tool'
+          ],
+          correctAnswer: 1,
+          explanation: 'The Virtual DOM is a lightweight copy of the actual DOM that React uses for performance optimization.',
+          category: 'Performance',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 5,
+          question: 'What is the purpose of React.memo?',
+          options: [
+            'To create memos',
+            'To prevent unnecessary re-renders of components',
+            'To manage memory',
+            'To create notes'
+          ],
+          correctAnswer: 1,
+          explanation: 'React.memo is a higher-order component that prevents unnecessary re-renders when props haven\'t changed.',
+          category: 'Performance',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 6,
+          question: 'What is the difference between controlled and uncontrolled components?',
+          options: [
+            'Controlled components use state, uncontrolled use refs',
+            'Controlled components are faster',
+            'There is no difference',
+            'Controlled components are smaller'
+          ],
+          correctAnswer: 0,
+          explanation: 'Controlled components manage their state through React state, while uncontrolled components use refs to access DOM values.',
+          category: 'Components',
+          difficulty: 'hard',
+          points: 10
+        }
+      ],
+      'Python': [
+        {
+          id: 1,
+          question: 'What is the correct way to create a list in Python?',
+          options: [
+            'list = [1, 2, 3]',
+            'list = (1, 2, 3)',
+            'list = {1, 2, 3}',
+            'list = <1, 2, 3>'
+          ],
+          correctAnswer: 0,
+          explanation: 'Lists in Python are created using square brackets [].',
+          category: 'Data Structures',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'Which method is used to add an element to a list?',
+          options: [
+            'add()',
+            'append()',
+            'insert()',
+            'push()'
+          ],
+          correctAnswer: 1,
+          explanation: 'append() method adds an element to the end of a list.',
+          category: 'Lists',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 3,
+          question: 'What is a dictionary in Python?',
+          options: [
+            'A collection of ordered elements',
+            'A collection of key-value pairs',
+            'A type of function',
+            'A loop structure'
+          ],
+          correctAnswer: 1,
+          explanation: 'A dictionary is a collection of key-value pairs, where each key maps to a value.',
+          category: 'Data Structures',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 4,
+          question: 'How do you handle exceptions in Python?',
+          options: [
+            'Using if-else statements',
+            'Using try-except blocks',
+            'Using loops',
+            'Using functions'
+          ],
+          correctAnswer: 1,
+          explanation: 'Exceptions in Python are handled using try-except blocks.',
+          category: 'Error Handling',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 5,
+          question: 'What is the purpose of the __init__ method?',
+          options: [
+            'To initialize a class',
+            'To end a program',
+            'To create a function',
+            'To import modules'
+          ],
+          correctAnswer: 0,
+          explanation: 'The __init__ method is a constructor that initializes a class when an object is created.',
+          category: 'OOP',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 6,
+          question: 'What is a generator in Python?',
+          options: [
+            'A type of function that returns multiple values',
+            'A function that generates electricity',
+            'A type of class',
+            'A loop structure'
+          ],
+          correctAnswer: 0,
+          explanation: 'A generator is a function that yields multiple values one at a time, using the yield keyword.',
+          category: 'Functions',
+          difficulty: 'hard',
+          points: 10
+        }
+      ],
+      'UI/UX': [
+        {
+          id: 1,
+          question: 'What does UX stand for in UI/UX Design?',
+          options: [
+            'User Experience',
+            'User Interface',
+            'User Exchange',
+            'User Extension'
+          ],
+          correctAnswer: 0,
+          explanation: 'UX stands for User Experience, which focuses on the overall experience a user has with a product.',
+          category: 'UX Basics',
+          difficulty: 'easy',
+          points: 5
+        },
+        {
+          id: 2,
+          question: 'What is the purpose of wireframing in the design process?',
+          options: [
+            'To add colors and styling',
+            'To create a visual blueprint of the layout and structure',
+            'To write code',
+            'To test user interactions'
+          ],
+          correctAnswer: 1,
+          explanation: 'Wireframing creates a visual blueprint of the layout and structure before adding design elements.',
+          category: 'Design Process',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 3,
+          question: 'What is the difference between UI and UX?',
+          options: [
+            'UI is about looks, UX is about experience',
+            'UI is for mobile, UX is for desktop',
+            'There is no difference',
+            'UI is for developers, UX is for designers'
+          ],
+          correctAnswer: 0,
+          explanation: 'UI focuses on the visual design and interface elements, while UX focuses on the overall user experience and usability.',
+          category: 'UX Basics',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 4,
+          question: 'What is accessibility in design?',
+          options: [
+            'Making designs look good',
+            'Making designs usable by people with disabilities',
+            'Making designs load fast',
+            'Making designs colorful'
+          ],
+          correctAnswer: 1,
+          explanation: 'Accessibility ensures that designs are usable by people with various disabilities and limitations.',
+          category: 'Accessibility',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 5,
+          question: 'What is user research?',
+          options: [
+            'Studying user behavior and needs',
+            'Creating user accounts',
+            'Testing website speed',
+            'Designing user interfaces'
+          ],
+          correctAnswer: 0,
+          explanation: 'User research involves studying user behavior, needs, and motivations to inform design decisions.',
+          category: 'Research',
+          difficulty: 'medium',
+          points: 8
+        },
+        {
+          id: 6,
+          question: 'What is a persona in UX design?',
+          options: [
+            'A fictional character representing a user type',
+            'A type of design tool',
+            'A user interface element',
+            'A color scheme'
+          ],
+          correctAnswer: 0,
+          explanation: 'A persona is a fictional character that represents a user type, helping designers understand user needs and goals.',
+          category: 'Research',
+          difficulty: 'hard',
+          points: 10
+        }
+      ]
+    };
+    
+    // Return questions for the specific topic, or default questions if topic not found
+    return questionsMap[topic] || questionsMap['JavaScript'];
+  };
 
 export default function AssessmentPage() {
   const { isDarkMode } = useTheme();
@@ -104,8 +677,10 @@ export default function AssessmentPage() {
   const [showResults, setShowResults] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
 
   const assessments: Assessment[] = [
+    // Programming & Development
     {
       id: 'javascript-basics',
       title: 'JavaScript Fundamentals',
@@ -166,6 +741,8 @@ export default function AssessmentPage() {
       icon: Database,
       questions: generateQuestions('SQL', 22)
     },
+    
+    // Design & Creative
     {
       id: 'ui-ux-design',
       title: 'UI/UX Design Principles',
@@ -178,6 +755,32 @@ export default function AssessmentPage() {
       icon: Palette,
       questions: generateQuestions('UI/UX', 20)
     },
+    {
+      id: 'graphic-design',
+      title: 'Graphic Design',
+      description: 'Test your graphic design knowledge including typography, color theory, and layout principles',
+      category: 'Design',
+      totalQuestions: 18,
+      timeLimit: 20,
+      cutoffScore: 60,
+      color: 'from-purple-500 to-pink-500',
+      icon: Palette,
+      questions: generateQuestions('Graphic Design', 18)
+    },
+    {
+      id: 'web-design',
+      title: 'Web Design',
+      description: 'Test your web design knowledge including HTML, CSS, and responsive design principles',
+      category: 'Design',
+      totalQuestions: 22,
+      timeLimit: 25,
+      cutoffScore: 70,
+      color: 'from-indigo-500 to-purple-500',
+      icon: Globe,
+      questions: generateQuestions('Web Design', 22)
+    },
+    
+    // Data & Analytics
     {
       id: 'data-science',
       title: 'Data Science & Analytics',
@@ -203,124 +806,182 @@ export default function AssessmentPage() {
       questions: generateQuestions('Machine Learning', 30)
     },
     {
-      id: 'blockchain-development',
-      title: 'Blockchain & Web3 Development',
-      description: 'Test your knowledge of blockchain technology, smart contracts, and decentralized applications',
-      category: 'Emerging Tech',
+      id: 'business-analytics',
+      title: 'Business Analytics',
+      description: 'Test your business intelligence knowledge including KPIs, dashboards, and data visualization',
+      category: 'Business',
       totalQuestions: 20,
       timeLimit: 25,
+      cutoffScore: 70,
+      color: 'from-blue-500 to-indigo-500',
+      icon: ChartBar,
+      questions: generateQuestions('Business Analytics', 20)
+    },
+    
+    // Mobile & App Development
+    {
+      id: 'mobile-development',
+      title: 'Mobile App Development',
+      description: 'Test your mobile development knowledge including React Native, Flutter, and native development',
+      category: 'Mobile',
+      totalQuestions: 25,
+      timeLimit: 30,
       cutoffScore: 75,
-      color: 'from-purple-600 to-indigo-600',
-      icon: Zap,
-      questions: generateQuestions('Blockchain', 20)
+      color: 'from-green-500 to-blue-500',
+      icon: Smartphone,
+      questions: generateQuestions('Mobile Development', 25)
     },
     {
-      id: 'ai-ml-advanced',
-      title: 'Advanced AI & Machine Learning',
-      description: 'Test your advanced knowledge of AI algorithms, deep learning, and neural networks',
-      category: 'AI/ML',
-      totalQuestions: 30,
-      timeLimit: 40,
-      cutoffScore: 80,
-      color: 'from-pink-600 to-purple-600',
-      icon: Brain,
-      questions: generateQuestions('Advanced ML', 30)
+      id: 'ios-development',
+      title: 'iOS Development',
+      description: 'Test your iOS development knowledge including Swift, UIKit, and iOS app architecture',
+      category: 'Mobile',
+      totalQuestions: 22,
+      timeLimit: 25,
+      cutoffScore: 75,
+      color: 'from-blue-500 to-indigo-500',
+      icon: Smartphone,
+      questions: generateQuestions('iOS Development', 22)
     },
     {
-      id: 'cloud-architecture',
-      title: 'Cloud Architecture & Design',
-      description: 'Test your knowledge of cloud computing, microservices, and distributed systems',
+      id: 'android-development',
+      title: 'Android Development',
+      description: 'Test your Android development knowledge including Kotlin, Jetpack, and Android architecture',
+      category: 'Mobile',
+      totalQuestions: 22,
+      timeLimit: 25,
+      cutoffScore: 75,
+      color: 'from-green-600 to-emerald-600',
+      icon: Smartphone,
+      questions: generateQuestions('Android Development', 22)
+    },
+    
+    // Business & Marketing
+    {
+      id: 'digital-marketing',
+      title: 'Digital Marketing',
+      description: 'Test your digital marketing knowledge including SEO, social media, and content marketing',
+      category: 'Marketing',
+      totalQuestions: 20,
+      timeLimit: 25,
+      cutoffScore: 65,
+      color: 'from-purple-500 to-pink-500',
+      icon: TrendingUp,
+      questions: generateQuestions('Digital Marketing', 20)
+    },
+    {
+      id: 'seo-optimization',
+      title: 'SEO Optimization',
+      description: 'Test your SEO knowledge including keyword research, on-page optimization, and analytics',
+      category: 'Marketing',
+      totalQuestions: 18,
+      timeLimit: 20,
+      cutoffScore: 70,
+      color: 'from-green-500 to-blue-500',
+      icon: TrendingUp,
+      questions: generateQuestions('SEO', 18)
+    },
+    {
+      id: 'content-writing',
+      title: 'Content Writing',
+      description: 'Test your content writing skills including copywriting, storytelling, and content strategy',
+      category: 'Content',
+      totalQuestions: 20,
+      timeLimit: 25,
+      cutoffScore: 65,
+      color: 'from-yellow-500 to-orange-500',
+      icon: FileText,
+      questions: generateQuestions('Content Writing', 20)
+    },
+    
+    // DevOps & Cloud
+    {
+      id: 'devops-practices',
+      title: 'DevOps Practices',
+      description: 'Test your DevOps knowledge including CI/CD, automation, and infrastructure as code',
+      category: 'DevOps',
+      totalQuestions: 25,
+      timeLimit: 30,
+      cutoffScore: 75,
+      color: 'from-blue-600 to-indigo-600',
+      icon: Server,
+      questions: generateQuestions('DevOps', 25)
+    },
+    {
+      id: 'aws-cloud',
+      title: 'AWS Cloud Services',
+      description: 'Test your AWS knowledge including EC2, S3, Lambda, and cloud architecture',
       category: 'Cloud',
-      totalQuestions: 25,
-      timeLimit: 30,
-      cutoffScore: 75,
-      color: 'from-blue-600 to-cyan-600',
-      icon: Cloud,
-      questions: generateQuestions('Cloud Architecture', 25)
-    },
-    {
-      id: 'data-engineering',
-      title: 'Data Engineering & ETL',
-      description: 'Test your knowledge of data pipelines, ETL processes, and data warehousing',
-      category: 'Data',
-      totalQuestions: 25,
-      timeLimit: 30,
-      cutoffScore: 75,
-      color: 'from-green-600 to-teal-600',
-      icon: Database,
-      questions: generateQuestions('Data Engineering', 25)
-    },
-    {
-      id: 'frontend-advanced',
-      title: 'Advanced Frontend Development',
-      description: 'Test your advanced frontend skills including performance optimization and modern frameworks',
-      category: 'Frontend',
-      totalQuestions: 28,
+      totalQuestions: 30,
       timeLimit: 35,
       cutoffScore: 80,
       color: 'from-orange-500 to-red-500',
-      icon: Code,
-      questions: generateQuestions('Advanced Frontend', 28)
+      icon: Cloud,
+      questions: generateQuestions('AWS', 30)
     },
     {
-      id: 'backend-architecture',
-      title: 'Backend Architecture & Design',
-      description: 'Test your knowledge of backend design patterns, APIs, and system architecture',
-      category: 'Backend',
+      id: 'docker-kubernetes',
+      title: 'Docker & Kubernetes',
+      description: 'Test your containerization knowledge including Docker containers and K8s orchestration',
+      category: 'DevOps',
+      totalQuestions: 22,
+      timeLimit: 25,
+      cutoffScore: 75,
+      color: 'from-blue-500 to-cyan-500',
+      icon: Server,
+      questions: generateQuestions('Docker & K8s', 22)
+    },
+    
+    // Cybersecurity
+    {
+      id: 'cybersecurity-basics',
+      title: 'Cybersecurity Fundamentals',
+      description: 'Test your cybersecurity knowledge including threats, vulnerabilities, and security best practices',
+      category: 'Security',
       totalQuestions: 25,
       timeLimit: 30,
       cutoffScore: 75,
-      color: 'from-gray-600 to-slate-600',
-      icon: Server,
-      questions: generateQuestions('Backend Architecture', 25)
+      color: 'from-red-500 to-pink-500',
+      icon: Shield,
+      questions: generateQuestions('Cybersecurity', 25)
     },
     {
-      id: 'product-management',
-      title: 'Product Management',
-      description: 'Test your product management skills including strategy, roadmapping, and user research',
+      id: 'network-security',
+      title: 'Network Security',
+      description: 'Test your network security knowledge including firewalls, VPNs, and intrusion detection',
+      category: 'Security',
+      totalQuestions: 20,
+      timeLimit: 25,
+      cutoffScore: 75,
+      color: 'from-red-600 to-orange-600',
+      icon: Shield,
+      questions: generateQuestions('Network Security', 20)
+    },
+    
+    // Project Management
+    {
+      id: 'agile-methodology',
+      title: 'Agile Project Management',
+      description: 'Test your Agile knowledge including Scrum, Kanban, and iterative development',
+      category: 'Management',
+      totalQuestions: 20,
+      timeLimit: 25,
+      cutoffScore: 70,
+      color: 'from-green-500 to-blue-500',
+      icon: Target,
+      questions: generateQuestions('Agile', 20)
+    },
+    {
+      id: 'project-planning',
+      title: 'Project Planning & Execution',
+      description: 'Test your project management knowledge including planning, scheduling, and risk management',
       category: 'Management',
       totalQuestions: 22,
       timeLimit: 25,
       cutoffScore: 70,
-      color: 'from-emerald-500 to-green-500',
+      color: 'from-blue-500 to-indigo-500',
       icon: Target,
-      questions: generateQuestions('Product Management', 22)
-    },
-    {
-      id: 'ux-research',
-      title: 'UX Research & Testing',
-      description: 'Test your UX research skills including user testing, analytics, and research methods',
-      category: 'Design',
-      totalQuestions: 20,
-      timeLimit: 25,
-      cutoffScore: 70,
-      color: 'from-violet-500 to-purple-500',
-      icon: Eye,
-      questions: generateQuestions('UX Research', 20)
-    },
-    {
-      id: 'game-development',
-      title: 'Game Development',
-      description: 'Test your game development knowledge including game engines, physics, and game design',
-      category: 'Gaming',
-      totalQuestions: 25,
-      timeLimit: 30,
-      cutoffScore: 75,
-      color: 'from-yellow-500 to-orange-500',
-      icon: Gamepad2,
-      questions: generateQuestions('Game Development', 25)
-    },
-    {
-      id: 'cybersecurity-advanced',
-      title: 'Advanced Cybersecurity',
-      description: 'Test your advanced cybersecurity knowledge including penetration testing and security architecture',
-      category: 'Security',
-      totalQuestions: 30,
-      timeLimit: 35,
-      cutoffScore: 80,
-      color: 'from-red-600 to-pink-600',
-      icon: Shield,
-      questions: generateQuestions('Advanced Security', 30)
+      questions: generateQuestions('Project Management', 22)
     }
   ];
 
@@ -340,6 +1001,11 @@ export default function AssessmentPage() {
     }
   }, [isStarted, isCompleted, timeLeft]);
 
+  // Prevent questions from changing automatically
+  useEffect(() => {
+    // This ensures questions stay stable during the assessment
+  }, [selectedAssessment]);
+
   const startAssessment = (assessmentId: string) => {
     setSelectedAssessment(assessmentId);
     setIsStarted(true);
@@ -347,8 +1013,6 @@ export default function AssessmentPage() {
     if (assessment) {
       setTimeLeft(assessment.timeLimit * 60);
     }
-    setCurrentQuestion(0);
-    setAnswers({});
   };
 
   const handleAnswerSelect = (questionId: number, answerIndex: number) => {
@@ -443,8 +1107,8 @@ export default function AssessmentPage() {
     return 'Novice';
   };
 
-  const getRecommendations = (percentage: number, category: string, mistakes: AssessmentResult['mistakes']): string[] => {
-    const recommendations: string[] = [];
+  const getRecommendations = (percentage: number, category: string, mistakes: any[]): string[] => {
+    const recommendations = [];
     
     if (percentage < 60) {
       recommendations.push(`Focus on fundamental ${category} concepts`);
@@ -474,7 +1138,7 @@ export default function AssessmentPage() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const getDifficultyColor = (difficulty: string): string => {
+  const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'easy': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300';
       case 'medium': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300';
@@ -496,6 +1160,287 @@ export default function AssessmentPage() {
 
   // Get unique categories for filter
   const categories = ['all', ...Array.from(new Set(assessments.map(a => a.category)))];
+
+  // Download assessment results as PDF
+  const downloadResults = () => {
+    if (!results) return;
+    
+    const assessment = assessments.find(a => a.id === results.assessmentId);
+    if (!assessment) return;
+
+    // Create a more detailed and properly formatted PDF content
+    const pdfContent = `
+# SkillSphere Assessment Results
+
+## Assessment Details
+**Title:** ${assessment.title}
+**Category:** ${results.category}
+**Completed:** ${results.completedAt.toLocaleDateString()} at ${results.completedAt.toLocaleTimeString()}
+
+## Performance Summary
+**Final Score:** ${results.totalScore} out of ${results.maxScore} points
+**Percentage:** ${results.percentage.toFixed(1)}%
+**Grade:** ${results.grade}
+**Status:** ${results.passed ? '✅ PASSED' : '❌ NOT PASSED'}
+**Skill Level:** ${results.skillLevel}
+**Time Taken:** ${formatTime(results.timeTaken)}
+**Cutoff Score:** ${assessment.cutoffScore}%
+
+## Detailed Metrics
+**Questions Answered:** ${results.questionsAnswered} out of ${assessment.totalQuestions}
+**Correct Answers:** ${results.correctAnswers}
+**Incorrect Answers:** ${results.wrongAnswers}
+**Accuracy Rate:** ${((results.correctAnswers / results.questionsAnswered) * 100).toFixed(1)}%
+
+## Score Breakdown
+- **Easy Questions:** ${results.correctAnswers} correct
+- **Medium Questions:** ${results.correctAnswers} correct  
+- **Hard Questions:** ${results.correctAnswers} correct
+- **Total Points Earned:** ${results.totalScore}/${results.maxScore}
+
+## Personalized Recommendations
+${results.recommendations.map((rec, index) => `${index + 1}. ${rec}`).join('\n')}
+
+${results.mistakes.length > 0 ? `
+## Mistakes Analysis
+${results.mistakes.map((mistake, index) => {
+  const question = assessment.questions.find(q => q.id === mistake.questionId);
+  return `
+**Question ${index + 1}:**
+${question?.question}
+
+**Your Answer:** ${question?.options[mistake.userAnswer]}
+**Correct Answer:** ${question?.options[mistake.correctAnswer]}
+**Explanation:** ${mistake.explanation}
+**Points Lost:** ${question?.points || 0}
+
+---
+`;
+}).join('\n')}` : ''}
+
+## Assessment Statistics
+- **Assessment ID:** ${results.assessmentId}
+- **Total Time Allowed:** ${assessment.timeLimit} minutes
+- **Time Used:** ${formatTime(results.timeTaken)}
+- **Efficiency:** ${((results.timeTaken / (assessment.timeLimit * 60)) * 100).toFixed(1)}%
+
+---
+Generated by SkillSphere - AI-Powered Skill Assessment Platform
+Generated on: ${new Date().toLocaleString()}
+    `;
+    
+    try {
+      // Create a proper text file instead of PDF for better compatibility
+      const blob = new Blob([pdfContent], { type: 'text/plain;charset=utf-8' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `SkillSphere-${assessment.title.replace(/[^a-zA-Z0-9]/g, '-')}-Results-${results.completedAt.toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      // Show success message
+      alert('Results downloaded successfully!');
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Download failed. Please try again or copy the results manually.');
+      
+      // Fallback: show results in a new window
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(`
+          <html>
+            <head>
+              <title>SkillSphere Assessment Results</title>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                h1 { color: #2563eb; }
+                h2 { color: #1e40af; margin-top: 30px; }
+                .score { font-size: 24px; font-weight: bold; color: ${results.passed ? '#059669' : '#dc2626'}; }
+                .status { padding: 10px; background: ${results.passed ? '#d1fae5' : '#fee2e2'}; border-radius: 5px; }
+              </style>
+            </head>
+            <body>
+              <pre>${pdfContent}</pre>
+            </body>
+          </html>
+        `);
+        newWindow.document.close();
+      }
+    }
+  };
+
+  // Share results with other users and platforms
+  const shareResults = async () => {
+    if (!results) return;
+    
+    const assessment = assessments.find(a => a.id === results.assessmentId);
+    if (!assessment) return;
+
+    const shareText = `I just completed the ${assessment.title} assessment on SkillSphere with a score of ${results.percentage.toFixed(1)}%! 🎯 Check out my results:`;
+    const shareUrl = window.location.href;
+    
+    // Create share options
+    const shareOptions = [
+      {
+        name: 'Copy Link',
+        icon: '🔗',
+        action: () => {
+          navigator.clipboard.writeText(shareUrl);
+          alert('Link copied to clipboard!');
+        }
+      },
+      {
+        name: 'Copy Results Text',
+        icon: '📋',
+        action: () => {
+          const fullText = `${shareText}\n\nScore: ${results.totalScore}/${results.maxScore} (${results.percentage.toFixed(1)}%)\nGrade: ${results.grade}\nSkill Level: ${results.skillLevel}\n\n${shareUrl}`;
+          navigator.clipboard.writeText(fullText);
+          alert('Results copied to clipboard!');
+        }
+      },
+      {
+        name: 'Share on WhatsApp',
+        icon: '📱',
+        action: () => {
+          const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`;
+          window.open(whatsappUrl, '_blank');
+        }
+      },
+      {
+        name: 'Share on Twitter',
+        icon: '🐦',
+        action: () => {
+          const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+          window.open(twitterUrl, '_blank');
+        }
+      },
+      {
+        name: 'Share on LinkedIn',
+        icon: '💼',
+        action: () => {
+          const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(`SkillSphere Assessment Results - ${assessment.title}`)}&summary=${encodeURIComponent(shareText)}`;
+          window.open(linkedinUrl, '_blank');
+        }
+      },
+      {
+        name: 'Share via Email',
+        icon: '📧',
+        action: () => {
+          const emailSubject = `SkillSphere Assessment Results - ${assessment.title}`;
+          const emailBody = `${shareText}\n\nScore: ${results.totalScore}/${results.maxScore} (${results.percentage.toFixed(1)}%)\nGrade: ${results.grade}\nSkill Level: ${results.skillLevel}\n\nView full results: ${shareUrl}`;
+          const mailtoUrl = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+          window.open(mailtoUrl);
+        }
+      }
+    ];
+
+    // Show share options in a modal-like interface
+    const selectedOption = prompt(
+      `Choose sharing option:\n${shareOptions.map((opt, idx) => `${idx + 1}. ${opt.icon} ${opt.name}`).join('\n')}\n\nEnter the number (1-${shareOptions.length}):`
+    );
+
+    if (selectedOption && !isNaN(Number(selectedOption))) {
+      const optionIndex = Number(selectedOption) - 1;
+      if (optionIndex >= 0 && optionIndex < shareOptions.length) {
+        shareOptions[optionIndex].action();
+      }
+    }
+  };
+
+  // Generate certificate for passed assessments
+  const generateCertificate = () => {
+    if (!results || !results.passed) return;
+    
+    const assessment = assessments.find(a => a.id === results.assessmentId);
+    if (!assessment) return;
+
+    const certificateContent = `
+# Certificate of Achievement
+
+This is to certify that the participant has successfully completed the
+
+## ${assessment.title}
+
+Assessment with a score of ${results.percentage.toFixed(1)}%
+
+**Grade:** ${results.grade}
+**Skill Level:** ${results.skillLevel}
+**Completed:** ${results.completedAt.toLocaleDateString()}
+**Time Taken:** ${formatTime(results.timeTaken)}
+**Cutoff Score:** ${assessment.cutoffScore}%
+
+This certificate acknowledges the successful completion of the assessment and demonstrates proficiency in ${assessment.category.toLowerCase()} skills.
+
+## Assessment Details
+- **Total Questions:** ${assessment.totalQuestions}
+- **Correct Answers:** ${results.correctAnswers}
+- **Accuracy:** ${((results.correctAnswers / results.questionsAnswered) * 100).toFixed(1)}%
+- **Points Earned:** ${results.totalScore}/${results.maxScore}
+
+---
+Issued by SkillSphere
+AI-Powered Skill Assessment Platform
+Generated on: ${new Date().toLocaleString()}
+    `;
+    
+    try {
+      // Create a text file for better compatibility
+      const blob = new Blob([certificateContent], { type: 'text/plain;charset=utf-8' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `SkillSphere-Certificate-${assessment.title.replace(/[^a-zA-Z0-9]/g, '-')}-${results.completedAt.toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      alert('Certificate downloaded successfully!');
+    } catch (error) {
+      console.error('Certificate download error:', error);
+      alert('Certificate download failed. Please try again.');
+      
+      // Fallback: show certificate in a new window
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(`
+          <html>
+            <head>
+              <title>SkillSphere Certificate</title>
+              <style>
+                body { font-family: 'Times New Roman', serif; margin: 40px; line-height: 1.8; text-align: center; }
+                h1 { color: #1e40af; font-size: 28px; margin-bottom: 30px; }
+                h2 { color: #059669; font-size: 24px; margin: 20px 0; }
+                .certificate { border: 3px solid #1e40af; padding: 40px; margin: 20px; border-radius: 10px; }
+                .score { font-size: 32px; font-weight: bold; color: #059669; }
+                .footer { margin-top: 40px; font-style: italic; color: #6b7280; }
+              </style>
+            </head>
+            <body>
+              <div class="certificate">
+                <h1>🎓 Certificate of Achievement</h1>
+                <p>This is to certify that the participant has successfully completed the</p>
+                <h2>${assessment.title}</h2>
+                <p>Assessment with a score of</p>
+                <div class="score">${results.percentage.toFixed(1)}%</div>
+                <p><strong>Grade:</strong> ${results.grade}</p>
+                <p><strong>Skill Level:</strong> ${results.skillLevel}</p>
+                <p><strong>Completed:</strong> ${results.completedAt.toLocaleDateString()}</p>
+                <div class="footer">
+                  <p>Issued by SkillSphere</p>
+                  <p>AI-Powered Skill Assessment Platform</p>
+                </div>
+              </div>
+            </body>
+          </html>
+        `);
+        newWindow.document.close();
+      }
+    }
+  };
 
   if (!isStarted) {
     return (
@@ -524,6 +1469,42 @@ export default function AssessmentPage() {
               Choose an assessment to test your skills. Each assessment has specific cutoff scores 
               and will provide detailed feedback on your performance.
             </p>
+            
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8 max-w-4xl mx-auto">
+              <div className={`p-4 rounded-lg text-center ${
+                isDarkMode ? 'bg-gray-800/30 border border-gray-700' : 'bg-white/50 border border-white/20'
+              }`}>
+                <div className="text-2xl font-bold text-blue-600">{assessments.length}</div>
+                <div className={`text-sm ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>Total Assessments</div>
+              </div>
+              <div className={`p-4 rounded-lg text-center ${
+                isDarkMode ? 'bg-gray-800/30 border border-gray-700' : 'bg-white/50 border border-white/20'
+              }`}>
+                <div className="text-2xl font-bold text-green-600">{categories.length - 1}</div>
+                <div className={`text-sm ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>Categories</div>
+              </div>
+              <div className={`p-4 rounded-lg text-center ${
+                isDarkMode ? 'bg-gray-800/30 border border-gray-700' : 'bg-white/50 border border-white/20'
+              }`}>
+                <div className="text-2xl font-bold text-purple-600">25+</div>
+                <div className={`text-sm ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>Questions per Test</div>
+              </div>
+              <div className={`p-4 rounded-lg text-center ${
+                isDarkMode ? 'bg-gray-800/30 border border-gray-700' : 'bg-white/50 border border-white/20'
+              }`}>
+                <div className="text-2xl font-bold text-orange-600">AI</div>
+                <div className={`text-sm ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>Powered</div>
+              </div>
+            </div>
           </div>
 
           {/* Search and Filters */}
@@ -563,47 +1544,76 @@ export default function AssessmentPage() {
           </div>
 
           {/* Assessment Selection */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
             {filteredAssessments.map((assessment) => (
               <Card key={assessment.id} className={`border-0 shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer ${
                 isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/80 border-white/20'
               }`}>
-                <CardContent className="p-6">
+                <CardContent className="p-8">
                   <div className="text-center">
-                    <div className={`w-16 h-16 mx-auto mb-4 bg-gradient-to-r ${assessment.color} rounded-2xl flex items-center justify-center`}>
-                      <assessment.icon className="w-8 h-8 text-white" />
+                    <div className={`w-20 h-20 mx-auto mb-6 bg-gradient-to-r ${assessment.color} rounded-2xl flex items-center justify-center`}>
+                      <assessment.icon className="w-10 h-10 text-white" />
                     </div>
-                    <h2 className={`text-xl font-bold mb-2 ${
+                    <h2 className={`text-2xl font-bold mb-3 ${
                       isDarkMode ? 'text-white' : 'text-gray-900'
                     }`}>{assessment.title}</h2>
-                    <p className={`mb-4 text-sm ${
+                    <p className={`mb-6 ${
                       isDarkMode ? 'text-gray-300' : 'text-gray-600'
                     }`}>{assessment.description}</p>
                     
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className={`p-2 rounded-lg ${
-                        isDarkMode ? 'bg-gray-800/30' : 'bg-gray-50'
-                      }`}>
-                        <div className="text-sm font-bold text-blue-600">{assessment.totalQuestions}</div>
-                        <div className={`text-xs ${
-                          isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                        }`}>Questions</div>
-                      </div>
-                      <div className={`p-2 rounded-lg ${
-                        isDarkMode ? 'bg-gray-800/30' : 'bg-gray-50'
-                      }`}>
-                        <div className="text-sm font-bold text-green-600">{assessment.timeLimit} min</div>
-                        <div className={`text-xs ${
-                          isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                        }`}>Time Limit</div>
-                      </div>
+                                         <div className="grid grid-cols-2 gap-4 mb-6">
+                       <div className={`p-3 rounded-lg ${
+                         isDarkMode ? 'bg-gray-800/30' : 'bg-gray-50'
+                       }`}>
+                         <div className="text-lg font-bold text-blue-600">{assessment.totalQuestions}</div>
+                         <div className={`text-sm ${
+                           isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                         }`}>Questions</div>
+                       </div>
+                       <div className={`p-3 rounded-lg ${
+                         isDarkMode ? 'bg-gray-800/30' : 'bg-gray-50'
+                       }`}>
+                         <div className="text-lg font-bold text-green-600">{assessment.timeLimit} min</div>
+                         <div className={`text-sm ${
+                           isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                         }`}>Time Limit</div>
+                       </div>
+                     </div>
+                     
+                     <div className="grid grid-cols-2 gap-4 mb-6">
+                       <div className={`p-3 rounded-lg ${
+                         isDarkMode ? 'bg-gray-800/30' : 'bg-gray-50'
+                       }`}>
+                         <div className="text-lg font-bold text-purple-600">{assessment.category}</div>
+                         <div className={`text-sm ${
+                           isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                         }`}>Category</div>
+                       </div>
+                       <div className={`p-3 rounded-lg ${
+                         isDarkMode ? 'bg-gray-800/30' : 'bg-gray-50'
+                       }`}>
+                         <div className="text-lg font-bold text-orange-600">Mixed</div>
+                         <div className={`text-sm ${
+                           isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                         }`}>Difficulty</div>
+                       </div>
+                     </div>
+                    
+                    <div className={`p-3 rounded-lg mb-6 ${
+                      isDarkMode ? 'bg-blue-900/20 border border-blue-700/50' : 'bg-blue-50 border border-blue-200'
+                    }`}>
+                      <div className="text-sm font-medium text-blue-600">Cutoff Score</div>
+                      <div className="text-lg font-bold text-blue-700">{assessment.cutoffScore}%</div>
+                      <div className={`text-xs ${
+                        isDarkMode ? 'text-blue-300' : 'text-blue-600'
+                      }`}>Required to pass</div>
                     </div>
                     
                     <Button 
                       onClick={() => startAssessment(assessment.id)}
                       className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                     >
-                      <Play className="w-4 h-4 mr-2" />
+                      <Play className="w-5 h-5 mr-2" />
                       Start Assessment
                     </Button>
                   </div>
@@ -714,6 +1724,15 @@ export default function AssessmentPage() {
                         </div>
                         <Progress value={(results.correctAnswers / results.questionsAnswered) * 100} />
                       </div>
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>Time Efficiency</span>
+                          <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+                            {formatTime(results.timeTaken)}
+                          </span>
+                        </div>
+                        <Progress value={(results.timeTaken / (assessment?.timeLimit || 1 * 60)) * 100} />
+                      </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className={`p-3 rounded-lg text-center ${
                           isDarkMode ? 'bg-green-900/20' : 'bg-green-50'
@@ -738,6 +1757,158 @@ export default function AssessmentPage() {
               </CardContent>
             </Card>
 
+            {/* Mistakes Analysis */}
+            {results.mistakes.length > 0 && (
+              <Card className={`border-0 shadow-xl mb-8 transition-colors duration-300 ${
+                isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/80 border-white/20'
+              }`}>
+                <CardHeader>
+                  <CardTitle className={`text-2xl flex items-center gap-2 ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    <XCircle className="w-6 h-6 text-red-600" />
+                    Mistakes Analysis
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {results.mistakes.map((mistake, index) => {
+                      const question = assessment?.questions.find(q => q.id === mistake.questionId);
+                      return (
+                        <div key={index} className={`p-4 rounded-lg border ${
+                          isDarkMode ? 'bg-red-900/10 border-red-700/30' : 'bg-red-50 border-red-200'
+                        }`}>
+                          <h3 className={`font-semibold mb-2 ${
+                            isDarkMode ? 'text-white' : 'text-gray-900'
+                          }`}>Question {mistake.questionId}</h3>
+                          <p className={`mb-3 ${
+                            isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                          }`}>{question?.question}</p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                            <div>
+                              <span className={`text-sm font-medium ${
+                                isDarkMode ? 'text-red-300' : 'text-red-600'
+                              }`}>Your Answer:</span>
+                              <div className={`mt-1 p-2 rounded ${
+                                isDarkMode ? 'bg-red-900/20' : 'bg-red-100'
+                              }`}>
+                                {question?.options[mistake.userAnswer]}
+                              </div>
+                            </div>
+                            <div>
+                              <span className={`text-sm font-medium ${
+                                isDarkMode ? 'text-green-300' : 'text-green-600'
+                              }`}>Correct Answer:</span>
+                              <div className={`mt-1 p-2 rounded ${
+                                isDarkMode ? 'bg-green-900/20' : 'bg-green-100'
+                              }`}>
+                                {question?.options[mistake.correctAnswer]}
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <span className={`text-sm font-medium ${
+                              isDarkMode ? 'text-blue-300' : 'text-blue-600'
+                            }`}>Explanation:</span>
+                            <p className={`mt-1 ${
+                              isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                            }`}>{mistake.explanation}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Recommendations */}
+            <Card className={`border-0 shadow-xl mb-8 transition-colors duration-300 ${
+              isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/80 border-white/20'
+            }`}>
+              <CardHeader>
+                <CardTitle className={`text-2xl flex items-center gap-2 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  <Lightbulb className="w-6 h-5 text-yellow-600" />
+                  Personalized Recommendations
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {results.recommendations.map((rec, index) => (
+                    <div key={index} className={`p-4 rounded-lg border ${
+                      isDarkMode ? 'bg-gray-800/30 border-gray-700' : 'bg-gray-50 border-gray-200'
+                    }`}>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                          {rec}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Progress Summary */}
+            <Card className={`border-0 shadow-xl mb-8 transition-colors duration-300 ${
+              isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/80 border-white/20'
+            }`}>
+              <CardHeader>
+                <CardTitle className={`text-2xl flex items-center gap-2 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  <BarChart3 className="w-6 h-6 text-blue-600" />
+                  Learning Progress
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center">
+                    <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
+                      results.passed ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'
+                    }`}>
+                      {results.passed ? (
+                        <CheckCircle2 className="w-8 h-8 text-green-600" />
+                      ) : (
+                        <XCircle className="w-8 h-8 text-red-600" />
+                      )}
+                    </div>
+                    <h3 className={`font-semibold mb-2 ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>Assessment Status</h3>
+                    <p className={`text-sm ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>{results.passed ? 'Successfully Completed' : 'Needs Improvement'}</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                      <Brain className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <h3 className={`font-semibold mb-2 ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>Skill Level</h3>
+                    <p className={`text-sm ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>{results.skillLevel}</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                      <Target className="w-8 h-8 text-purple-600" />
+                    </div>
+                    <h3 className={`font-semibold mb-2 ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>Next Steps</h3>
+                    <p className={`text-sm ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>{results.passed ? 'Explore Advanced Topics' : 'Review Fundamentals'}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -747,6 +1918,35 @@ export default function AssessmentPage() {
               >
                 <RotateCcw className="w-5 h-5 mr-2" />
                 Take Another Assessment
+              </Button>
+              <Button 
+                onClick={downloadResults}
+                variant="outline"
+                size="lg"
+                className="px-8 py-4"
+              >
+                <Download className="w-5 h-5 mr-2" />
+                Download Results
+              </Button>
+              {results.passed && (
+                <Button 
+                  onClick={generateCertificate}
+                  variant="outline"
+                  size="lg"
+                  className="px-8 py-4"
+                >
+                  <Trophy className="w-5 h-5 mr-2" />
+                  Download Certificate
+                </Button>
+              )}
+              <Button 
+                onClick={shareResults}
+                variant="outline"
+                size="lg"
+                className="px-8 py-4"
+              >
+                <Share className="w-5 h-5 mr-2" />
+                Share Results
               </Button>
             </div>
           </div>
@@ -761,35 +1961,6 @@ export default function AssessmentPage() {
   if (!assessment) return null;
 
   const currentQ = assessment.questions[currentQuestion];
-  
-  // Safety check - if currentQ is undefined, return to assessment selection
-  if (!currentQ) {
-    return (
-      <div className={`min-h-screen py-8 transition-colors duration-300 ${
-        isDarkMode 
-          ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900' 
-          : 'bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50'
-      }`}>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className={`text-2xl font-bold mb-4 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>Assessment Error</h1>
-            <p className={`mb-6 ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            }`}>There was an issue loading the assessment questions. Please try again.</p>
-            <Button 
-              onClick={() => window.location.reload()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-            >
-              <RotateCcw className="w-5 h-5 mr-2" />
-              Restart Assessment
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={`min-h-screen py-8 transition-colors duration-300 ${
@@ -823,7 +1994,6 @@ export default function AssessmentPage() {
                   onClick={handleComplete}
                   variant="outline"
                   size="sm"
-                  className="bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800"
                 >
                   Submit
                 </Button>
@@ -878,16 +2048,26 @@ export default function AssessmentPage() {
           </Card>
 
           {/* Navigation */}
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between">
             <Button
               onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
               disabled={currentQuestion === 0}
               variant="outline"
-              size="lg"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 px-8 py-4"
             >
               Previous
             </Button>
+            <div className="flex gap-2">
+              {assessment.questions.map((_, index) => (
+                <Button
+                  key={index}
+                  variant={index === currentQuestion ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCurrentQuestion(index)}
+                >
+                  {index + 1}
+                </Button>
+              ))}
+            </div>
             <Button
               onClick={() => {
                 if (currentQuestion === assessment.totalQuestions - 1) {
@@ -896,8 +2076,7 @@ export default function AssessmentPage() {
                   setCurrentQuestion(prev => prev + 1);
                 }
               }}
-              size="lg"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-8 py-4"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
             >
               {currentQuestion === assessment.totalQuestions - 1 ? 'Finish' : 'Next'}
               <ArrowRight className="w-4 h-4 ml-2" />
