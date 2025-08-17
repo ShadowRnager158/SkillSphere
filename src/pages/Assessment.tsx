@@ -289,7 +289,28 @@ export default function AssessmentPage() {
     if (assessment) {
       setTimeLeft(assessment.timeLimit * 60);
       // Reshuffle questions for each new attempt
-      assessment.questions = shuffleArray(getTopicQuestions(assessment.title.split(' ')[0]).slice(0, 30));
+      const topicMap: { [key: string]: string } = {
+        'javascript-basics': 'JavaScript',
+        'react-fundamentals': 'React',
+        'python-basics': 'Python',
+        'nodejs-backend': 'Node.js',
+        'sql-database': 'SQL',
+        'ui-ux-design': 'UI/UX',
+        'data-science': 'Data Science',
+        'machine-learning': 'Machine Learning',
+        'blockchain-development': 'Blockchain',
+        'ai-ml-advanced': 'Advanced ML',
+        'cloud-architecture': 'Cloud Architecture',
+        'data-engineering': 'Data Engineering',
+        'frontend-advanced': 'Advanced Frontend',
+        'backend-architecture': 'Backend Architecture',
+        'product-management': 'Product Management',
+        'ux-research': 'UX Research',
+        'game-development': 'Game Development',
+        'cybersecurity-advanced': 'Advanced Security'
+      };
+      const topic = topicMap[assessmentId] || 'JavaScript';
+      assessment.questions = shuffleArray(getTopicQuestions(topic).slice(0, 30));
     }
     setCurrentQuestion(0);
     setAnswers({});
