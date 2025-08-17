@@ -1,14 +1,4 @@
-// Define the Question interface locally since @/types import is failing
-interface Question {
-  id: number;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
-  category: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-  points: number;
-}
+import { type Question } from '@/types';
 
 export const questionsMap: { [key: string]: Question[] } = {
   'JavaScript': [
@@ -1128,17 +1118,17 @@ export const questionsMap: { [key: string]: Question[] } = {
   ]
 };
 
+export const getTopicQuestions = (topic: string): Question[] => {
+  const questions = questionsMap[topic] || questionsMap['JavaScript'];
+  return shuffleArray(questions); // Always return shuffled questions
+};
+
 // Function to shuffle array
-export const shuffleArray = (array: any[]): any[] => {
+const shuffleArray = (array: any[]): any[] => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
-};
-
-export const getTopicQuestions = (topic: string): Question[] => {
-  const questions = questionsMap[topic] || questionsMap['JavaScript'];
-  return shuffleArray(questions); // Always return shuffled questions
 };

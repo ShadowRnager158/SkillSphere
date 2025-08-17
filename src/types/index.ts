@@ -117,6 +117,9 @@ export interface AssessmentResult {
     userAnswer: number;
     correctAnswer: number;
     explanation: string;
+    question: string;
+    options: string[];
+    difficulty: 'easy' | 'medium' | 'hard';
   }[];
   recommendations: string[];
   skillLevel: string;
