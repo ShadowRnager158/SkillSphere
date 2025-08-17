@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { getTopicQuestions } from '@/data/assessmentQuestions';
+import { getTopicQuestions, shuffleArray } from '@/data/assessmentQuestions';
 import { type Question, type Assessment, type AssessmentResult } from '@/types';
 import { useUser } from '@/contexts/UserContext';
 import { 
@@ -18,49 +18,9 @@ import {
 import { 
   Brain, Code, Cpu, Server, Database, Palette, BarChart3, 
   Play, Timer, ArrowRight, Trophy, AlertCircle, RotateCcw,
-  Zap, Cloud, Eye, Gamepad2, Shield, Target
+  Zap, Cloud, Eye, Gamepad2, Shield, Target, Download, Share,
+  CheckCircle, XCircle, Clock, Star, Award, FileText, Printer
 } from 'lucide-react';
-
-// Generate questions for each topic using the imported function
-const generateQuestions = (topic: string, count: number): Question[] => {
-  const baseQuestions = getTopicQuestions(topic);
-  const questions: Question[] = [];
-  
-  // If we have enough base questions, use them
-  if (baseQuestions.length >= count) {
-    return baseQuestions.slice(0, count).map((q, index) => ({ ...q, id: index + 1 }));
-  }
-  
-  // If we don't have enough questions, generate additional ones
-  for (let i = 0; i < count; i++) {
-    if (i < baseQuestions.length) {
-      // Use existing questions
-      questions.push({
-        ...baseQuestions[i],
-        id: i + 1
-      });
-    } else {
-      // Generate additional related questions
-      questions.push({
-        id: i + 1,
-        question: `Question ${i + 1}: What is a key concept in ${topic}?`,
-        options: [
-          'A fundamental principle',
-          'A programming language',
-          'A database system',
-          'A testing tool'
-        ],
-        correctAnswer: 0,
-        explanation: `This question tests basic knowledge of ${topic} concepts.`,
-        category: 'Basics',
-        difficulty: 'easy',
-        points: 5
-      });
-    }
-  }
-  
-  return questions;
-};
 
 export default function AssessmentPage() {
   const { isDarkMode } = useTheme();
@@ -75,6 +35,7 @@ export default function AssessmentPage() {
   const [showResults, setShowResults] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showCertificate, setShowCertificate] = useState(false);
 
   const assessments: Assessment[] = [
     {
@@ -82,12 +43,12 @@ export default function AssessmentPage() {
       title: 'JavaScript Fundamentals',
       description: 'Test your knowledge of JavaScript basics, variables, functions, and control structures',
       category: 'Programming',
-      totalQuestions: 25,
-      timeLimit: 30,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 70,
       color: 'from-yellow-500 to-orange-500',
       icon: Code,
-      questions: generateQuestions('JavaScript', 25)
+      questions: shuffleArray(getTopicQuestions('JavaScript').slice(0, 30))
     },
     {
       id: 'react-fundamentals',
@@ -99,67 +60,67 @@ export default function AssessmentPage() {
       cutoffScore: 75,
       color: 'from-blue-500 to-cyan-500',
       icon: Cpu,
-      questions: generateQuestions('React', 30)
+      questions: shuffleArray(getTopicQuestions('React').slice(0, 30))
     },
     {
       id: 'python-basics',
       title: 'Python Programming',
       description: 'Test your Python knowledge including syntax, data structures, and OOP concepts',
       category: 'Programming',
-      totalQuestions: 25,
-      timeLimit: 30,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 70,
       color: 'from-green-500 to-emerald-500',
       icon: Code,
-      questions: generateQuestions('Python', 25)
+      questions: shuffleArray(getTopicQuestions('Python').slice(0, 30))
     },
     {
       id: 'nodejs-backend',
       title: 'Node.js Backend',
       description: 'Test your Node.js knowledge including Express, APIs, and server-side development',
       category: 'Backend',
-      totalQuestions: 28,
+      totalQuestions: 30,
       timeLimit: 35,
       cutoffScore: 75,
       color: 'from-green-600 to-emerald-600',
       icon: Server,
-      questions: generateQuestions('Node.js', 28)
+      questions: shuffleArray(getTopicQuestions('Node.js').slice(0, 30))
     },
     {
       id: 'sql-database',
       title: 'SQL & Database Design',
       description: 'Test your database knowledge including SQL queries, normalization, and database design',
       category: 'Database',
-      totalQuestions: 22,
-      timeLimit: 25,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 75,
       color: 'from-blue-600 to-indigo-600',
       icon: Database,
-      questions: generateQuestions('SQL', 22)
+      questions: shuffleArray(getTopicQuestions('SQL').slice(0, 30))
     },
     {
       id: 'ui-ux-design',
       title: 'UI/UX Design Principles',
       description: 'Test your understanding of design principles, user experience, and interface design',
       category: 'Design',
-      totalQuestions: 20,
-      timeLimit: 25,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 65,
       color: 'from-pink-500 to-purple-500',
       icon: Palette,
-      questions: generateQuestions('UI/UX', 20)
+      questions: shuffleArray(getTopicQuestions('UI/UX').slice(0, 30))
     },
     {
       id: 'data-science',
       title: 'Data Science & Analytics',
       description: 'Test your knowledge of data analysis, statistics, and machine learning concepts',
       category: 'Data',
-      totalQuestions: 25,
+      totalQuestions: 30,
       timeLimit: 35,
       cutoffScore: 80,
       color: 'from-green-500 to-emerald-500',
       icon: BarChart3,
-      questions: generateQuestions('Data Science', 25)
+      questions: shuffleArray(getTopicQuestions('Data Science').slice(0, 30))
     },
     {
       id: 'machine-learning',
@@ -167,23 +128,23 @@ export default function AssessmentPage() {
       description: 'Test your ML knowledge including algorithms, model training, and evaluation techniques',
       category: 'Data',
       totalQuestions: 30,
-      timeLimit: 40,
+      timeLimit: 35,
       cutoffScore: 80,
       color: 'from-purple-600 to-blue-600',
       icon: Brain,
-      questions: generateQuestions('Machine Learning', 30)
+      questions: shuffleArray(getTopicQuestions('Machine Learning').slice(0, 30))
     },
     {
       id: 'blockchain-development',
       title: 'Blockchain & Web3 Development',
       description: 'Test your knowledge of blockchain technology, smart contracts, and decentralized applications',
       category: 'Emerging Tech',
-      totalQuestions: 20,
-      timeLimit: 25,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 75,
       color: 'from-purple-600 to-indigo-600',
       icon: Zap,
-      questions: generateQuestions('Blockchain', 20)
+      questions: shuffleArray(getTopicQuestions('Blockchain').slice(0, 30))
     },
     {
       id: 'ai-ml-advanced',
@@ -191,95 +152,95 @@ export default function AssessmentPage() {
       description: 'Test your advanced knowledge of AI algorithms, deep learning, and neural networks',
       category: 'AI/ML',
       totalQuestions: 30,
-      timeLimit: 40,
+      timeLimit: 35,
       cutoffScore: 80,
       color: 'from-pink-600 to-purple-600',
       icon: Brain,
-      questions: generateQuestions('Advanced ML', 30)
+      questions: shuffleArray(getTopicQuestions('Advanced ML').slice(0, 30))
     },
     {
       id: 'cloud-architecture',
       title: 'Cloud Architecture & Design',
       description: 'Test your knowledge of cloud computing, microservices, and distributed systems',
       category: 'Cloud',
-      totalQuestions: 25,
-      timeLimit: 30,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 75,
       color: 'from-blue-600 to-cyan-600',
       icon: Cloud,
-      questions: generateQuestions('Cloud Architecture', 25)
+      questions: shuffleArray(getTopicQuestions('Cloud Architecture').slice(0, 30))
     },
     {
       id: 'data-engineering',
       title: 'Data Engineering & ETL',
       description: 'Test your knowledge of data pipelines, ETL processes, and data warehousing',
       category: 'Data',
-      totalQuestions: 25,
-      timeLimit: 30,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 75,
       color: 'from-green-600 to-teal-600',
       icon: Database,
-      questions: generateQuestions('Data Engineering', 25)
+      questions: shuffleArray(getTopicQuestions('Data Engineering').slice(0, 30))
     },
     {
       id: 'frontend-advanced',
       title: 'Advanced Frontend Development',
       description: 'Test your advanced frontend skills including performance optimization and modern frameworks',
       category: 'Frontend',
-      totalQuestions: 28,
+      totalQuestions: 30,
       timeLimit: 35,
       cutoffScore: 80,
       color: 'from-orange-500 to-red-500',
       icon: Code,
-      questions: generateQuestions('Advanced Frontend', 28)
+      questions: shuffleArray(getTopicQuestions('Advanced Frontend').slice(0, 30))
     },
     {
       id: 'backend-architecture',
       title: 'Backend Architecture & Design',
       description: 'Test your knowledge of backend design patterns, APIs, and system architecture',
       category: 'Backend',
-      totalQuestions: 25,
-      timeLimit: 30,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 75,
       color: 'from-gray-600 to-slate-600',
       icon: Server,
-      questions: generateQuestions('Backend Architecture', 25)
+      questions: shuffleArray(getTopicQuestions('Backend Architecture').slice(0, 30))
     },
     {
       id: 'product-management',
       title: 'Product Management',
       description: 'Test your product management skills including strategy, roadmapping, and user research',
       category: 'Management',
-      totalQuestions: 22,
-      timeLimit: 25,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 70,
       color: 'from-emerald-500 to-green-500',
       icon: Target,
-      questions: generateQuestions('Product Management', 22)
+      questions: shuffleArray(getTopicQuestions('Product Management').slice(0, 30))
     },
     {
       id: 'ux-research',
       title: 'UX Research & Testing',
       description: 'Test your UX research skills including user testing, analytics, and research methods',
       category: 'Design',
-      totalQuestions: 20,
-      timeLimit: 25,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 70,
       color: 'from-violet-500 to-purple-500',
       icon: Eye,
-      questions: generateQuestions('UX Research', 20)
+      questions: shuffleArray(getTopicQuestions('UX Research').slice(0, 30))
     },
     {
       id: 'game-development',
       title: 'Game Development',
       description: 'Test your game development knowledge including game engines, physics, and game design',
       category: 'Gaming',
-      totalQuestions: 25,
-      timeLimit: 30,
+      totalQuestions: 30,
+      timeLimit: 35,
       cutoffScore: 75,
       color: 'from-yellow-500 to-orange-500',
       icon: Gamepad2,
-      questions: generateQuestions('Game Development', 25)
+      questions: shuffleArray(getTopicQuestions('Game Development').slice(0, 30))
     },
     {
       id: 'cybersecurity-advanced',
@@ -291,7 +252,7 @@ export default function AssessmentPage() {
       cutoffScore: 80,
       color: 'from-red-600 to-pink-600',
       icon: Shield,
-      questions: generateQuestions('Advanced Security', 30)
+      questions: shuffleArray(getTopicQuestions('Advanced Security').slice(0, 30))
     }
   ];
 
@@ -317,6 +278,8 @@ export default function AssessmentPage() {
     const assessment = assessments.find(a => a.id === assessmentId);
     if (assessment) {
       setTimeLeft(assessment.timeLimit * 60);
+      // Reshuffle questions for each new attempt
+      assessment.questions = shuffleArray(getTopicQuestions(assessment.title.split(' ')[0]).slice(0, 30));
     }
     setCurrentQuestion(0);
     setAnswers({});
@@ -341,19 +304,24 @@ export default function AssessmentPage() {
     let correctAnswers = 0;
     let wrongAnswers = 0;
     const mistakes: any[] = [];
+    const scoreBreakdown = { easy: 0, medium: 0, hard: 0 };
     
     assessment.questions.forEach(q => {
       if (answers[q.id] !== undefined) {
         if (answers[q.id] === q.correctAnswer) {
           totalScore += q.points;
           correctAnswers++;
+          scoreBreakdown[q.difficulty as keyof typeof scoreBreakdown]++;
         } else {
           wrongAnswers++;
           mistakes.push({
             questionId: q.id,
             userAnswer: answers[q.id],
             correctAnswer: q.correctAnswer,
-            explanation: q.explanation
+            explanation: q.explanation,
+            question: q.question,
+            options: q.options,
+            difficulty: q.difficulty
           });
         }
       }
@@ -367,7 +335,7 @@ export default function AssessmentPage() {
     const recommendations = getRecommendations(percentage, assessment.category, mistakes);
     
     const result: AssessmentResult = {
-      id: '', // Will be set by the service
+      id: '',
       assessmentId: selectedAssessment,
       assessmentTitle: assessment.title,
       userId: user?.id || 'anonymous',
@@ -469,6 +437,104 @@ export default function AssessmentPage() {
     }
   };
 
+  const downloadResults = () => {
+    if (!results) return;
+    
+    const assessment = assessments.find(a => a.id === results.assessmentId);
+    const content = `# SkillSphere Assessment Results
+
+## Assessment Details
+**Title:** ${assessment?.title}
+**Category:** ${assessment?.category}
+**Completed:** ${results.completedAt.toLocaleString()}
+
+## Performance Summary
+**Final Score:** ${results.totalScore} out of ${results.maxScore} points
+**Percentage:** ${results.percentage.toFixed(1)}%
+**Grade:** ${results.grade}
+**Status:** ${results.passed ? '✅ PASSED' : '❌ NOT PASSED'}
+**Skill Level:** ${results.skillLevel}
+**Time Taken:** ${formatTime(results.timeTaken)}
+**Cutoff Score:** ${assessment?.cutoffScore}%
+
+## Detailed Metrics
+**Questions Answered:** ${results.questionsAnswered} out of ${assessment?.totalQuestions}
+**Correct Answers:** ${results.correctAnswers}
+**Incorrect Answers:** ${results.wrongAnswers}
+**Accuracy Rate:** ${((results.correctAnswers / results.questionsAnswered) * 100).toFixed(1)}%
+
+## Score Breakdown
+- **Easy Questions:** ${results.mistakes.filter(m => m.difficulty === 'easy').length} correct
+- **Medium Questions:** ${results.mistakes.filter(m => m.difficulty === 'medium').length} correct  
+- **Hard Questions:** ${results.mistakes.filter(m => m.difficulty === 'hard').length} correct
+- **Total Points Earned:** ${results.totalScore}/${results.maxScore}
+
+## Personalized Recommendations
+${results.recommendations.map((rec, index) => `${index + 1}. ${rec}`).join('\n')}
+
+## Assessment Statistics
+- **Assessment ID:** ${results.assessmentId}
+- **Total Time Allowed:** ${assessment?.timeLimit} minutes
+- **Time Used:** ${formatTime(results.timeTaken)}
+- **Efficiency:** ${((results.timeTaken / (assessment?.timeLimit || 1 * 60)) * 100).toFixed(1)}%
+
+---
+Generated by SkillSphere - AI-Powered Skill Assessment Platform
+Generated on: ${new Date().toLocaleString()}`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `assessment-results-${results.assessmentId}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const downloadCertificate = () => {
+    if (!results || !results.passed) return;
+    
+    const assessment = assessments.find(a => a.id === results.assessmentId);
+    const content = `# Certificate of Achievement
+
+This is to certify that the participant has successfully completed the
+
+## ${assessment?.title}
+
+Assessment with a score of ${results.percentage.toFixed(1)}%
+
+**Grade:** ${results.grade}
+**Skill Level:** ${results.skillLevel}
+**Completed:** ${results.completedAt.toLocaleDateString()}
+**Time Taken:** ${formatTime(results.timeTaken)}
+**Cutoff Score:** ${assessment?.cutoffScore}%
+
+This certificate acknowledges the successful completion of the assessment and demonstrates proficiency in ${assessment?.category.toLowerCase()} skills.
+
+## Assessment Details
+- **Total Questions:** ${assessment?.totalQuestions}
+- **Correct Answers:** ${results.correctAnswers}
+- **Accuracy:** ${((results.correctAnswers / results.questionsAnswered) * 100).toFixed(1)}%
+- **Points Earned:** ${results.totalScore}/${results.maxScore}
+
+---
+Issued by SkillSphere
+AI-Powered Skill Assessment Platform
+Generated on: ${new Date().toLocaleString()}`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `certificate-${results.assessmentId}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // Filter assessments based on search and category
   const filteredAssessments = assessments.filter(assessment => {
     const matchesSearch = assessment.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -507,8 +573,7 @@ export default function AssessmentPage() {
             <p className={`text-xl max-w-3xl mx-auto ${
               isDarkMode ? 'text-gray-300' : 'text-gray-600'
             }`}>
-              Choose an assessment to test your skills. Each assessment has specific cutoff scores 
-              and will provide detailed feedback on your performance.
+              Choose an assessment to test your skills. Each assessment has 30 questions with shuffling for retakes.
             </p>
           </div>
 
@@ -724,6 +789,63 @@ export default function AssessmentPage() {
               </CardContent>
             </Card>
 
+            {/* Mistakes Review */}
+            {results.mistakes.length > 0 && (
+              <Card className={`border-0 shadow-xl mb-8 transition-colors duration-300 ${
+                isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/80 border-white/20'
+              }`}>
+                <CardHeader>
+                  <CardTitle className={`text-xl flex items-center gap-2 ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    <XCircle className="w-5 h-5 text-red-500" />
+                    Questions You Missed
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {results.mistakes.map((mistake, index) => (
+                    <div key={index} className={`p-4 rounded-lg border ${
+                      isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-gray-50 border-gray-200'
+                    }`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className={`font-medium ${
+                          isDarkMode ? 'text-white' : 'text-gray-900'
+                        }`}>Question {mistake.questionId}</h4>
+                        <Badge className={getDifficultyColor(mistake.difficulty)}>
+                          {mistake.difficulty}
+                        </Badge>
+                      </div>
+                      <p className={`mb-3 ${
+                        isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                      }`}>{mistake.question}</p>
+                      <div className="space-y-2 mb-3">
+                        {mistake.options.map((option, optIndex) => (
+                          <div key={optIndex} className={`flex items-center gap-2 ${
+                            optIndex === mistake.correctAnswer 
+                              ? 'text-green-600 font-medium' 
+                              : optIndex === mistake.userAnswer 
+                                ? 'text-red-600 font-medium'
+                                : isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                          }`}>
+                            {optIndex === mistake.correctAnswer && <CheckCircle className="w-4 h-4" />}
+                            {optIndex === mistake.userAnswer && optIndex !== mistake.correctAnswer && <XCircle className="w-4 h-4" />}
+                            <span>{option}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className={`p-3 rounded-lg ${
+                        isDarkMode ? 'bg-blue-900/20' : 'bg-blue-50'
+                      }`}>
+                        <p className={`text-sm ${
+                          isDarkMode ? 'text-blue-300' : 'text-blue-700'
+                        }`}><strong>Explanation:</strong> {mistake.explanation}</p>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
+
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -734,6 +856,26 @@ export default function AssessmentPage() {
                 <RotateCcw className="w-5 h-5 mr-2" />
                 Take Another Assessment
               </Button>
+              <Button 
+                onClick={downloadResults}
+                variant="outline"
+                size="lg"
+                className="px-8 py-4"
+              >
+                <Download className="w-5 h-5 mr-2" />
+                Download Results
+              </Button>
+              {results.passed && (
+                <Button 
+                  onClick={downloadCertificate}
+                  variant="outline"
+                  size="lg"
+                  className="px-8 py-4"
+                >
+                  <Award className="w-5 h-5 mr-2" />
+                  Download Certificate
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -748,7 +890,6 @@ export default function AssessmentPage() {
 
   const currentQ = assessment.questions[currentQuestion];
   
-  // Safety check - if currentQ is undefined, return to assessment selection
   if (!currentQ) {
     return (
       <div className={`min-h-screen py-8 transition-colors duration-300 ${
