@@ -153,7 +153,7 @@ export const questionsMap: { [key: string]: Question[] } = {
       difficulty: 'medium',
       points: 8
     },
-    // Add 40 more basic JavaScript questions here...
+    // Add 190 more JavaScript questions here...
     {
       id: 11,
       question: 'What is the difference between let, const, and var?',
