@@ -22,31 +22,32 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    username: user?.username || '',
-    headline: user?.headline || '',
-    dob: user?.dob || '',
-    education: user?.education || '',
-    gender: user?.gender || '',
-    skills: user?.skills || [],
-    bio: user?.bio || '',
-    location: user?.location || '',
-    phone: user?.phone || '',
+    name: user?.name || 'John Doe',
+    username: user?.username || 'johndoe',
+    headline: user?.headline || 'Full Stack Developer & UI/UX Designer',
+    dob: user?.dob || '1990-05-15',
+    education: user?.education || 'Bachelor of Computer Science',
+    gender: user?.gender || 'Male',
+    skills: user?.skills || ['React', 'TypeScript', 'Node.js', 'Python', 'UI/UX Design'],
+    bio: user?.bio || 'Passionate full-stack developer with 5+ years of experience building modern web applications. Specialized in React, TypeScript, and cloud technologies. Always eager to learn new technologies and solve complex problems.',
+    location: user?.location || 'San Francisco, CA',
+    phone: user?.phone || '+1 (555) 123-4567',
     avatar: user?.avatar || '',
     avatarFile: null as File | null,
     resume: user?.resume || '',
     resumeFile: null as File | null,
     stats: user?.stats || {
-      projectsCompleted: 0,
-      totalEarnings: 0,
-      clientRating: 0,
-      responseTime: '',
-      skillsVerified: 0,
-      portfolioItems: 0
+      projectsCompleted: 47,
+      totalEarnings: 125000,
+      clientRating: 4.9,
+      responseTime: '< 2 hours',
+      skillsVerified: 12,
+      portfolioItems: 8
     },
-    isPublic: user?.isPublic || false,
-    socialLinks: user?.socialLinks || { linkedin: '', github: '' }
+    isPublic: user?.isPublic || true,
+    socialLinks: user?.socialLinks || { linkedin: 'linkedin.com/in/johndoe', github: 'github.com/johndoe' }
   });
   const [localUser, setLocalUser] = useState(user);
   const [skillInput, setSkillInput] = useState('');
