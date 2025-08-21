@@ -4,6 +4,7 @@ import { Plus, MessageSquare, Briefcase, User, X, Bell, Search, Home, ArrowRight
 import Navbar from './Navbar';
 import Footer from './Footer';
 import ChatWidget from './ChatWidget';
+import ThemeToggle from './ThemeToggle';
 
 const Layout = () => {
   const [showFAB, setShowFAB] = useState(false);
@@ -202,6 +203,9 @@ const Layout = () => {
           </div>
         </div>
       </div>
+
+      {/* Theme Toggle */}
+      <ThemeToggle />
     </div>
   );
 };
