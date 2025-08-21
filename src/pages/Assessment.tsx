@@ -1,789 +1,464 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
   Brain, 
-  Code, 
-  Palette, 
-  Database, 
-  Cloud, 
-  Smartphone, 
-  Globe, 
-  Shield,
-  Clock,
+  Target, 
+  Clock, 
+  CheckCircle, 
+  Star,
+  TrendingUp,
   Users,
   Award,
-  Star,
-  CheckCircle,
+  BookOpen,
+  Zap,
+  Rocket,
+  Sparkles,
   ArrowRight,
+  ArrowLeft,
+  ChevronRight,
+  ChevronLeft,
+  ChevronUp,
+  ChevronDown,
+  MoreHorizontal,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  Grid,
+  List,
+  RefreshCw,
+  Bookmark,
+  Share2,
+  Download,
+  Archive,
+  Tag,
+  Filter3,
+  Sliders,
+  Settings,
+  Bell,
+  Mail,
+  Phone,
+  Globe,
+  Building,
+  Briefcase,
+  GraduationCap,
+  Code,
+  Palette,
+  Database,
+  Cloud,
+  Smartphone,
+  Shield,
+  Lock,
+  Unlock,
+  Key,
+  LogOut,
+  X,
+  Home,
+  MessageSquare,
+  FileText,
+  Image,
+  Video,
+  Music,
+  Folder,
+  File,
+  Server,
+  Cpu,
+  HardDrive,
+  Wifi,
+  Bluetooth,
+  Battery,
+  WifiOff,
+  Volume2,
+  VolumeX,
   Play,
   Pause,
-  RotateCcw,
-  BookOpen,
-  Target,
-  Zap,
-  DollarSign,
-  Lock,
-  Eye,
-  EyeOff,
-  CreditCard,
-  Calendar,
-  MapPin,
-  Mail,
-  Phone
+  SkipForward,
+  SkipBack,
+  Repeat,
+  Shuffle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
-interface Certification {
+interface Assessment {
   id: string;
   title: string;
   description: string;
-  icon: any;
-  duration: string;
+  category: 'skill' | 'personality' | 'aptitude' | 'career';
+  duration: number; // in minutes
   questions: number;
-  price: number;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  category: string;
-  features: string[];
-  examTopics: string[];
-  validity: string;
-  badge: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  isCompleted: boolean;
+  score?: number;
+  maxScore: number;
+  tags: string[];
 }
 
-export default function AssessmentPage() {
+export default function Assessment() {
   const navigate = useNavigate();
-  const [selectedCert, setSelectedCert] = useState<Certification | null>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [showPayment, setShowPayment] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [examStarted, setExamStarted] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedAssessment, setSelectedAssessment] = useState<Assessment | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [showResults, setShowResults] = useState(false);
-  const [score, setScore] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, any>>({});
+  const [isTakingAssessment, setIsTakingAssessment] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
-  useEffect(() => {
-    if (examStarted && timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            setExamStarted(false);
-            setShowResults(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [examStarted, timeLeft]);
-
-  const certifications: Certification[] = [
+  const assessments: Assessment[] = [
     {
-      id: 'ai-ml-expert',
-      title: 'AI & Machine Learning Expert',
-      description: 'Master the fundamentals of artificial intelligence and machine learning algorithms',
-      icon: Brain,
-      duration: '3 hours',
-      questions: 100,
-      price: 299,
-      difficulty: 'Advanced',
-      category: 'Artificial Intelligence',
-      features: [
-        'Comprehensive AI/ML assessment',
-        'Real-world project scenarios',
-        'Industry-recognized certification',
-        'Lifetime access to materials',
-        'Expert review and feedback'
-      ],
-      examTopics: [
-        'Neural Networks & Deep Learning',
-        'Supervised & Unsupervised Learning',
-        'Natural Language Processing',
-        'Computer Vision',
-        'Model Deployment & MLOps'
-      ],
-      validity: '2 years',
-      badge: '🤖'
+      id: '1',
+      title: 'Technical Skills Assessment',
+      description: 'Evaluate your programming and technical skills across multiple domains.',
+      category: 'skill',
+      duration: 30,
+      questions: 25,
+      difficulty: 'medium',
+      isCompleted: false,
+      maxScore: 100,
+      tags: ['Programming', 'Technical', 'Skills']
     },
     {
-      id: 'full-stack-developer',
-      title: 'Full-Stack Developer',
-      description: 'Comprehensive assessment covering frontend, backend, and database technologies',
-      icon: Code,
-      duration: '4 hours',
-      questions: 120,
-      price: 249,
-      difficulty: 'Intermediate',
-      category: 'Web Development',
-      features: [
-        'Frontend & Backend assessment',
-        'Database design evaluation',
-        'API development testing',
-        'Performance optimization',
-        'Security best practices'
-      ],
-      examTopics: [
-        'React, Angular, Vue.js',
-        'Node.js, Python, Java',
-        'SQL & NoSQL databases',
-        'RESTful APIs & GraphQL',
-        'DevOps & CI/CD'
-      ],
-      validity: '2 years',
-      badge: '💻'
+      id: '2',
+      title: 'Personality Type Analysis',
+      description: 'Discover your personality type and work style preferences.',
+      category: 'personality',
+      duration: 15,
+      questions: 20,
+      difficulty: 'easy',
+      isCompleted: true,
+      score: 85,
+      maxScore: 100,
+      tags: ['Personality', 'Work Style', 'Preferences']
     },
     {
-      id: 'ui-ux-designer',
-      title: 'UI/UX Design Specialist',
-      description: 'Evaluate your design thinking, user research, and interface design skills',
-      icon: Palette,
-      duration: '2.5 hours',
-      questions: 80,
-      price: 199,
-      difficulty: 'Intermediate',
-      category: 'Design',
-      features: [
-        'Design thinking assessment',
-        'User research evaluation',
-        'Prototyping skills test',
-        'Design system knowledge',
-        'Portfolio review included'
-      ],
-      examTopics: [
-        'User Research & Personas',
-        'Information Architecture',
-        'Wireframing & Prototyping',
-        'Visual Design Principles',
-        'Usability Testing'
-      ],
-      validity: '2 years',
-      badge: '🎨'
+      id: '3',
+      title: 'Problem Solving Aptitude',
+      description: 'Test your logical thinking and problem-solving abilities.',
+      category: 'aptitude',
+      duration: 45,
+      questions: 30,
+      difficulty: 'hard',
+      isCompleted: false,
+      maxScore: 100,
+      tags: ['Logic', 'Problem Solving', 'Analytical']
     },
     {
-      id: 'data-scientist',
-      title: 'Data Scientist',
-      description: 'Comprehensive evaluation of statistical analysis, data modeling, and business intelligence',
-      icon: Database,
-      duration: '3.5 hours',
-      questions: 110,
-      price: 279,
-      difficulty: 'Advanced',
-      category: 'Data Science',
-      features: [
-        'Statistical analysis testing',
-        'Data modeling assessment',
-        'Business intelligence evaluation',
-        'Big data technologies',
-        'Industry case studies'
-      ],
-      examTopics: [
-        'Statistical Analysis',
-        'Data Visualization',
-        'Predictive Modeling',
-        'Big Data Technologies',
-        'Business Intelligence'
-      ],
-      validity: '2 years',
-      badge: '📊'
+      id: '4',
+      title: 'Career Interest Assessment',
+      description: 'Identify your career interests and potential job matches.',
+      category: 'career',
+      duration: 20,
+      questions: 15,
+      difficulty: 'easy',
+      isCompleted: false,
+      maxScore: 100,
+      tags: ['Career', 'Interests', 'Job Matching']
     },
     {
-      id: 'cloud-architect',
-      title: 'Cloud Solutions Architect',
-      description: 'Assess your knowledge of cloud platforms, architecture patterns, and deployment strategies',
-      icon: Cloud,
-      duration: '3 hours',
-      questions: 90,
-      price: 329,
-      difficulty: 'Advanced',
-      category: 'Cloud Computing',
-      features: [
-        'Multi-cloud platform testing',
-        'Architecture design evaluation',
-        'Security & compliance assessment',
-        'Cost optimization strategies',
-        'Migration planning'
-      ],
-      examTopics: [
-        'AWS, Azure, GCP',
-        'Microservices Architecture',
-        'Container Orchestration',
-        'Serverless Computing',
-        'Cloud Security'
-      ],
-      validity: '2 years',
-      badge: '☁️'
+      id: '5',
+      title: 'Communication Skills Test',
+      description: 'Assess your written and verbal communication abilities.',
+      category: 'skill',
+      duration: 25,
+      questions: 20,
+      difficulty: 'medium',
+      isCompleted: true,
+      score: 92,
+      maxScore: 100,
+      tags: ['Communication', 'Writing', 'Verbal']
     },
     {
-      id: 'mobile-developer',
-      title: 'Mobile App Developer',
-      description: 'Test your skills in native and cross-platform mobile development',
-      icon: Smartphone,
-      duration: '2.5 hours',
-      questions: 85,
-      price: 229,
-      difficulty: 'Intermediate',
-      category: 'Mobile Development',
-      features: [
-        'Native development testing',
-        'Cross-platform evaluation',
-        'Performance optimization',
-        'App store guidelines',
-        'Real device testing'
-      ],
-      examTopics: [
-        'iOS Development (Swift)',
-        'Android Development (Kotlin)',
-        'React Native & Flutter',
-        'Mobile UI/UX',
-        'App Performance'
-      ],
-      validity: '2 years',
-      badge: '📱'
+      id: '6',
+      title: 'Leadership Potential',
+      description: 'Evaluate your leadership qualities and management potential.',
+      category: 'personality',
+      duration: 35,
+      questions: 25,
+      difficulty: 'medium',
+      isCompleted: false,
+      maxScore: 100,
+      tags: ['Leadership', 'Management', 'Team Work']
     }
   ];
 
-  const startExam = (cert: Certification) => {
-    setSelectedCert(cert);
-    setTimeLeft(cert.duration === '2.5 hours' ? 9000 : cert.duration === '3 hours' ? 10800 : 14400); // Convert to seconds
-    setCurrentStep(2);
-  };
+  const filteredAssessments = assessments.filter(assessment => 
+    selectedCategory === 'all' || assessment.category === selectedCategory
+  );
 
-  const beginExam = () => {
-    setExamStarted(true);
-    setCurrentStep(3);
-  };
-
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const handlePayment = () => {
-    setShowPayment(true);
-    setCurrentStep(4);
-  };
-
-  const processPayment = () => {
-    // Simulate payment processing
-    setTimeout(() => {
-      setShowPayment(false);
-      setCurrentStep(5);
-    }, 2000);
-  };
-
-  const sampleQuestions = [
-    {
-      question: "What is the primary advantage of using a neural network for image classification?",
-      options: [
-        "Faster computation speed",
-        "Automatic feature extraction",
-        "Lower memory usage",
-        "Simpler implementation"
-      ],
-      correct: 1
-    },
-    {
-      question: "Which of the following is NOT a valid HTTP status code?",
-      options: ["200", "404", "500", "999"],
-      correct: 3
-    },
-    {
-      question: "What is the main principle of responsive design?",
-      options: [
-        "Using only CSS Grid",
-        "Mobile-first approach",
-        "Fixed pixel widths",
-        "JavaScript-only solutions"
-      ],
-      correct: 1
-    }
+  const categories = [
+    { id: 'all', name: 'All Assessments', count: assessments.length },
+    { id: 'skill', name: 'Skills', count: assessments.filter(a => a.category === 'skill').length },
+    { id: 'personality', name: 'Personality', count: assessments.filter(a => a.category === 'personality').length },
+    { id: 'aptitude', name: 'Aptitude', count: assessments.filter(a => a.category === 'aptitude').length },
+    { id: 'career', name: 'Career', count: assessments.filter(a => a.category === 'career').length }
   ];
+
+  const getDifficultyColor = (difficulty: Assessment['difficulty']) => {
+    switch (difficulty) {
+      case 'easy': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300';
+      case 'medium': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300';
+      case 'hard': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300';
+    }
+  };
+
+  const getCategoryColor = (category: Assessment['category']) => {
+    switch (category) {
+      case 'skill': return 'from-blue-500 to-indigo-600';
+      case 'personality': return 'from-purple-500 to-pink-600';
+      case 'aptitude': return 'from-green-500 to-emerald-600';
+      case 'career': return 'from-orange-500 to-red-600';
+    }
+  };
+
+  const handleStartAssessment = (assessment: Assessment) => {
+    setSelectedAssessment(assessment);
+    setIsTakingAssessment(true);
+    setCurrentQuestion(0);
+    setAnswers({});
+  };
+
+  const handleAnswerQuestion = (answer: any) => {
+    setAnswers(prev => ({ ...prev, [currentQuestion]: answer }));
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestion < (selectedAssessment?.questions || 0) - 1) {
+      setCurrentQuestion(prev => prev + 1);
+    } else {
+      // Assessment completed
+      setIsTakingAssessment(false);
+      setSelectedAssessment(null);
+    }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(prev => prev - 1);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-24 lg:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-indigo-600/20 dark:from-blue-900/30 dark:via-purple-900/30 dark:to-indigo-900/30">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-blue-400/10 dark:bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-400/10 dark:bg-purple-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        </div>
-        
-        <div className="relative container mx-auto px-4 text-center">
+      {/* Header */}
+      <section className="py-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+        <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-between"
           >
-            <Badge variant="secondary" className="mb-6 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/50">
-              🏆 Professional Certifications
-            </Badge>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Free Assessments</h1>
+                <p className="text-gray-600 dark:text-gray-400">Evaluate your skills and discover your potential</p>
+              </div>
+            </div>
             
-            <h1 className="text-5xl lg:text-7xl font-bold mb-8 leading-tight text-gray-900 dark:text-white">
-              Skill
-              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                Assessment
-              </span>
-            </h1>
-            
-            <p className="text-xl lg:text-2xl mb-12 text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Validate your expertise with industry-recognized certifications. Prove your skills and advance your career.
-            </p>
+            <Button onClick={() => navigate('/certification-exams')}>
+              <Award className="w-4 h-4 mr-2" />
+              Certification Exams
+            </Button>
           </motion.div>
         </div>
       </section>
 
-      {/* Certifications Grid */}
-      {currentStep === 1 && (
-        <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="max-w-7xl mx-auto"
-            >
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                  Choose Your Certification
-                </h2>
-                <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                  Select from our comprehensive range of professional certifications
-                </p>
-              </div>
-              
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {certifications.map((cert, index) => (
-                  <motion.div
-                    key={cert.id}
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-                    transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
+      {!isTakingAssessment ? (
+        <>
+          {/* Categories Filter */}
+          <section className="py-6">
+            <div className="container mx-auto px-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="flex flex-wrap gap-2 justify-center"
+              >
+                {categories.map((category) => (
+                  <Button
+                    key={category.id}
+                    variant={selectedCategory === category.id ? 'default' : 'outline'}
+                    onClick={() => setSelectedCategory(category.id)}
+                    className="flex items-center gap-2"
                   >
-                    <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group cursor-pointer" onClick={() => startExam(cert)}>
-                      <CardHeader className="pb-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className={`w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                            <cert.icon className="w-8 h-8 text-white" />
+                    {category.name}
+                    <Badge variant="secondary" className="ml-1">
+                      {category.count}
+                    </Badge>
+                  </Button>
+                ))}
+              </motion.div>
+            </div>
+          </section>
+
+          {/* Assessments Grid */}
+          <section className="py-8">
+            <div className="container mx-auto px-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {filteredAssessments.map((assessment, index) => (
+                  <motion.div
+                    key={assessment.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+                    transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
+                  >
+                    <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className={`w-12 h-12 bg-gradient-to-r ${getCategoryColor(assessment.category)} rounded-xl flex items-center justify-center`}>
+                            <Brain className="w-6 h-6 text-white" />
                           </div>
-                          <Badge variant={cert.difficulty === 'Advanced' ? 'destructive' : cert.difficulty === 'Intermediate' ? 'default' : 'secondary'}>
-                            {cert.difficulty}
+                          {assessment.isCompleted && (
+                            <CheckCircle className="w-6 h-6 text-green-500" />
+                          )}
+                        </div>
+                        
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                          {assessment.title}
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
+                          {assessment.description}
+                        </p>
+                        
+                        <div className="flex items-center gap-2 mb-4">
+                          <Badge className={getDifficultyColor(assessment.difficulty)}>
+                            {assessment.difficulty}
+                          </Badge>
+                          <Badge variant="outline">
+                            {assessment.category}
                           </Badge>
                         </div>
-                        <CardTitle className="text-2xl text-gray-900 dark:text-white mb-2">{cert.title}</CardTitle>
-                        <CardDescription className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                          {cert.description}
-                        </CardDescription>
-                      </CardHeader>
-                      
-                      <CardContent className="space-y-4">
-                        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                          <span className="flex items-center gap-2">
-                            <Clock className="w-4 h-4" />
-                            {cert.duration}
-                          </span>
-                          <span className="flex items-center gap-2">
-                            <BookOpen className="w-4 h-4" />
-                            {cert.questions} questions
-                          </span>
+                        
+                        <div className="space-y-3 mb-4">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600 dark:text-gray-400">Duration</span>
+                            <span className="text-gray-900 dark:text-white font-medium">{assessment.duration} min</span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600 dark:text-gray-400">Questions</span>
+                            <span className="text-gray-900 dark:text-white font-medium">{assessment.questions}</span>
+                          </div>
+                          {assessment.isCompleted && assessment.score && (
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-gray-600 dark:text-gray-400">Score</span>
+                              <span className="text-gray-900 dark:text-white font-medium">{assessment.score}/{assessment.maxScore}</span>
+                            </div>
+                          )}
                         </div>
                         
-                        <div className="flex items-center justify-between">
-                          <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                            ${cert.price}
-                          </div>
-                          <Button className="group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white">
-                            <span className="flex items-center gap-2">
-                              Start Assessment
-                              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </span>
-                          </Button>
+                        <div className="flex flex-wrap gap-1 mb-4">
+                          {assessment.tags.map((tag, idx) => (
+                            <Badge key={idx} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
                         </div>
                         
-                        <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                          <div className="flex flex-wrap gap-2">
-                            {cert.features.slice(0, 3).map((feature, idx) => (
-                              <Badge key={idx} variant="outline" className="text-xs">
-                                {feature}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
+                        <Button 
+                          className="w-full"
+                          onClick={() => handleStartAssessment(assessment)}
+                          disabled={assessment.isCompleted}
+                        >
+                          {assessment.isCompleted ? 'Completed' : 'Start Assessment'}
+                        </Button>
                       </CardContent>
                     </Card>
                   </motion.div>
                 ))}
-              </div>
-            </motion.div>
-          </div>
-        </section>
-      )}
-
-      {/* Exam Details */}
-      {currentStep === 2 && selectedCert && (
-        <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+              </motion.div>
+            </div>
+          </section>
+        </>
+      ) : (
+        /* Assessment Taking Interface */
+        <section className="py-8">
           <div className="container mx-auto px-4">
             <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+              transition={{ duration: 0.6 }}
               className="max-w-4xl mx-auto"
             >
-              <div className="text-center mb-12">
-                <div className="text-6xl mb-4">{selectedCert.badge}</div>
-                <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                  {selectedCert.title}
-                </h2>
-                <p className="text-xl text-gray-600 dark:text-gray-300">
-                  Certification Assessment Details
-                </p>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
-                  <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white">Exam Information</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Duration:</span>
-                      <span className="font-semibold text-gray-900 dark:text-white">{selectedCert.duration}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Questions:</span>
-                      <span className="font-semibold text-gray-900 dark:text-white">{selectedCert.questions}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Difficulty:</span>
-                      <Badge variant={selectedCert.difficulty === 'Advanced' ? 'destructive' : 'default'}>
-                        {selectedCert.difficulty}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Validity:</span>
-                      <span className="font-semibold text-gray-900 dark:text-white">{selectedCert.validity}</span>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
-                  <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white">Topics Covered</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {selectedCert.examTopics.map((topic, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                          <span className="text-gray-700 dark:text-gray-300">{topic}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              <div className="text-center space-y-4">
-                <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                  ${selectedCert.price}
-                </div>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    size="lg" 
-                    onClick={handlePayment}
-                    className="group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg font-semibold rounded-2xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105"
-                  >
-                    <span className="flex items-center gap-2">
-                      <CreditCard className="w-5 h-5" />
-                      Purchase & Start
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </Button>
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    onClick={() => setCurrentStep(1)}
-                    className="border-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 px-8 py-4 text-lg font-semibold rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
-                  >
-                    Back to Certifications
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-      )}
-
-      {/* Payment Section */}
-      {currentStep === 4 && selectedCert && (
-        <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="max-w-2xl mx-auto"
-            >
-              <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                  Complete Your Purchase
-                </h2>
-                <p className="text-xl text-gray-600 dark:text-gray-300">
-                  Secure payment to access your certification assessment
-                </p>
-              </div>
-              
               <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
                 <CardHeader>
-                  <CardTitle className="text-gray-900 dark:text-white">Payment Details</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-gray-900 dark:text-white">
+                        {selectedAssessment?.title}
+                      </CardTitle>
+                      <CardDescription>
+                        Question {currentQuestion + 1} of {selectedAssessment?.questions}
+                      </CardDescription>
+                    </div>
+                    <Button variant="outline" onClick={() => setIsTakingAssessment(false)}>
+                      <X className="w-4 h-4 mr-2" />
+                      Exit
+                    </Button>
+                  </div>
+                  
+                  <Progress 
+                    value={((currentQuestion + 1) / (selectedAssessment?.questions || 1)) * 100} 
+                    className="mt-4"
+                  />
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">{selectedCert.title}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Certification Assessment</div>
-                    </div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      ${selectedCert.price}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Card Number
-                      </label>
-                      <div className="relative">
-                        <input 
-                          type="text" 
-                          placeholder="1234 5678 9012 3456"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                        <CreditCard className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Expiry Date
-                        </label>
-                        <input 
-                          type="text" 
-                          placeholder="MM/YY"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          CVV
-                        </label>
-                        <input 
-                          type="text" 
-                          placeholder="123"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Cardholder Name
-                      </label>
-                      <input 
-                        type="text" 
-                        placeholder="John Doe"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={processPayment}
-                    className="w-full group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 text-lg font-semibold rounded-xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Lock className="w-5 h-5" />
-                      Pay ${selectedCert.price} Securely
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </Button>
-                  
-                  <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-                    🔒 Your payment is secured with SSL encryption
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </section>
-      )}
-
-      {/* Exam Interface */}
-      {currentStep === 3 && selectedCert && examStarted && (
-        <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="max-w-4xl mx-auto"
-            >
-              {/* Exam Header */}
-              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-8">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {selectedCert.title}
-                    </h2>
+                
+                <CardContent className="p-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                      Sample Question {currentQuestion + 1}
+                    </h3>
                     <p className="text-gray-600 dark:text-gray-400">
-                      Question {currentQuestion + 1} of {sampleQuestions.length}
+                      This is a sample question for demonstration purposes. In a real assessment, you would see actual questions here.
                     </p>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                      {formatTime(timeLeft)}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Time Remaining</div>
-                  </div>
-                </div>
-                
-                <Progress 
-                  value={(currentQuestion / sampleQuestions.length) * 100} 
-                  className="h-2"
-                />
-              </div>
-              
-              {/* Question */}
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
-                <CardContent className="p-8">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                    {sampleQuestions[currentQuestion].question}
-                  </h3>
                   
-                  <div className="space-y-4">
-                    {sampleQuestions[currentQuestion].options.map((option, index) => (
-                      <button
+                  <div className="space-y-3 mb-8">
+                    {['Option A', 'Option B', 'Option C', 'Option D'].map((option, index) => (
+                      <div
                         key={index}
-                        onClick={() => setAnswers({...answers, [currentQuestion]: option})}
-                        className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-300 ${
-                          answers[currentQuestion] === option
+                        className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+                          answers[currentQuestion] === index
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                             : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                         }`}
+                        onClick={() => handleAnswerQuestion(index)}
                       >
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          {String.fromCharCode(65 + index)}. {option}
-                        </span>
-                      </button>
+                        <span className="text-gray-900 dark:text-white">{option}</span>
+                      </div>
                     ))}
                   </div>
                   
-                  <div className="flex justify-between mt-8">
+                  <div className="flex justify-between">
                     <Button
                       variant="outline"
-                      onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
+                      onClick={handlePreviousQuestion}
                       disabled={currentQuestion === 0}
                     >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
                       Previous
                     </Button>
                     
-                    {currentQuestion === sampleQuestions.length - 1 ? (
-                      <Button
-                        onClick={() => {
-                          setShowResults(true);
-                          setExamStarted(false);
-                        }}
-                        className="bg-green-600 hover:bg-green-700"
-                      >
-                        Submit Exam
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => setCurrentQuestion(currentQuestion + 1)}
-                        disabled={!answers[currentQuestion]}
-                      >
-                        Next
-                      </Button>
-                    )}
+                    <Button onClick={handleNextQuestion}>
+                      {currentQuestion === (selectedAssessment?.questions || 0) - 1 ? 'Finish' : 'Next'}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
-          </div>
-        </section>
-      )}
-
-      {/* Results */}
-      {showResults && selectedCert && (
-        <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="max-w-2xl mx-auto text-center"
-            >
-              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-12">
-                <div className="text-8xl mb-6">🎉</div>
-                <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                  Assessment Complete!
-                </h2>
-                <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-                  Congratulations on completing your {selectedCert.title} assessment
-                </p>
-                
-                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl p-8 mb-8">
-                  <div className="text-6xl font-bold mb-2">85%</div>
-                  <div className="text-xl">Pass Score</div>
-                </div>
-                
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-gray-600 dark:text-gray-400">Questions Answered:</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">3/3</span>
-                  </div>
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-gray-600 dark:text-gray-400">Time Taken:</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">15:30</span>
-                  </div>
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-gray-600 dark:text-gray-400">Certificate Status:</span>
-                    <Badge className="bg-green-500 hover:bg-green-600">Issued</Badge>
-                  </div>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    size="lg"
-                    onClick={() => navigate('/dashboard')}
-                    className="group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg font-semibold rounded-2xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105"
-                  >
-                    <span className="flex items-center gap-2">
-                      View Certificate
-                      <Award className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    </span>
-                  </Button>
-                  <Button 
-                    size="lg"
-                    variant="outline"
-                    onClick={() => setCurrentStep(1)}
-                    className="border-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 px-8 py-4 text-lg font-semibold rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
-                  >
-                    Take Another Assessment
-                  </Button>
-                </div>
-              </div>
             </motion.div>
           </div>
         </section>
