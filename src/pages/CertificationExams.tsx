@@ -87,28 +87,19 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-
-interface Certification {
-  id: string;
-  title: string;
-  description: string;
-  icon: any;
-  duration: string;
-  questions: number;
-  price: number;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  category: string;
-  features: string[];
-  examTopics: string[];
-  validity: string;
-  badge: string;
-  popularity: number;
-  passRate: number;
-}
+import { 
+  certificationExams, 
+  getCertificationById, 
+  calculateExamScore, 
+  getExamTimeLimit, 
+  formatExamTime,
+  CertificationExam,
+  ExamQuestion
+} from '@/data/certificationExams';
 
 export default function CertificationExams() {
   const navigate = useNavigate();
-  const [selectedCert, setSelectedCert] = useState<Certification | null>(null);
+  const [selectedCert, setSelectedCert] = useState<CertificationExam | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -119,6 +110,7 @@ export default function CertificationExams() {
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [questions, setQuestions] = useState<ExamQuestion[]>([]);
 
   useEffect(() => {
     setIsVisible(true);
@@ -140,213 +132,30 @@ export default function CertificationExams() {
     }
   }, [examStarted, timeLeft]);
 
-  const certifications: Certification[] = [
-    {
-      id: 'ai-ml-expert',
-      title: 'AI & Machine Learning Expert',
-      description: 'Master the fundamentals of artificial intelligence and machine learning algorithms',
-      icon: Brain,
-      duration: '3 hours',
-      questions: 100,
-      price: 299,
-      difficulty: 'Advanced',
-      category: 'Artificial Intelligence',
-      features: [
-        'Comprehensive AI/ML assessment',
-        'Real-world project scenarios',
-        'Industry-recognized certification',
-        'Lifetime access to materials',
-        'Expert review and feedback'
-      ],
-      examTopics: [
-        'Neural Networks & Deep Learning',
-        'Supervised & Unsupervised Learning',
-        'Natural Language Processing',
-        'Computer Vision',
-        'Model Deployment & MLOps'
-      ],
-      validity: '2 years',
-      badge: '🤖',
-      popularity: 95,
-      passRate: 78
-    },
-    {
-      id: 'full-stack-developer',
-      title: 'Full-Stack Developer',
-      description: 'Comprehensive assessment covering frontend, backend, and database technologies',
-      icon: Code,
-      duration: '4 hours',
-      questions: 120,
-      price: 249,
-      difficulty: 'Intermediate',
-      category: 'Web Development',
-      features: [
-        'Frontend & Backend assessment',
-        'Database design evaluation',
-        'API development testing',
-        'Performance optimization',
-        'Security best practices'
-      ],
-      examTopics: [
-        'React, Angular, Vue.js',
-        'Node.js, Python, Java',
-        'SQL & NoSQL databases',
-        'RESTful APIs & GraphQL',
-        'DevOps & CI/CD'
-      ],
-      validity: '2 years',
-      badge: '💻',
-      popularity: 98,
-      passRate: 82
-    },
-    {
-      id: 'ui-ux-designer',
-      title: 'UI/UX Design Specialist',
-      description: 'Evaluate your design thinking, user research, and interface design skills',
-      icon: Palette,
-      duration: '2.5 hours',
-      questions: 80,
-      price: 199,
-      difficulty: 'Intermediate',
-      category: 'Design',
-      features: [
-        'Design thinking assessment',
-        'User research evaluation',
-        'Prototyping skills test',
-        'Design system knowledge',
-        'Portfolio review included'
-      ],
-      examTopics: [
-        'User Research & Personas',
-        'Information Architecture',
-        'Wireframing & Prototyping',
-        'Visual Design Principles',
-        'Usability Testing'
-      ],
-      validity: '2 years',
-      badge: '🎨',
-      popularity: 92,
-      passRate: 85
-    },
-    {
-      id: 'data-scientist',
-      title: 'Data Scientist',
-      description: 'Comprehensive evaluation of statistical analysis, data modeling, and business intelligence',
-      icon: Database,
-      duration: '3.5 hours',
-      questions: 110,
-      price: 279,
-      difficulty: 'Advanced',
-      category: 'Data Science',
-      features: [
-        'Statistical analysis testing',
-        'Data modeling assessment',
-        'Business intelligence evaluation',
-        'Big data technologies',
-        'Industry case studies'
-      ],
-      examTopics: [
-        'Statistical Analysis',
-        'Data Visualization',
-        'Predictive Modeling',
-        'Big Data Technologies',
-        'Business Intelligence'
-      ],
-      validity: '2 years',
-      badge: '📊',
-      popularity: 96,
-      passRate: 75
-    },
-    {
-      id: 'cloud-architect',
-      title: 'Cloud Solutions Architect',
-      description: 'Assess your knowledge of cloud platforms, architecture patterns, and deployment strategies',
-      icon: Cloud,
-      duration: '3 hours',
-      questions: 90,
-      price: 329,
-      difficulty: 'Advanced',
-      category: 'Cloud Computing',
-      features: [
-        'Multi-cloud platform testing',
-        'Architecture design evaluation',
-        'Security & compliance assessment',
-        'Cost optimization strategies',
-        'Migration planning'
-      ],
-      examTopics: [
-        'AWS, Azure, GCP',
-        'Microservices Architecture',
-        'Container Orchestration',
-        'Serverless Computing',
-        'Cloud Security'
-      ],
-      validity: '2 years',
-      badge: '☁️',
-      popularity: 94,
-      passRate: 70
-    },
-    {
-      id: 'mobile-developer',
-      title: 'Mobile App Developer',
-      description: 'Test your skills in native and cross-platform mobile development',
-      icon: Smartphone,
-      duration: '2.5 hours',
-      questions: 85,
-      price: 229,
-      difficulty: 'Intermediate',
-      category: 'Mobile Development',
-      features: [
-        'Native development testing',
-        'Cross-platform evaluation',
-        'Performance optimization',
-        'App store guidelines',
-        'Real device testing'
-      ],
-      examTopics: [
-        'iOS Development (Swift)',
-        'Android Development (Kotlin)',
-        'React Native & Flutter',
-        'Mobile UI/UX',
-        'App Performance'
-      ],
-      validity: '2 years',
-      badge: '📱',
-      popularity: 90,
-      passRate: 80
-    }
-  ];
-
-  const filteredCertifications = certifications.filter(cert => 
+  const filteredCertifications = certificationExams.filter(cert => 
     selectedCategory === 'all' || cert.category === selectedCategory
   );
 
   const categories = [
-    { id: 'all', name: 'All Certifications', count: certifications.length },
-    { id: 'Artificial Intelligence', name: 'AI & ML', count: certifications.filter(c => c.category === 'Artificial Intelligence').length },
-    { id: 'Web Development', name: 'Web Dev', count: certifications.filter(c => c.category === 'Web Development').length },
-    { id: 'Design', name: 'Design', count: certifications.filter(c => c.category === 'Design').length },
-    { id: 'Data Science', name: 'Data Science', count: certifications.filter(c => c.category === 'Data Science').length },
-    { id: 'Cloud Computing', name: 'Cloud', count: certifications.filter(c => c.category === 'Cloud Computing').length },
-    { id: 'Mobile Development', name: 'Mobile', count: certifications.filter(c => c.category === 'Mobile Development').length }
+    { id: 'all', name: 'All Certifications', count: certificationExams.length },
+    { id: 'Artificial Intelligence', name: 'AI & ML', count: certificationExams.filter(c => c.category === 'Artificial Intelligence').length },
+    { id: 'Web Development', name: 'Web Dev', count: certificationExams.filter(c => c.category === 'Web Development').length },
+    { id: 'Design', name: 'Design', count: certificationExams.filter(c => c.category === 'Design').length },
+    { id: 'Data Science', name: 'Data Science', count: certificationExams.filter(c => c.category === 'Data Science').length },
+    { id: 'Cloud Computing', name: 'Cloud', count: certificationExams.filter(c => c.category === 'Cloud Computing').length },
+    { id: 'Mobile Development', name: 'Mobile', count: certificationExams.filter(c => c.category === 'Mobile Development').length }
   ];
 
-  const startExam = (cert: Certification) => {
+  const startExam = (cert: CertificationExam) => {
     setSelectedCert(cert);
-    setTimeLeft(cert.duration === '2.5 hours' ? 9000 : cert.duration === '3 hours' ? 10800 : 14400); // Convert to seconds
+    setTimeLeft(getExamTimeLimit(cert));
+    setQuestions(cert.examQuestions);
     setCurrentStep(2);
   };
 
   const beginExam = () => {
     setExamStarted(true);
     setCurrentStep(3);
-  };
-
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const handlePayment = () => {
@@ -362,33 +171,29 @@ export default function CertificationExams() {
     }, 2000);
   };
 
-  const sampleQuestions = [
-    {
-      question: "What is the primary advantage of using a neural network for image classification?",
-      options: [
-        "Faster computation speed",
-        "Automatic feature extraction",
-        "Lower memory usage",
-        "Simpler implementation"
-      ],
-      correct: 1
-    },
-    {
-      question: "Which of the following is NOT a valid HTTP status code?",
-      options: ["200", "404", "500", "999"],
-      correct: 3
-    },
-    {
-      question: "What is the main principle of responsive design?",
-      options: [
-        "Using only CSS Grid",
-        "Mobile-first approach",
-        "Fixed pixel widths",
-        "JavaScript-only solutions"
-      ],
-      correct: 1
+  const handleAnswerQuestion = (answer: string) => {
+    setAnswers(prev => ({ ...prev, [currentQuestion]: answer }));
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
+    } else {
+      // Exam completed
+      const finalScore = calculateExamScore(questions, answers);
+      setScore(finalScore);
+      setShowResults(true);
+      setExamStarted(false);
     }
-  ];
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(prev => prev - 1);
+    }
+  };
+
+  const currentQuestionData = questions[currentQuestion];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
@@ -470,8 +275,8 @@ export default function CertificationExams() {
                     <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group cursor-pointer" onClick={() => startExam(cert)}>
                       <CardHeader className="pb-4">
                         <div className="flex items-center justify-between mb-4">
-                          <div className={`w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                            <cert.icon className="w-8 h-8 text-white" />
+                          <div className={`w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 text-2xl`}>
+                            {cert.icon}
                           </div>
                           <Badge variant={cert.difficulty === 'Advanced' ? 'destructive' : cert.difficulty === 'Intermediate' ? 'default' : 'secondary'}>
                             {cert.difficulty}
@@ -548,7 +353,7 @@ export default function CertificationExams() {
               className="max-w-4xl mx-auto"
             >
               <div className="text-center mb-12">
-                <div className="text-6xl mb-4">{selectedCert.badge}</div>
+                <div className="text-6xl mb-4">{selectedCert.icon}</div>
                 <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
                   {selectedCert.title}
                 </h2>
@@ -576,6 +381,10 @@ export default function CertificationExams() {
                       <Badge variant={selectedCert.difficulty === 'Advanced' ? 'destructive' : 'default'}>
                         {selectedCert.difficulty}
                       </Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Passing Score:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{selectedCert.passingScore}%</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600 dark:text-gray-400">Validity:</span>
@@ -755,19 +564,19 @@ export default function CertificationExams() {
                       {selectedCert.title}
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400">
-                      Question {currentQuestion + 1} of {sampleQuestions.length}
+                      Question {currentQuestion + 1} of {questions.length}
                     </p>
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                      {formatTime(timeLeft)}
+                      {formatExamTime(timeLeft)}
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">Time Remaining</div>
                   </div>
                 </div>
                 
                 <Progress 
-                  value={(currentQuestion / sampleQuestions.length) * 100} 
+                  value={(currentQuestion / questions.length) * 100} 
                   className="h-2"
                 />
               </div>
@@ -775,56 +584,50 @@ export default function CertificationExams() {
               {/* Question */}
               <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
                 <CardContent className="p-8">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                    {sampleQuestions[currentQuestion].question}
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    {sampleQuestions[currentQuestion].options.map((option, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setAnswers({...answers, [currentQuestion]: option})}
-                        className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-300 ${
-                          answers[currentQuestion] === option
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                        }`}
-                      >
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          {String.fromCharCode(65 + index)}. {option}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  
-                  <div className="flex justify-between mt-8">
-                    <Button
-                      variant="outline"
-                      onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
-                      disabled={currentQuestion === 0}
-                    >
-                      Previous
-                    </Button>
-                    
-                    {currentQuestion === sampleQuestions.length - 1 ? (
-                      <Button
-                        onClick={() => {
-                          setShowResults(true);
-                          setExamStarted(false);
-                        }}
-                        className="bg-green-600 hover:bg-green-700"
-                      >
-                        Submit Exam
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => setCurrentQuestion(currentQuestion + 1)}
-                        disabled={!answers[currentQuestion]}
-                      >
-                        Next
-                      </Button>
-                    )}
-                  </div>
+                  {currentQuestionData && (
+                    <>
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                        {currentQuestionData.question}
+                      </h3>
+                      
+                      <div className="space-y-4">
+                        {currentQuestionData.options.map((option, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleAnswerQuestion(option)}
+                            className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-300 ${
+                              answers[currentQuestion] === option
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                            }`}
+                          >
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              {String.fromCharCode(65 + index)}. {option}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                      
+                      <div className="flex justify-between mt-8">
+                        <Button
+                          variant="outline"
+                          onClick={handlePreviousQuestion}
+                          disabled={currentQuestion === 0}
+                        >
+                          <ArrowLeft className="w-4 h-4 mr-2" />
+                          Previous
+                        </Button>
+                        
+                        <Button
+                          onClick={handleNextQuestion}
+                          disabled={!answers[currentQuestion]}
+                        >
+                          {currentQuestion === questions.length - 1 ? 'Finish' : 'Next'}
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -852,22 +655,27 @@ export default function CertificationExams() {
                 </p>
                 
                 <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl p-8 mb-8">
-                  <div className="text-6xl font-bold mb-2">85%</div>
-                  <div className="text-xl">Pass Score</div>
+                  <div className="text-6xl font-bold mb-2">{score}%</div>
+                  <div className="text-xl">Your Score</div>
+                  <div className="text-sm mt-2">
+                    {score >= selectedCert.passingScore ? '🎉 Passed!' : '❌ Did not pass'}
+                  </div>
                 </div>
                 
                 <div className="space-y-4 mb-8">
                   <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <span className="text-gray-600 dark:text-gray-400">Questions Answered:</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">3/3</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{questions.length}/{questions.length}</span>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-gray-600 dark:text-gray-400">Time Taken:</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">15:30</span>
+                    <span className="text-gray-600 dark:text-gray-400">Passing Score:</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{selectedCert.passingScore}%</span>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <span className="text-gray-600 dark:text-gray-400">Certificate Status:</span>
-                    <Badge className="bg-green-500 hover:bg-green-600">Issued</Badge>
+                    <Badge className={score >= selectedCert.passingScore ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"}>
+                      {score >= selectedCert.passingScore ? 'Issued' : 'Not Qualified'}
+                    </Badge>
                   </div>
                 </div>
                 

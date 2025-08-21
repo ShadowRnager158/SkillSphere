@@ -82,6 +82,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { getQuestionsForAssessment, calculateScore, Question } from '@/data/assessmentQuestions';
 
 interface Assessment {
   id: string;
@@ -105,6 +106,9 @@ export default function Assessment() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, any>>({});
   const [isTakingAssessment, setIsTakingAssessment] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [finalScore, setFinalScore] = useState(0);
+  const [questions, setQuestions] = useState<Question[]>([]);
 
   useEffect(() => {
     setIsVisible(true);
@@ -117,7 +121,7 @@ export default function Assessment() {
       description: 'Evaluate your programming and technical skills across multiple domains.',
       category: 'skill',
       duration: 30,
-      questions: 25,
+      questions: 5,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -129,7 +133,7 @@ export default function Assessment() {
       description: 'Discover your personality type and work style preferences.',
       category: 'personality',
       duration: 15,
-      questions: 20,
+      questions: 5,
       difficulty: 'easy',
       isCompleted: true,
       score: 85,
@@ -142,7 +146,7 @@ export default function Assessment() {
       description: 'Test your logical thinking and problem-solving abilities.',
       category: 'aptitude',
       duration: 45,
-      questions: 30,
+      questions: 5,
       difficulty: 'hard',
       isCompleted: false,
       maxScore: 100,
@@ -154,7 +158,7 @@ export default function Assessment() {
       description: 'Identify your career interests and potential job matches.',
       category: 'career',
       duration: 20,
-      questions: 15,
+      questions: 5,
       difficulty: 'easy',
       isCompleted: false,
       maxScore: 100,
@@ -166,7 +170,7 @@ export default function Assessment() {
       description: 'Assess your written and verbal communication abilities.',
       category: 'skill',
       duration: 25,
-      questions: 20,
+      questions: 5,
       difficulty: 'medium',
       isCompleted: true,
       score: 92,
@@ -179,7 +183,7 @@ export default function Assessment() {
       description: 'Evaluate your leadership qualities and management potential.',
       category: 'personality',
       duration: 35,
-      questions: 25,
+      questions: 5,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -217,10 +221,13 @@ export default function Assessment() {
   };
 
   const handleStartAssessment = (assessment: Assessment) => {
+    const assessmentQuestions = getQuestionsForAssessment(assessment.id);
+    setQuestions(assessmentQuestions);
     setSelectedAssessment(assessment);
     setIsTakingAssessment(true);
     setCurrentQuestion(0);
     setAnswers({});
+    setShowResults(false);
   };
 
   const handleAnswerQuestion = (answer: any) => {
@@ -228,12 +235,14 @@ export default function Assessment() {
   };
 
   const handleNextQuestion = () => {
-    if (currentQuestion < (selectedAssessment?.questions || 0) - 1) {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(prev => prev + 1);
     } else {
       // Assessment completed
+      const score = calculateScore(questions, answers);
+      setFinalScore(score);
+      setShowResults(true);
       setIsTakingAssessment(false);
-      setSelectedAssessment(null);
     }
   };
 
@@ -242,6 +251,17 @@ export default function Assessment() {
       setCurrentQuestion(prev => prev - 1);
     }
   };
+
+  const handleFinishAssessment = () => {
+    setShowResults(false);
+    setSelectedAssessment(null);
+    setQuestions([]);
+    setAnswers({});
+    setCurrentQuestion(0);
+    setFinalScore(0);
+  };
+
+  const currentQuestionData = questions[currentQuestion];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
@@ -272,7 +292,7 @@ export default function Assessment() {
         </div>
       </section>
 
-      {!isTakingAssessment ? (
+      {!isTakingAssessment && !showResults ? (
         <>
           {/* Categories Filter */}
           <section className="py-6">
@@ -383,6 +403,67 @@ export default function Assessment() {
             </div>
           </section>
         </>
+      ) : showResults ? (
+        /* Results Screen */
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+              transition={{ duration: 0.6 }}
+              className="max-w-2xl mx-auto"
+            >
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
+                <CardContent className="p-8 text-center">
+                  <div className="text-6xl mb-6">🎉</div>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                    Assessment Complete!
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400 mb-8">
+                    Congratulations on completing your {selectedAssessment?.title}
+                  </p>
+                  
+                  <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl p-8 mb-8">
+                    <div className="text-5xl font-bold mb-2">{finalScore}%</div>
+                    <div className="text-xl">Your Score</div>
+                  </div>
+                  
+                  <div className="space-y-4 mb-8">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <span className="text-gray-600 dark:text-gray-400">Questions Answered:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{questions.length}/{questions.length}</span>
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <span className="text-gray-600 dark:text-gray-400">Assessment Type:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{selectedAssessment?.category}</span>
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <span className="text-gray-600 dark:text-gray-400">Difficulty:</span>
+                      <Badge className={getDifficultyColor(selectedAssessment?.difficulty || 'medium')}>
+                        {selectedAssessment?.difficulty}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button 
+                      onClick={handleFinishAssessment}
+                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                    >
+                      Take Another Assessment
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => navigate('/dashboard')}
+                    >
+                      Go to Dashboard
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </section>
       ) : (
         /* Assessment Taking Interface */
         <section className="py-8">
@@ -401,62 +482,69 @@ export default function Assessment() {
                         {selectedAssessment?.title}
                       </CardTitle>
                       <CardDescription>
-                        Question {currentQuestion + 1} of {selectedAssessment?.questions}
+                        Question {currentQuestion + 1} of {questions.length}
                       </CardDescription>
                     </div>
-                    <Button variant="outline" onClick={() => setIsTakingAssessment(false)}>
+                    <Button variant="outline" onClick={handleFinishAssessment}>
                       <X className="w-4 h-4 mr-2" />
                       Exit
                     </Button>
                   </div>
                   
                   <Progress 
-                    value={((currentQuestion + 1) / (selectedAssessment?.questions || 1)) * 100} 
+                    value={((currentQuestion + 1) / questions.length) * 100} 
                     className="mt-4"
                   />
                 </CardHeader>
                 
                 <CardContent className="p-6">
-                  <div className="text-center mb-8">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                      Sample Question {currentQuestion + 1}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      This is a sample question for demonstration purposes. In a real assessment, you would see actual questions here.
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-3 mb-8">
-                    {['Option A', 'Option B', 'Option C', 'Option D'].map((option, index) => (
-                      <div
-                        key={index}
-                        className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
-                          answers[currentQuestion] === index
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                        }`}
-                        onClick={() => handleAnswerQuestion(index)}
-                      >
-                        <span className="text-gray-900 dark:text-white">{option}</span>
+                  {currentQuestionData && (
+                    <>
+                      <div className="mb-8">
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                          {currentQuestionData.question}
+                        </h3>
+                        <Badge variant="outline" className="mb-4">
+                          {currentQuestionData.category}
+                        </Badge>
                       </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <Button
-                      variant="outline"
-                      onClick={handlePreviousQuestion}
-                      disabled={currentQuestion === 0}
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Previous
-                    </Button>
-                    
-                    <Button onClick={handleNextQuestion}>
-                      {currentQuestion === (selectedAssessment?.questions || 0) - 1 ? 'Finish' : 'Next'}
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
+                      
+                      <div className="space-y-3 mb-8">
+                        {currentQuestionData.options.map((option, index) => (
+                          <div
+                            key={index}
+                            className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+                              answers[currentQuestion] === index
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                            }`}
+                            onClick={() => handleAnswerQuestion(index)}
+                          >
+                            <span className="text-gray-900 dark:text-white">{option}</span>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="flex justify-between">
+                        <Button
+                          variant="outline"
+                          onClick={handlePreviousQuestion}
+                          disabled={currentQuestion === 0}
+                        >
+                          <ArrowLeft className="w-4 h-4 mr-2" />
+                          Previous
+                        </Button>
+                        
+                        <Button 
+                          onClick={handleNextQuestion}
+                          disabled={answers[currentQuestion] === undefined}
+                        >
+                          {currentQuestion === questions.length - 1 ? 'Finish' : 'Next'}
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
