@@ -5,7 +5,7 @@ import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/SkillSphere/' : '/',
+  base: '/',
   plugins: [
     react(),
     mode === 'analyze' &&

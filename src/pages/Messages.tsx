@@ -13,6 +13,10 @@ import {
   Image,
   Paperclip,
   Smile,
+<<<<<<< Current (Your changes)
+=======
+  Send,
+>>>>>>> Incoming (Background Agent changes)
   User,
   Clock,
   Check,
