@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
 import { 
   User, 
   Shield, 
@@ -114,7 +115,50 @@ import {
   SortAsc,
   SortDesc,
   Grid,
-  List
+  List,
+  Lightbulb,
+  Coffee,
+  Beer,
+  Gift,
+  Target as TargetIcon,
+  Zap as ZapIcon,
+  Brain as BrainIcon,
+  Sparkles as SparklesIcon,
+  BarChart3 as BarChart3Icon,
+  PieChart as PieChartIcon,
+  Activity as ActivityIcon,
+  Timer as TimerIcon,
+  CheckSquare as CheckSquareIcon,
+  Square as SquareIcon,
+  ExternalLink as ExternalLinkIcon,
+  Copy as CopyIcon,
+  Link as LinkIcon,
+  Smile as SmileIcon,
+  Frown as FrownIcon,
+  Meh as MehIcon,
+  ThumbsUp as ThumbsUpIcon,
+  ThumbsDown as ThumbsDownIcon,
+  MessageCircle as MessageCircleIcon,
+  Send as SendIcon,
+  BookOpen,
+  Award,
+  Target,
+  Bookmark,
+  Share2,
+  MoreHorizontal,
+  CheckCircle as CheckCircleIcon,
+  Circle,
+  ArrowRight as ArrowRightIcon,
+  Gift as GiftIcon,
+  Coffee as CoffeeIcon,
+  Beer as BeerIcon,
+  Trophy,
+  Lightbulb as LightbulbIcon,
+  Rocket as RocketIcon,
+  Target as TargetIcon2,
+  Zap as ZapIcon2,
+  Brain as BrainIcon2,
+  Sparkles as SparklesIcon2
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Phone } from 'lucide-react';
@@ -144,7 +188,10 @@ export default function SettingsPage() {
     lastName: user?.lastName || '',
     phone: user?.phone || '',
     location: user?.location || '',
-    bio: user?.bio || ''
+    bio: user?.bio || '',
+    company: user?.company || '',
+    position: user?.position || '',
+    website: user?.website || ''
   });
   const [notifications, setNotifications] = useState({
     email: true,
@@ -156,7 +203,11 @@ export default function SettingsPage() {
     weeklyDigest: true,
     assessmentReminders: true,
     newOpportunities: true,
-    paymentNotifications: true
+    paymentNotifications: true,
+    securityAlerts: true,
+    systemUpdates: false,
+    newsletter: false,
+    partnerOffers: false
   });
   const [privacy, setPrivacy] = useState({
     profileVisibility: 'public',
@@ -168,22 +219,47 @@ export default function SettingsPage() {
     showLastSeen: false,
     allowProfileViews: true,
     showSkills: true,
-    showProjects: true
+    showProjects: true,
+    showEarnings: false,
+    showAssessments: true,
+    showCertifications: true,
+    allowSearchIndexing: true
   });
   const [security, setSecurity] = useState({
     twoFactorAuth: false,
     loginNotifications: true,
     sessionTimeout: 30,
     passwordExpiry: 90,
-    suspiciousActivity: true
+    suspiciousActivity: true,
+    deviceManagement: true,
+    loginHistory: true,
+    passwordStrength: 'strong',
+    biometricAuth: false,
+    trustedDevices: []
+  });
+  const [preferences, setPreferences] = useState({
+    theme: theme,
+    fontSize: 'medium',
+    lineHeight: 'normal',
+    reducedMotion: false,
+    highContrast: false,
+    autoSave: true,
+    emailDigest: 'weekly',
+    timeFormat: '12h',
+    dateFormat: 'MM/DD/YYYY',
+    currency: 'USD',
+    language: 'en',
+    timezone: 'UTC'
   });
 
   const tabs = [
-    { id: 'account', label: 'Account', icon: User, description: 'Basic account information' },
-    { id: 'security', label: 'Security', icon: Shield, description: 'Password and security settings' },
-    { id: 'notifications', label: 'Notifications', icon: Bell, description: 'Communication preferences' },
-    { id: 'privacy', label: 'Privacy', icon: Lock, description: 'Profile visibility and privacy' },
-    { id: 'preferences', label: 'Preferences', icon: SettingsIcon, description: 'Language and display settings' }
+    { id: 'account', label: 'Account', icon: User, description: 'Basic account information and profile settings' },
+    { id: 'security', label: 'Security', icon: Shield, description: 'Password, 2FA, and security preferences' },
+    { id: 'notifications', label: 'Notifications', icon: Bell, description: 'Communication and alert preferences' },
+    { id: 'privacy', label: 'Privacy', icon: Lock, description: 'Profile visibility and data sharing' },
+    { id: 'preferences', label: 'Preferences', icon: SettingsIcon, description: 'Language, theme, and display settings' },
+    { id: 'integrations', label: 'Integrations', icon: Zap, description: 'Third-party app connections' },
+    { id: 'billing', label: 'Billing', icon: CreditCard, description: 'Payment methods and subscription' }
   ];
 
   const languages = [
@@ -221,594 +297,849 @@ export default function SettingsPage() {
     { value: 'CNY', label: 'CNY - Chinese Yuan', symbol: '¥' }
   ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const integrations = [
+    {
+      id: 'github',
+      name: 'GitHub',
+      description: 'Connect your GitHub account to showcase repositories',
+      icon: '🐙',
+      connected: true,
+      lastSync: '2 hours ago'
+    },
+    {
+      id: 'linkedin',
+      name: 'LinkedIn',
+      description: 'Import your professional experience and connections',
+      icon: '💼',
+      connected: false,
+      lastSync: null
+    },
+    {
+      id: 'google',
+      name: 'Google Calendar',
+      description: 'Sync your schedule and availability',
+      icon: '📅',
+      connected: true,
+      lastSync: '1 hour ago'
+    },
+    {
+      id: 'slack',
+      name: 'Slack',
+      description: 'Get notifications in your Slack workspace',
+      icon: '💬',
+      connected: false,
+      lastSync: null
+    }
+  ];
+
+  const billingPlans = [
+    {
+      id: 'free',
+      name: 'Free',
+      price: '$0',
+      period: 'month',
+      features: ['Basic assessments', 'Limited projects', 'Community support'],
+      current: true
+    },
+    {
+      id: 'pro',
+      name: 'Pro',
+      price: '$29',
+      period: 'month',
+      features: ['Unlimited assessments', 'Advanced analytics', 'Priority support', 'Custom certificates'],
+      current: false
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise',
+      price: 'Custom',
+      period: 'year',
+      features: ['Team management', 'Advanced security', 'Dedicated support', 'Custom integrations'],
+      current: false
+    }
+  ];
+
+  const handleSave = () => {
+    // In a real app, you would save to backend
+    toast({
+      title: "Settings saved",
+      description: "Your preferences have been updated successfully.",
+    });
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    // Reset form data
   };
 
   const handleNotificationChange = (key: string, value: boolean) => {
-    setNotifications(prev => ({ ...prev, [key]: value }));
+    setNotifications(prev => ({
+      ...prev,
+      [key]: value
+    }));
   };
 
-  const handlePrivacyChange = (key: string, value: string | boolean) => {
-    setPrivacy(prev => ({ ...prev, [key]: value }));
+  const handlePrivacyChange = (key: string, value: any) => {
+    setPrivacy(prev => ({
+      ...prev,
+      [key]: value
+    }));
   };
 
-  const handleSecurityChange = (key: string, value: boolean | number) => {
-    setSecurity(prev => ({ ...prev, [key]: value }));
+  const handleSecurityChange = (key: string, value: any) => {
+    setSecurity(prev => ({
+      ...prev,
+      [key]: value
+    }));
   };
 
-  const handleSave = async () => {
-    try {
-      // Here you would typically save to backend
-      toast({
-        title: "Settings Saved",
-        description: "Your settings have been updated successfully.",
-      });
-      setIsEditing(false);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save settings. Please try again.",
-        variant: "destructive",
-      });
+  const handlePreferenceChange = (key: string, value: any) => {
+    setPreferences(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const getVisibilityIcon = (visibility: string) => {
+    switch (visibility) {
+      case 'public': return <Globe className="w-4 h-4" />;
+      case 'private': return <Lock className="w-4 h-4" />;
+      case 'connections': return <Users className="w-4 h-4" />;
+      default: return <Globe className="w-4 h-4" />;
     }
   };
 
-  const handlePasswordChange = async () => {
-    if (formData.newPassword !== formData.confirmPassword) {
-      toast({
-        title: "Error",
-        description: "New passwords don't match.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    try {
-      // Here you would typically update password
-      toast({
-        title: "Password Updated",
-        description: "Your password has been changed successfully.",
-      });
-      setFormData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update password. Please try again.",
-        variant: "destructive",
-      });
+  const getVisibilityColor = (visibility: string) => {
+    switch (visibility) {
+      case 'public': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'private': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      case 'connections': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
-
-  const exportData = () => {
-    const data = {
-      profile: formData,
-      notifications,
-      privacy,
-      security
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'skillsphere-settings.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    toast({
-      title: "Data Exported",
-      description: "Your settings have been exported successfully.",
-    });
-  };
-
-  const resetToDefaults = () => {
-    if (confirm('Are you sure you want to reset all settings to defaults? This action cannot be undone.')) {
-      // Reset to default values
-      toast({
-        title: "Settings Reset",
-        description: "All settings have been reset to defaults.",
-      });
-    }
-  };
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center p-8">
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl flex items-center justify-center">
-            <SettingsIcon className="h-10 w-10 text-white" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Settings Access Required</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-8">Please log in to access your account settings and preferences</p>
-          <Button 
-            onClick={() => window.location.href = '/login'} 
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full"
-          >
-            Go to Login
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl flex items-center justify-center">
-              <SettingsIcon className="w-8 h-8 text-white" />
+      {/* Hero Section */}
+      <section className="relative overflow-hidden py-24 lg:py-32">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-indigo-600/20 dark:from-blue-900/30 dark:via-purple-900/30 dark:to-indigo-900/30">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-blue-400/10 dark:bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-400/10 dark:bg-purple-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        
+        <ResponsiveContainer maxWidth="7xl" className="relative text-center">
+          <AnimatedElement animation="fade-in" delay={0.2}>
+            <Badge variant="secondary" className="mb-6 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/50">
+              ⚙️ Settings & Preferences
+            </Badge>
+            
+            <h1 className="text-5xl lg:text-7xl font-bold mb-8 leading-tight text-gray-900 dark:text-white">
+              Account Settings
+            </h1>
+            
+            <p className="text-xl lg:text-2xl mb-12 text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              Customize your experience, manage your privacy, and control how you interact with SkillSphere
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                onClick={() => setIsEditing(!isEditing)}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg"
+              >
+                <Save className="w-5 h-5 mr-2" />
+                {isEditing ? 'Cancel Changes' : 'Save Changes'}
+              </Button>
+              <Button size="lg" variant="outline" className="border-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 px-8 py-4 text-lg">
+                <Download className="w-5 h-5 mr-2" />
+                Export Settings
+              </Button>
             </div>
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">Account Settings</h1>
-              <p className="text-xl text-gray-600 dark:text-gray-300">
-                Manage your account preferences, security, and privacy settings
+          </AnimatedElement>
+        </ResponsiveContainer>
+      </section>
+
+      {/* Settings Navigation */}
+      <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+        <ResponsiveContainer maxWidth="7xl">
+          <AnimatedElement animation="fade-in" delay={0.4}>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                Customize Your Experience
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Choose from the settings categories below to personalize your account
               </p>
             </div>
-          </div>
-        </div>
+          </AnimatedElement>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar Navigation */}
-          <div className="lg:col-span-1">
-            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg sticky top-8">
-              <CardContent className="p-4">
-                <nav className="space-y-2">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`w-full text-left p-3 rounded-xl transition-all duration-200 flex items-center gap-3 ${
-                        activeTab === tab.id
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                      }`}
-                    >
-                      <tab.icon className="w-5 h-5" />
-                      <div className="flex-1">
-                        <div className="font-medium">{tab.label}</div>
-                        <div className={`text-xs ${
-                          activeTab === tab.id ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
-                        }`}>
-                          {tab.description}
-                        </div>
-                      </div>
-                      <ChevronRight className={`w-4 h-4 transition-transform duration-200 ${
-                        activeTab === tab.id ? 'rotate-90' : ''
-                      }`} />
-                    </button>
-                  ))}
-                </nav>
-              </CardContent>
-            </Card>
+          {/* Tab Navigation */}
+          <div className="flex flex-wrap justify-center gap-2 mb-16">
+            {tabs.map((tab) => (
+              <Button
+                key={tab.id}
+                variant={activeTab === tab.id ? 'default' : 'outline'}
+                onClick={() => setActiveTab(tab.id)}
+                className="flex items-center gap-2 px-6 py-3"
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+              </Button>
+            ))}
           </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Account Settings */}
-            {activeTab === 'account' && (
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2 text-gray-900 dark:text-white">
-                    <User className="w-5 h-5 text-blue-600" />
-                    Account Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="firstName" className="text-gray-700 dark:text-gray-300 font-medium">First Name</Label>
-                      <Input
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        className="mt-2"
-                        placeholder="Enter your first name"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName" className="text-gray-700 dark:text-gray-300 font-medium">Last Name</Label>
-                      <Input
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        className="mt-2"
-                        placeholder="Enter your last name"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-medium">Email Address</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="mt-2"
-                        placeholder="Enter your email address"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="phone" className="text-gray-700 dark:text-gray-300 font-medium">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        className="mt-2"
-                        placeholder="Enter your phone number"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="location" className="text-gray-700 dark:text-gray-300 font-medium">Location</Label>
-                      <Input
-                        id="location"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        className="mt-2"
-                        placeholder="Enter your location"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="bio" className="text-gray-700 dark:text-gray-300 font-medium">Bio</Label>
-                      <Input
-                        id="bio"
-                        name="bio"
-                        value={formData.bio}
-                        onChange={handleInputChange}
-                        className="mt-2"
-                        placeholder="Tell us about yourself"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-3 pt-4">
-                    <Button onClick={handleSave} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                      <Save className="w-4 h-4 mr-2" />
-                      Save Changes
-                    </Button>
-                    <Button variant="outline" onClick={() => setIsEditing(false)}>
-                      Cancel
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Security Settings */}
-            {activeTab === 'security' && (
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2 text-gray-900 dark:text-white">
-                    <Shield className="w-5 h-5 text-green-600" />
-                    Security & Authentication
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Password Change */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Change Password</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="currentPassword" className="text-gray-700 dark:text-gray-300 font-medium">Current Password</Label>
-                        <div className="relative mt-2">
+          {/* Tab Content */}
+          {activeTab === 'account' && (
+            <div className="space-y-8">
+              <LazyLoader placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={0.5}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <User className="w-6 h-6 text-blue-600" />
+                        Profile Information
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="firstName">First Name</Label>
                           <Input
-                            id="currentPassword"
-                            name="currentPassword"
-                            type={showPassword ? 'text' : 'password'}
-                            value={formData.currentPassword}
-                            onChange={handleInputChange}
-                            placeholder="Enter current password"
+                            id="firstName"
+                            value={formData.firstName}
+                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                            placeholder="Enter your first name"
                           />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </Button>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="lastName">Last Name</Label>
+                          <Input
+                            id="lastName"
+                            value={formData.lastName}
+                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                            placeholder="Enter your last name"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email">Email Address</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            placeholder="Enter your email"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="phone">Phone Number</Label>
+                          <Input
+                            id="phone"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            placeholder="Enter your phone number"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="company">Company</Label>
+                          <Input
+                            id="company"
+                            value={formData.company}
+                            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                            placeholder="Enter your company name"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="position">Position</Label>
+                          <Input
+                            id="position"
+                            value={formData.position}
+                            onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                            placeholder="Enter your job title"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="location">Location</Label>
+                          <Input
+                            id="location"
+                            value={formData.location}
+                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                            placeholder="Enter your location"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="website">Website</Label>
+                          <Input
+                            id="website"
+                            value={formData.website}
+                            onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                            placeholder="Enter your website URL"
+                          />
                         </div>
                       </div>
-                      <div>
-                        <Label htmlFor="newPassword" className="text-gray-700 dark:text-gray-300 font-medium">New Password</Label>
-                        <Input
-                          id="newPassword"
-                          name="newPassword"
-                          type={showPassword ? 'text' : 'password'}
-                          value={formData.newPassword}
-                          onChange={handleInputChange}
-                          placeholder="Enter new password"
+                      <div className="mt-6 space-y-2">
+                        <Label htmlFor="bio">Bio</Label>
+                        <Textarea
+                          id="bio"
+                          value={formData.bio}
+                          onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                          placeholder="Tell us about yourself..."
+                          rows={4}
                         />
                       </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300 font-medium">Confirm New Password</Label>
-                      <Input
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type={showPassword ? 'text' : 'password'}
-                        value={formData.confirmPassword}
-                        onChange={handleInputChange}
-                        placeholder="Confirm new password"
-                      />
-                    </div>
-                    <Button onClick={handlePasswordChange} className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-                      <Key className="w-4 h-4 mr-2" />
-                      Update Password
-                    </Button>
-                  </div>
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            </div>
+          )}
 
-                  <Separator />
-
-                  {/* Two-Factor Authentication */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Two-Factor Authentication</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Add an extra layer of security to your account</p>
-                      </div>
-                      <Switch
-                        checked={security.twoFactorAuth}
-                        onCheckedChange={(checked) => handleSecurityChange('twoFactorAuth', checked)}
-                      />
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* Security Preferences */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Security Preferences</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-gray-700 dark:text-gray-300 font-medium">Login Notifications</Label>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Get notified of new login attempts</p>
-                        </div>
-                        <Switch
-                          checked={security.loginNotifications}
-                          onCheckedChange={(checked) => handleSecurityChange('loginNotifications', checked)}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-gray-700 dark:text-gray-300 font-medium">Suspicious Activity Alerts</Label>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Receive alerts for unusual account activity</p>
-                        </div>
-                        <Switch
-                          checked={security.suspiciousActivity}
-                          onCheckedChange={(checked) => handleSecurityChange('suspiciousActivity', checked)}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Notifications Settings */}
-            {activeTab === 'notifications' && (
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2 text-gray-900 dark:text-white">
-                    <Bell className="w-5 h-5 text-orange-600" />
-                    Notification Preferences
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {Object.entries(notifications).map(([key, value]) => (
-                      <div key={key} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                        <div>
-                          <Label className="text-gray-700 dark:text-gray-300 font-medium capitalize">
-                            {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                          </Label>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Receive notifications for {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
-                          </p>
-                        </div>
-                        <Switch
-                          checked={value}
-                          onCheckedChange={(checked) => handleNotificationChange(key, checked)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Privacy Settings */}
-            {activeTab === 'privacy' && (
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2 text-gray-900 dark:text-white">
-                    <Lock className="w-5 h-5 text-purple-600" />
-                    Privacy & Visibility
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="text-gray-700 dark:text-gray-300 font-medium">Profile Visibility</Label>
-                      <Select value={privacy.profileVisibility} onValueChange={(value) => handlePrivacyChange('profileVisibility', value)}>
-                        <SelectTrigger className="mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="public">Public - Anyone can view</SelectItem>
-                          <SelectItem value="connections">Connections only</SelectItem>
-                          <SelectItem value="private">Private - Only you</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Information</h3>
-                    <div className="space-y-3">
-                      {Object.entries(privacy).slice(1).map(([key, value]) => (
-                        <div key={key} className="flex items-center justify-between">
-                          <div>
-                            <Label className="text-gray-700 dark:text-gray-300 font-medium capitalize">
-                              {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                            </Label>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {typeof value === 'boolean' 
-                                ? `Show ${key.replace(/([A-Z])/g, ' $1').toLowerCase()} on profile`
-                                : `Control ${key.replace(/([A-Z])/g, ' $1').toLowerCase()} visibility`
-                              }
-                            </p>
+          {activeTab === 'security' && (
+            <div className="space-y-8">
+              <LazyLoader placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={0.5}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <Shield className="w-6 h-6 text-green-600" />
+                        Security Settings
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Password Management</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="currentPassword">Current Password</Label>
+                            <div className="relative">
+                              <Input
+                                id="currentPassword"
+                                type={showPassword ? 'text' : 'password'}
+                                value={formData.currentPassword}
+                                onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
+                                placeholder="Enter current password"
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                onClick={() => setShowPassword(!showPassword)}
+                              >
+                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              </Button>
+                            </div>
                           </div>
-                          {typeof value === 'boolean' ? (
-                            <Switch
-                              checked={value}
-                              onCheckedChange={(checked) => handlePrivacyChange(key, checked)}
+                          <div className="space-y-2">
+                            <Label htmlFor="newPassword">New Password</Label>
+                            <Input
+                              id="newPassword"
+                              type="password"
+                              value={formData.newPassword}
+                              onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                              placeholder="Enter new password"
                             />
-                          ) : (
-                            <Select value={value as string} onValueChange={(val) => handlePrivacyChange(key, val)}>
-                              <SelectTrigger className="w-32">
+                          </div>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Two-Factor Authentication</h3>
+                        <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                          <div>
+                            <div className="font-medium">Two-Factor Authentication</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              Add an extra layer of security to your account
+                            </div>
+                          </div>
+                          <Switch
+                            checked={security.twoFactorAuth}
+                            onCheckedChange={(checked) => handleSecurityChange('twoFactorAuth', checked)}
+                          />
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Security Preferences</h3>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="font-medium">Login Notifications</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Get notified of new login attempts
+                              </div>
+                            </div>
+                            <Switch
+                              checked={security.loginNotifications}
+                              onCheckedChange={(checked) => handleSecurityChange('loginNotifications', checked)}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="font-medium">Suspicious Activity Alerts</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Receive alerts for unusual account activity
+                              </div>
+                            </div>
+                            <Switch
+                              checked={security.suspiciousActivity}
+                              onCheckedChange={(checked) => handleSecurityChange('suspiciousActivity', checked)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            </div>
+          )}
+
+          {activeTab === 'notifications' && (
+            <div className="space-y-8">
+              <LazyLoader placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={0.5}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <Bell className="w-6 h-6 text-yellow-600" />
+                        Notification Preferences
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Communication Channels</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Email Notifications</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Receive updates via email
+                              </div>
+                            </div>
+                            <Switch
+                              checked={notifications.email}
+                              onCheckedChange={(checked) => handleNotificationChange('email', checked)}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Push Notifications</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Get alerts on your device
+                              </div>
+                            </div>
+                            <Switch
+                              checked={notifications.push}
+                              onCheckedChange={(checked) => handleNotificationChange('push', checked)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Content Types</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Project Updates</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Status changes and milestones
+                              </div>
+                            </div>
+                            <Switch
+                              checked={notifications.projectUpdates}
+                              onCheckedChange={(checked) => handleNotificationChange('projectUpdates', checked)}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Messages</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                New conversations and replies
+                              </div>
+                            </div>
+                            <Switch
+                              checked={notifications.messages}
+                              onCheckedChange={(checked) => handleNotificationChange('messages', checked)}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Assessment Reminders</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Test completion reminders
+                              </div>
+                            </div>
+                            <Switch
+                              checked={notifications.assessmentReminders}
+                              onCheckedChange={(checked) => handleNotificationChange('assessmentReminders', checked)}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">New Opportunities</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Matching project alerts
+                              </div>
+                            </div>
+                            <Switch
+                              checked={notifications.newOpportunities}
+                              onCheckedChange={(checked) => handleNotificationChange('newOpportunities', checked)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            </div>
+          )}
+
+          {activeTab === 'privacy' && (
+            <div className="space-y-8">
+              <LazyLoader placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={0.5}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <Lock className="w-6 h-6 text-purple-600" />
+                        Privacy & Visibility
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Profile Visibility</h3>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Profile Visibility</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Control who can see your profile
+                              </div>
+                            </div>
+                            <Select
+                              value={privacy.profileVisibility}
+                              onValueChange={(value) => handlePrivacyChange('profileVisibility', value)}
+                            >
+                              <SelectTrigger className="w-40">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="public">Public</SelectItem>
-                                <SelectItem value="connections">Connections</SelectItem>
+                                <SelectItem value="connections">Connections Only</SelectItem>
                                 <SelectItem value="private">Private</SelectItem>
                               </SelectContent>
                             </Select>
-                          )}
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Preferences Settings */}
-            {activeTab === 'preferences' && (
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2 text-gray-900 dark:text-white">
-                    <SettingsIcon className="w-5 h-5 text-indigo-600" />
-                    Display & Language
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label className="text-gray-700 dark:text-gray-300 font-medium">Language</Label>
-                      <Select value={formData.language} onValueChange={(value) => setFormData(prev => ({ ...prev, language: value }))}>
-                        <SelectTrigger className="mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {languages.map((lang) => (
-                            <SelectItem key={lang.value} value={lang.value}>
-                              <span className="flex items-center gap-2">
-                                <span>{lang.flag}</span>
-                                <span>{lang.label}</span>
-                              </span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label className="text-gray-700 dark:text-gray-300 font-medium">Timezone</Label>
-                      <Select value={formData.timezone} onValueChange={(value) => setFormData(prev => ({ ...prev, timezone: value }))}>
-                        <SelectTrigger className="mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {timezones.map((tz) => (
-                            <SelectItem key={tz.value} value={tz.value}>
-                              {tz.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label className="text-gray-700 dark:text-gray-300 font-medium">Currency</Label>
-                      <Select value={formData.currency} onValueChange={(value) => setFormData(prev => ({ ...prev, currency: value }))}>
-                        <SelectTrigger className="mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {currencies.map((curr) => (
-                            <SelectItem key={curr.value} value={curr.value}>
-                              <span className="flex items-center gap-2">
-                                <span>{curr.symbol}</span>
-                                <span>{curr.label}</span>
-                              </span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label className="text-gray-700 dark:text-gray-300 font-medium">Theme</Label>
-                      <div className="mt-2 flex gap-2">
-                        <Button
-                          variant={theme === 'light' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setTheme('light')}
-                          className="flex-1"
-                        >
-                          <Sun className="w-4 h-4 mr-2" />
-                          Light
-                        </Button>
-                        <Button
-                          variant={theme === 'dark' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setTheme('dark')}
-                          className="flex-1"
-                        >
-                          <Moon className="w-4 h-4 mr-2" />
-                          Dark
-                        </Button>
-                        <Button
-                          variant={theme === 'auto' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setTheme('auto')}
-                          className="flex-1"
-                        >
-                          <Monitor className="w-4 h-4 mr-2" />
-                          Auto
-                        </Button>
                       </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
 
-        {/* Action Buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-          <Button onClick={exportData} variant="outline" className="px-6 py-3">
-            <Download className="w-4 h-4 mr-2" />
-            Export Settings
-          </Button>
-          <Button onClick={resetToDefaults} variant="outline" className="px-6 py-3 text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Reset to Defaults
-          </Button>
-        </div>
-      </div>
+                      <Separator />
+
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Information Sharing</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Show Email</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Display email on profile
+                              </div>
+                            </div>
+                            <Switch
+                              checked={privacy.showEmail}
+                              onCheckedChange={(checked) => handlePrivacyChange('showEmail', checked)}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Show Phone</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Display phone on profile
+                              </div>
+                            </div>
+                            <Switch
+                              checked={privacy.showPhone}
+                              onCheckedChange={(checked) => handlePrivacyChange('showPhone', checked)}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Show Location</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Display location on profile
+                              </div>
+                            </div>
+                            <Switch
+                              checked={privacy.showLocation}
+                              onCheckedChange={(checked) => handlePrivacyChange('showLocation', checked)}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Show Skills</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Display skills on profile
+                              </div>
+                            </div>
+                            <Switch
+                              checked={privacy.showSkills}
+                              onCheckedChange={(checked) => handlePrivacyChange('showSkills', checked)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            </div>
+          )}
+
+          {activeTab === 'preferences' && (
+            <div className="space-y-8">
+              <LazyLoader placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={0.5}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <SettingsIcon className="w-6 h-6 text-orange-600" />
+                        Display & Language
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="language">Language</Label>
+                          <Select
+                            value={preferences.language}
+                            onValueChange={(value) => handlePreferenceChange('language', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {languages.map((lang) => (
+                                <SelectItem key={lang.value} value={lang.value}>
+                                  <div className="flex items-center gap-2">
+                                    <span>{lang.flag}</span>
+                                    <span>{lang.label}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="timezone">Timezone</Label>
+                          <Select
+                            value={preferences.timezone}
+                            onValueChange={(value) => handlePreferenceChange('timezone', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {timezones.map((tz) => (
+                                <SelectItem key={tz.value} value={tz.value}>
+                                  {tz.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="currency">Currency</Label>
+                          <Select
+                            value={preferences.currency}
+                            onValueChange={(value) => handlePreferenceChange('currency', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {currencies.map((curr) => (
+                                <SelectItem key={curr.value} value={curr.value}>
+                                  <div className="flex items-center gap-2">
+                                    <span>{curr.symbol}</span>
+                                    <span>{curr.label}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="timeFormat">Time Format</Label>
+                          <Select
+                            value={preferences.timeFormat}
+                            onValueChange={(value) => handlePreferenceChange('timeFormat', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="12h">12-hour (AM/PM)</SelectItem>
+                              <SelectItem value="24h">24-hour</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Accessibility</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">High Contrast</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Increase color contrast
+                              </div>
+                            </div>
+                            <Switch
+                              checked={preferences.highContrast}
+                              onCheckedChange={(checked) => handlePreferenceChange('highContrast', checked)}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div>
+                              <div className="font-medium">Reduced Motion</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Minimize animations
+                              </div>
+                            </div>
+                            <Switch
+                              checked={preferences.reducedMotion}
+                              onCheckedChange={(checked) => handlePreferenceChange('reducedMotion', checked)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            </div>
+          )}
+
+          {activeTab === 'integrations' && (
+            <div className="space-y-8">
+              <LazyLoader placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={0.5}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <Zap className="w-6 h-6 text-yellow-600" />
+                        Third-Party Integrations
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {integrations.map((integration) => (
+                          <div key={integration.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div className="flex items-center gap-4">
+                              <div className="text-3xl">{integration.icon}</div>
+                              <div>
+                                <div className="font-medium">{integration.name}</div>
+                                <div className="text-sm text-gray-600 dark:text-gray-400">
+                                  {integration.description}
+                                </div>
+                                {integration.connected && (
+                                  <div className="text-xs text-green-600 dark:text-green-400 mt-1">
+                                    Last synced: {integration.lastSync}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {integration.connected ? (
+                                <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                                  Connected
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline">Not Connected</Badge>
+                              )}
+                              <Button variant="outline" size="sm">
+                                {integration.connected ? 'Manage' : 'Connect'}
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            </div>
+          )}
+
+          {activeTab === 'billing' && (
+            <div className="space-y-8">
+              <LazyLoader placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={0.5}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <CreditCard className="w-6 h-6 text-green-600" />
+                        Billing & Subscription
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {billingPlans.map((plan) => (
+                          <div
+                            key={plan.id}
+                            className={`p-6 rounded-lg border-2 ${
+                              plan.current
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                : 'border-gray-200 dark:border-gray-700'
+                            }`}
+                          >
+                            <div className="text-center mb-4">
+                              <h3 className="text-xl font-bold">{plan.name}</h3>
+                              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">
+                                {plan.price}
+                                {plan.period !== 'year' && <span className="text-lg">/{plan.period}</span>}
+                              </div>
+                            </div>
+                            <ul className="space-y-2 mb-6">
+                              {plan.features.map((feature, index) => (
+                                <li key={index} className="flex items-center gap-2 text-sm">
+                                  <CheckCircle className="w-4 h-4 text-green-500" />
+                                  {feature}
+                                </li>
+                              ))}
+                            </ul>
+                            <Button
+                              className={`w-full ${
+                                plan.current
+                                  ? 'bg-blue-600 hover:bg-blue-700'
+                                  : 'bg-gray-600 hover:bg-gray-700'
+                              }`}
+                            >
+                              {plan.current ? 'Current Plan' : 'Choose Plan'}
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            </div>
+          )}
+        </ResponsiveContainer>
+      </section>
     </div>
   );
 }

@@ -1226,8 +1226,8 @@ export const assessmentQuestions: AssessmentQuestions = {
       skill: 'Suspense',
       tags: ['Suspense', 'Loading States', 'Fallback']
     }
-    ],
-  '1': [
+  ]
+};
     // Additional JavaScript Fundamentals Questions (1-26 to 1-50)
     {
       id: '1-26',
