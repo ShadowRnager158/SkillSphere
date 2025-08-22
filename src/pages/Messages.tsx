@@ -418,7 +418,7 @@ export default function Messages() {
                     </Button>
                     <Button
                       variant={filterStatus === 'online' ? 'default' : 'outline'}
-                      size="sm}
+                      size="sm"
                       onClick={() => setFilterStatus('online')}
                       className="flex-1"
                     >
