@@ -99,113 +99,164 @@ import {
   SkipForward,
   SkipBack,
   Repeat,
-  Shuffle
+  Shuffle,
+  BarChart3,
+  PieChart,
+  Activity,
+  Timer,
+  CheckSquare,
+  Square,
+  ExternalLink,
+  Copy,
+  Link,
+  Smile,
+  Frown,
+  Meh,
+  ThumbsUp,
+  ThumbsDown,
+  MessageCircle,
+  Send,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-
-interface ProfileData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  location: string;
-  website: string;
-  bio: string;
-  avatar: string;
-  role: string;
-  company: string;
-  joinedDate: string;
-  skills: string[];
-  projects: number;
-  completedTasks: number;
-  rating: number;
-  earnings: number;
-}
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  status: 'active' | 'completed' | 'paused';
-  progress: number;
-  budget: number;
-  startDate: string;
-  endDate: string;
-  client: string;
-}
 
 export default function Profile() {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [showAssessmentModal, setShowAssessmentModal] = useState(false);
+  const [selectedAssessment, setSelectedAssessment] = useState<any>(null);
+  const [profileData, setProfileData] = useState({
+    name: 'Sarah Johnson',
+    email: 'sarah.johnson@skillsphere.com',
+    phone: '+1 (555) 123-4567',
+    location: 'San Francisco, CA',
+    bio: 'Full-stack developer with 5+ years of experience in React, Node.js, and cloud technologies. Passionate about creating user-friendly applications and solving complex problems.',
+    website: 'https://sarahjohnson.dev',
+    company: 'TechCorp Inc.',
+    position: 'Senior Developer',
+    skills: ['React', 'Node.js', 'TypeScript', 'AWS', 'Docker', 'MongoDB'],
+    avatar: '/api/placeholder/150/150'
+  });
+
+  const [editData, setEditData] = useState({ ...profileData });
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
-  const profileData: ProfileData = {
-    firstName: 'Sarah',
-    lastName: 'Johnson',
-    email: 'sarah.johnson@example.com',
-    phone: '+1 (555) 123-4567',
-    location: 'San Francisco, CA',
-    website: 'sarahjohnson.dev',
-    bio: 'Senior Product Manager with 8+ years of experience in tech. Passionate about creating user-centered products that solve real problems. Expert in agile methodologies, user research, and product strategy.',
-    avatar: 'SJ',
-    role: 'Senior Product Manager',
-    company: 'TechCorp',
-    joinedDate: '2023-01-15',
-    skills: ['Product Management', 'User Research', 'Agile', 'Data Analysis', 'UI/UX', 'Strategy'],
-    projects: 24,
-    completedTasks: 156,
-    rating: 4.9,
-    earnings: 125000
-  };
-
-  const projects: Project[] = [
+  const assessmentHistory = [
     {
-      id: '1',
-      title: 'E-commerce Platform Redesign',
-      description: 'Complete redesign of the main e-commerce platform with modern UI/UX',
-      status: 'active',
-      progress: 75,
-      budget: 25000,
-      startDate: '2024-01-15',
-      endDate: '2024-03-15',
-      client: 'RetailCorp'
-    },
-    {
-      id: '2',
-      title: 'Mobile App Development',
-      description: 'iOS and Android app for food delivery service',
-      status: 'active',
-      progress: 45,
-      budget: 35000,
-      startDate: '2024-02-01',
-      endDate: '2024-05-01',
-      client: 'FoodDelivery Inc'
-    },
-    {
-      id: '3',
-      title: 'AI Chatbot Integration',
-      description: 'Implementing AI-powered customer support chatbot',
+      id: 1,
+      title: 'JavaScript Fundamentals',
+      score: 85,
+      date: '2024-02-15',
       status: 'completed',
-      progress: 100,
-      budget: 15000,
-      startDate: '2024-01-01',
-      endDate: '2024-02-15',
-      client: 'SupportTech'
+      category: 'Programming',
+      timeSpent: '25 min',
+      questions: 20,
+      correctAnswers: 17
+    },
+    {
+      id: 2,
+      title: 'React Development',
+      score: 92,
+      date: '2024-02-10',
+      status: 'completed',
+      category: 'Programming',
+      timeSpent: '35 min',
+      questions: 20,
+      correctAnswers: 18
+    },
+    {
+      id: 3,
+      title: 'Leadership Style',
+      score: 78,
+      date: '2024-02-05',
+      status: 'completed',
+      category: 'Personality',
+      timeSpent: '20 min',
+      questions: 20,
+      correctAnswers: 16
+    },
+    {
+      id: 4,
+      title: 'Problem Solving',
+      score: 88,
+      date: '2024-01-28',
+      status: 'completed',
+      category: 'Aptitude',
+      timeSpent: '30 min',
+      questions: 20,
+      correctAnswers: 18
     }
   ];
 
-  const stats = [
-    { label: 'Projects Completed', value: profileData.projects, icon: Briefcase, color: 'from-blue-500 to-indigo-600' },
-    { label: 'Tasks Completed', value: profileData.completedTasks, icon: CheckCircle, color: 'from-green-500 to-emerald-600' },
-    { label: 'Client Rating', value: `${profileData.rating}/5`, icon: Star, color: 'from-yellow-500 to-orange-600' },
-    { label: 'Total Earnings', value: `$${profileData.earnings.toLocaleString()}`, icon: DollarSign, color: 'from-purple-500 to-pink-600' }
+  const projects = [
+    {
+      id: 1,
+      title: 'E-commerce Platform',
+      description: 'Modern e-commerce platform with AI-powered recommendations',
+      status: 'active',
+      progress: 75,
+      team: ['SJ', 'MC', 'LR'],
+      budget: '$25K',
+      deadline: '2024-04-15'
+    },
+    {
+      id: 2,
+      title: 'Mobile App Development',
+      description: 'Cross-platform mobile application for fitness tracking',
+      status: 'active',
+      progress: 45,
+      team: ['AT', 'DK', 'EW'],
+      budget: '$35K',
+      deadline: '2024-05-20'
+    }
   ];
+
+  const achievements = [
+    { id: 1, title: 'Top Performer', description: 'Achieved highest score in React Development assessment', icon: Trophy, date: '2024-02-10' },
+    { id: 2, title: 'Quick Learner', description: 'Completed 5 assessments in one month', icon: Award, date: '2024-01-28' },
+    { id: 3, title: 'Team Player', description: 'Successfully led 3 team projects', icon: Users, date: '2024-01-15' }
+  ];
+
+  const handleSaveProfile = () => {
+    setProfileData(editData);
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = () => {
+    setEditData(profileData);
+    setIsEditing(false);
+  };
+
+  const handleViewAssessment = (assessment: any) => {
+    setSelectedAssessment(assessment);
+    setShowAssessmentModal(true);
+  };
+
+  const handleTakeAssessment = () => {
+    navigate('/assessment');
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return 'text-green-600 dark:text-green-400';
+    if (score >= 80) return 'text-blue-600 dark:text-blue-400';
+    if (score >= 70) return 'text-yellow-600 dark:text-yellow-400';
+    return 'text-red-600 dark:text-red-400';
+  };
+
+  const getScoreBadge = (score: number) => {
+    if (score >= 90) return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+    if (score >= 80) return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+    if (score >= 70) return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+    return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+  };
+
+  const averageScore = Math.round(assessmentHistory.reduce((acc, assessment) => acc + assessment.score, 0) / assessmentHistory.length);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
@@ -224,16 +275,15 @@ export default function Profile() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
-                <p className="text-gray-600 dark:text-gray-400">Manage your account and preferences</p>
+                <p className="text-gray-600 dark:text-gray-400">Manage your account and track your progress</p>
               </div>
             </div>
-            
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm">
+            <div className="flex items-center space-x-3">
+              <Button variant="outline" onClick={() => navigate('/settings')}>
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
               </Button>
-              <Button size="sm">
+              <Button onClick={() => setIsEditing(true)}>
                 <Edit className="w-4 h-4 mr-2" />
                 Edit Profile
               </Button>
@@ -251,264 +301,379 @@ export default function Profile() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="lg:col-span-1"
             >
               <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <div className="relative inline-block mb-4">
-                      <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto">
-                        {profileData.avatar}
+                    <div className="relative inline-block">
+                      <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <User className="w-12 h-12 text-white" />
                       </div>
-                      <button className="absolute bottom-0 right-0 w-8 h-8 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300">
-                        <Camera className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                      </button>
+                      <Button size="sm" className="absolute bottom-2 right-2 w-8 h-8 rounded-full p-0">
+                        <Camera className="w-4 h-4" />
+                      </Button>
                     </div>
-                    
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                      {profileData.firstName} {profileData.lastName}
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                      {isEditing ? editData.name : profileData.name}
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400 mb-1">{profileData.role}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-500">{profileData.company}</p>
-                  </div>
-                  
-                  <div className="space-y-4 mb-6">
-                    <div className="flex items-center gap-3 text-sm">
-                      <Mail className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600 dark:text-gray-400">{profileData.email}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <Phone className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600 dark:text-gray-400">{profileData.phone}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <MapPin className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600 dark:text-gray-400">{profileData.location}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <Globe className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600 dark:text-gray-400">{profileData.website}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-6">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Skills</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {profileData.skills.map((skill, index) => (
-                        <Badge key={index} variant="outline" className="text-sm">
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <p className="text-sm text-gray-500 dark:text-gray-500 mb-2">
-                      Member since {new Date(profileData.joinedDate).toLocaleDateString()}
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                      {isEditing ? editData.position : profileData.position} at {isEditing ? editData.company : profileData.company}
                     </p>
-                    <Button variant="outline" className="w-full">
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit Profile
-                    </Button>
+                    <div className="flex justify-center space-x-4">
+                      <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+                        <Star className="w-3 h-3 mr-1" />
+                        Pro Member
+                      </Badge>
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Verified
+                      </Badge>
+                    </div>
                   </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <Mail className="w-4 h-4 text-gray-400" />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {isEditing ? editData.email : profileData.email}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Phone className="w-4 h-4 text-gray-400" />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {isEditing ? editData.phone : profileData.phone}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <MapPin className="w-4 h-4 text-gray-400" />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {isEditing ? editData.location : profileData.location}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Globe className="w-4 h-4 text-gray-400" />
+                      <a href={isEditing ? editData.website : profileData.website} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                        {isEditing ? editData.website : profileData.website}
+                      </a>
+                    </div>
+                  </div>
+
+                  {isEditing && (
+                    <div className="mt-6 space-y-4">
+                      <div>
+                        <Label htmlFor="name">Name</Label>
+                        <Input
+                          id="name"
+                          value={editData.name}
+                          onChange={(e) => setEditData({...editData, name: e.target.value})}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                          id="email"
+                          value={editData.email}
+                          onChange={(e) => setEditData({...editData, email: e.target.value})}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Phone</Label>
+                        <Input
+                          id="phone"
+                          value={editData.phone}
+                          onChange={(e) => setEditData({...editData, phone: e.target.value})}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="bio">Bio</Label>
+                        <Textarea
+                          id="bio"
+                          value={editData.bio}
+                          onChange={(e) => setEditData({...editData, bio: e.target.value})}
+                          className="mt-1"
+                          rows={3}
+                        />
+                      </div>
+                      <div className="flex space-x-3">
+                        <Button onClick={handleSaveProfile} className="flex-1">
+                          <Save className="w-4 h-4 mr-2" />
+                          Save
+                        </Button>
+                        <Button variant="outline" onClick={handleCancelEdit} className="flex-1">
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
 
-            {/* Main Content */}
+            {/* Assessment History */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
               transition={{ duration: 0.6, delay: 0.4 }}
               className="lg:col-span-2"
             >
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                {stats.map((stat, index) => (
-                  <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-                    transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                  >
-                    <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-                      <CardContent className="p-4 text-center">
-                        <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-xl flex items-center justify-center mx-auto mb-3`}>
-                          <stat.icon className="w-6 h-6 text-white" />
-                        </div>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-                          {stat.value}
-                        </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {stat.label}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Tabs */}
               <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-gray-900 dark:text-white">Profile Information</CardTitle>
-                      <CardDescription>Manage your personal and professional information</CardDescription>
+                      <CardTitle className="text-gray-900 dark:text-white">Assessment History</CardTitle>
+                      <CardDescription>Track your learning progress and achievements</CardDescription>
                     </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant={activeTab === 'overview' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setActiveTab('overview')}
-                      >
-                        Overview
-                      </Button>
-                      <Button
-                        variant={activeTab === 'projects' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setActiveTab('projects')}
-                      >
-                        Projects
-                      </Button>
-                      <Button
-                        variant={activeTab === 'settings' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setActiveTab('settings')}
-                      >
-                        Settings
+                    <div className="flex items-center space-x-3">
+                      <div className="text-center">
+                        <div className={`text-2xl font-bold ${getScoreColor(averageScore)}`}>
+                          {averageScore}%
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Avg Score</div>
+                      </div>
+                      <Button onClick={handleTakeAssessment}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Take Assessment
                       </Button>
                     </div>
                   </div>
                 </CardHeader>
-                
                 <CardContent>
-                  {activeTab === 'overview' && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-6"
-                    >
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">About</h3>
-                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                          {profileData.bio}
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h3>
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                              <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-gray-900 dark:text-white">Completed project "AI Chatbot Integration"</p>
-                              <p className="text-xs text-gray-500 dark:text-gray-500">2 days ago</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                              <Star className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-gray-900 dark:text-white">Received 5-star rating from client</p>
-                              <p className="text-xs text-gray-500 dark:text-gray-500">1 week ago</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {activeTab === 'projects' && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-4"
-                    >
-                      {projects.map((project, index) => (
-                        <motion.div
-                          key={project.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-                          transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
-                          className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-all duration-300"
-                        >
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <h4 className="font-semibold text-gray-900 dark:text-white">{project.title}</h4>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">{project.description}</p>
-                            </div>
-                            <Badge variant={project.status === 'completed' ? 'default' : project.status === 'active' ? 'secondary' : 'outline'}>
-                              {project.status}
+                  <div className="space-y-4">
+                    {assessmentHistory.map((assessment) => (
+                      <div key={assessment.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
+                              {assessment.title}
+                            </h3>
+                            <Badge className={getScoreBadge(assessment.score)}>
+                              {assessment.score}%
+                            </Badge>
+                            <Badge variant="outline">
+                              {assessment.category}
                             </Badge>
                           </div>
-                          
-                          <div className="space-y-3">
-                            <div>
-                              <div className="flex justify-between text-sm mb-1">
-                                <span className="text-gray-600 dark:text-gray-400">Progress</span>
-                                <span className="text-gray-900 dark:text-white font-medium">{project.progress}%</span>
-                              </div>
-                              <Progress value={project.progress} className="h-2" />
-                            </div>
-                            
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <span className="text-gray-600 dark:text-gray-400">Budget:</span>
-                                <span className="ml-2 text-gray-900 dark:text-white font-medium">${project.budget.toLocaleString()}</span>
-                              </div>
-                              <div>
-                                <span className="text-gray-600 dark:text-gray-400">Client:</span>
-                                <span className="ml-2 text-gray-900 dark:text-white font-medium">{project.client}</span>
-                              </div>
-                            </div>
+                          <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                            <span>Completed: {new Date(assessment.date).toLocaleDateString()}</span>
+                            <span>Time: {assessment.timeSpent}</span>
+                            <span>Questions: {assessment.questions}</span>
+                            <span>Correct: {assessment.correctAnswers}/{assessment.questions}</span>
                           </div>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  )}
-
-                  {activeTab === 'settings' && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-6"
-                    >
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Account Settings</h3>
-                        <div className="space-y-4">
-                          <Button variant="outline" className="w-full justify-start">
-                            <Shield className="w-4 h-4 mr-2" />
-                            Privacy & Security
-                          </Button>
-                          <Button variant="outline" className="w-full justify-start">
-                            <Bell className="w-4 h-4 mr-2" />
-                            Notifications
-                          </Button>
-                          <Button variant="outline" className="w-full justify-start">
-                            <CreditCard className="w-4 h-4 mr-2" />
-                            Billing & Payments
-                          </Button>
                         </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleViewAssessment(assessment)}
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          View
+                        </Button>
                       </div>
-                    </motion.div>
-                  )}
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
           </div>
+
+          {/* Skills and Projects */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            {/* Skills */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 dark:text-white">Skills & Expertise</CardTitle>
+                  <CardDescription>Your technical skills and competencies</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {profileData.skills.map((skill, index) => (
+                      <Badge key={index} className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                  <Button variant="outline" className="mt-4">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Skill
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Recent Projects */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 dark:text-white">Recent Projects</CardTitle>
+                  <CardDescription>Your active and completed projects</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {projects.map((project) => (
+                      <div key={project.id} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                            {project.title}
+                          </h3>
+                          <Badge className={project.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'}>
+                            {project.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                          {project.description}
+                        </p>
+                        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                          <span>Budget: {project.budget}</span>
+                          <span>Due: {new Date(project.deadline).toLocaleDateString()}</span>
+                        </div>
+                        <div className="mt-3">
+                          <div className="flex items-center justify-between text-sm mb-1">
+                            <span>Progress</span>
+                            <span>{project.progress}%</span>
+                          </div>
+                          <Progress value={project.progress} className="h-2" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <Button variant="outline" className="w-full mt-4" onClick={() => navigate('/projects')}>
+                    View All Projects
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+
+          {/* Achievements */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
+            className="mt-8"
+          >
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-white">Achievements & Badges</CardTitle>
+                <CardDescription>Your accomplishments and recognition</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {achievements.map((achievement) => (
+                    <div key={achievement.id} className="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg">
+                      <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <achievement.icon className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                        {achievement.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        {achievement.description}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(achievement.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </section>
+
+      {/* Assessment Detail Modal */}
+      <AnimatePresence>
+        {showAssessmentModal && selectedAssessment && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Assessment Details</h2>
+                <Button variant="ghost" size="sm" onClick={() => setShowAssessmentModal(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    {selectedAssessment.title}
+                  </h3>
+                  <div className={`text-4xl font-bold ${getScoreColor(selectedAssessment.score)} mb-2`}>
+                    {selectedAssessment.score}%
+                  </div>
+                  <Badge className={getScoreBadge(selectedAssessment.score)}>
+                    {selectedAssessment.score >= 90 ? 'Excellent' : 
+                     selectedAssessment.score >= 80 ? 'Good' : 
+                     selectedAssessment.score >= 70 ? 'Average' : 'Needs Improvement'}
+                  </Badge>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {selectedAssessment.correctAnswers}/{selectedAssessment.questions}
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Correct Answers</div>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {selectedAssessment.timeSpent}
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Time Spent</div>
+                  </div>
+                </div>
+                
+                <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Completed on</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {new Date(selectedAssessment.date).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </div>
+                </div>
+                
+                <div className="flex space-x-3">
+                  <Button variant="outline" className="flex-1" onClick={() => setShowAssessmentModal(false)}>
+                    Close
+                  </Button>
+                  <Button className="flex-1" onClick={() => {
+                    setShowAssessmentModal(false);
+                    navigate('/assessment');
+                  }}>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Retake Assessment
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
