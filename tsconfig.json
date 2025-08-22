@@ -9,10 +9,13 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "noImplicitAny": false,
-    "noUnusedParameters": false,
+    "jsx": "react-jsx",                     // ✅ Needed for React 17+
+    "moduleResolution": "node",             // ✅ Required to resolve npm packages
+    "esModuleInterop": true,                 // ✅ Fixes default import issues
     "skipLibCheck": true,
     "allowJs": true,
+    "noImplicitAny": false,
+    "noUnusedParameters": false,
     "noUnusedLocals": false,
     "strictNullChecks": false
   }

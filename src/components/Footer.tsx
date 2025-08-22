@@ -1,111 +1,35 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Sparkles, 
-  Globe, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Twitter, 
-  Linkedin, 
-  Facebook, 
+import { motion } from 'framer-motion';
+import {
+  Sparkles,
+  Mail,
+  Phone,
+  MapPin,
+  Facebook,
+  Twitter,
   Instagram,
-  ArrowRight,
-  Shield,
-  Users,
-  Award,
-  Zap,
-  CheckCircle
+  Linkedin,
+  Github,
+  Heart,
+  ArrowUp,
+  ExternalLink
 } from 'lucide-react';
 
-export default function Footer() {
-  const currentYear = new Date().getFullYear();
-  const [scrollProgress, setScrollProgress] = React.useState(0);
-  const [email, setEmail] = React.useState('');
-  const [isSubscribed, setIsSubscribed] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  React.useEffect(() => {
-    const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (window.scrollY / totalHeight) * 100;
-      setScrollProgress(Math.min(progress, 100));
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 't') {
-        e.preventDefault();
-        scrollToTop();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('keydown', handleKeyDown);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
-
+const Footer = () => {
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
-  const handleNewsletterSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    
-    setIsLoading(true);
-    
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Here you would typically send the email to your backend
-      console.log('Subscribing email:', email);
-      
-      setIsSubscribed(true);
-      setEmail('');
-      
-      // Reset subscription status after 5 seconds
-      setTimeout(() => setIsSubscribed(false), 5000);
-    } catch (error) {
-      console.error('Failed to subscribe:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const footerSections = [
     {
       title: 'Platform',
       links: [
-        { name: 'Browse Projects', href: '/tasks' },
-        { name: 'Post a Project', href: '/create-task' },
         { name: 'How It Works', href: '/how-it-works' },
+        { name: 'For Clients', href: '/for-clients' },
         { name: 'Success Stories', href: '/success-stories' },
-      ]
-    },
-    {
-      title: 'For Talent',
-      links: [
-        { name: 'Become a Skiller', href: '/register?type=skiller' },
-        { name: 'Browse Projects', href: '/tasks' },
-        { name: 'Skill Assessment', href: '/assessment' },
-        { name: 'Learning Resources', href: '/resources' },
-      ]
-    },
-    {
-      title: 'For Clients',
-      links: [
-        { name: 'Hire Talent', href: '/register' },
-        { name: 'Post Projects', href: '/create-task' },
-        { name: 'Client Guide', href: '/client-guide' },
-        { name: 'Enterprise Solutions', href: '/enterprise' },
+        { name: 'Resources', href: '/resources' },
+        { name: 'Community', href: '/community' },
       ]
     },
     {
@@ -115,294 +39,202 @@ export default function Footer() {
         { name: 'Careers', href: '/careers' },
         { name: 'Press', href: '/press' },
         { name: 'Partners', href: '/partners' },
+        { name: 'Contact', href: '/support' },
       ]
     },
     {
       title: 'Support',
       links: [
         { name: 'Help Center', href: '/help' },
-        { name: 'Contact Support', href: '/support' },
-        { name: 'Community', href: '/community' },
+        { name: 'Client Guide', href: '/client-guide' },
         { name: 'Status', href: '/status' },
+        { name: 'Privacy Policy', href: '/privacy-policy' },
+        { name: 'Terms of Service', href: '/terms-of-service' },
       ]
     },
     {
       title: 'Legal',
       links: [
-        { name: 'Privacy Policy', href: '/privacy-policy' },
-        { name: 'Terms of Service', href: '/terms-of-service' },
         { name: 'Cookie Policy', href: '/cookie-policy' },
         { name: 'GDPR', href: '/gdpr' },
+        { name: 'Security', href: '/security' },
+        { name: 'Compliance', href: '/compliance' },
       ]
     }
   ];
 
   const socialLinks = [
-    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/skillsphere' },
-    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/skillsphere' },
-    { name: 'Facebook', icon: Facebook, href: 'https://facebook.com/skillsphere' },
-    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/skillsphere' },
-  ];
-
-  const stats = [
-    { label: 'Active Projects', value: '2,500+' },
-    { label: 'Top Professionals', value: '10,000+' },
-    { label: 'Countries Served', value: '150+' },
-    { label: 'Success Rate', value: '98%' },
+    { name: 'Facebook', icon: Facebook, href: 'https://facebook.com' },
+    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com' },
+    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com' },
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
+    { name: 'GitHub', icon: Github, href: 'https://github.com' },
   ];
 
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 text-white mt-auto">
+    <footer className="bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 border-t border-gray-200 dark:border-gray-700">
       {/* Main Footer Content */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Top Section with Logo and Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
-          {/* Logo and Description */}
-          <div className="lg:col-span-1">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white">SkillSphere</h3>
-                <p className="text-blue-200 text-sm">Top 3% Talent Platform</p>
-              </div>
-            </div>
-            <p className="text-gray-300 mb-6 leading-relaxed">
-              Connect with the world's top professionals. Whether you're hiring talent or showcasing your skills, SkillSphere is your gateway to exceptional results.
-            </p>
-            <div className="flex items-center space-x-4 text-sm text-gray-400">
-              <div className="flex items-center space-x-2">
-                <Mail className="w-4 h-4" />
-                <span>support@skillsphere.com</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Stats */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+          {/* Brand Section */}
           <div className="lg:col-span-2">
-            <h3 className="text-xl font-semibold text-white mb-6">Platform Impact</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {stats.map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-xl md:text-2xl font-bold text-blue-400 mb-1">{stat.value}</div>
-                  <div className="text-xs md:text-sm text-gray-300">{stat.label}</div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="space-y-4"
+            >
+              <Link to="/" className="flex items-center space-x-2">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-white" />
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Links */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8 mb-8 md:mb-12">
-          {footerSections.map((section) => (
-            <div key={section.title}>
-              <h4 className="text-base md:text-lg font-semibold text-white mb-3 md:mb-4">{section.title}</h4>
-              <ul className="space-y-2 md:space-y-3">
-                {section.links.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.href}
-                      className="text-gray-300 hover:text-blue-400 transition-colors duration-200 text-xs md:text-sm hover:underline"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Newsletter and Social */}
-        <div className="border-t border-gray-700 pt-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Newsletter */}
-            <div>
-              <h4 className="text-lg font-semibold text-white mb-4">Stay Updated</h4>
-              <p className="text-gray-300 mb-4">
-                Get the latest insights on remote work, freelancing, and industry trends.
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  SkillSphere
+                </span>
+              </Link>
+              <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
+                Connecting talented professionals with amazing opportunities. Build your career, grow your business, and achieve your goals with our AI-powered platform.
               </p>
               
-              {isSubscribed ? (
-                <div className="p-4 bg-green-600/20 border border-green-500/30 rounded-lg">
-                  <div className="flex items-center gap-2 text-green-400">
-                    <CheckCircle className="w-5 h-5" />
-                    <span className="font-medium">Successfully subscribed!</span>
-                  </div>
-                  <p className="text-green-300 text-sm mt-1">
-                    You'll receive our newsletter with the latest updates and insights.
-                  </p>
+              {/* Contact Info */}
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
+                  <Mail className="w-5 h-5" />
+                  <span>hello@skillsphere.com</span>
                 </div>
-              ) : (
-                <form onSubmit={handleNewsletterSubscribe} className="space-y-3">
-                                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="flex-1 px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                />
-                <button 
-                  type="submit"
-                  disabled={isLoading}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>Subscribing...</span>
-                    </div>
-                  ) : (
-                    'Subscribe'
-                  )}
-                </button>
+                <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
+                  <Phone className="w-5 h-5" />
+                  <span>+1 (555) 123-4567</span>
+                </div>
+                <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
+                  <MapPin className="w-5 h-5" />
+                  <span>San Francisco, CA</span>
+                </div>
               </div>
-                  <p className="text-xs text-gray-400">
-                    We respect your privacy. Unsubscribe at any time.
-                  </p>
-                </form>
-              )}
-            </div>
 
-            {/* Social Links */}
-            <div>
-              <h4 className="text-lg font-semibold text-white mb-4">Follow Us</h4>
-              <p className="text-gray-300 mb-4">
-                Join our community and stay connected with the latest updates.
-              </p>
+              {/* Social Links */}
               <div className="flex space-x-4">
                 {socialLinks.map((social) => (
-                  <a
+                  <motion.a
                     key={social.name}
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-all duration-200 hover:scale-110"
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="w-10 h-10 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 shadow-sm hover:shadow-md"
                   >
                     <social.icon className="w-5 h-5" />
-                  </a>
+                  </motion.a>
                 ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Footer Links */}
+          {footerSections.map((section, index) => (
+            <motion.div
+              key={section.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="space-y-4"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {section.title}
+              </h3>
+              <ul className="space-y-3">
+                {section.links.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      to={link.href}
+                      className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-1 group"
+                    >
+                      <span>{link.name}</span>
+                      <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Newsletter Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700"
+        >
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
+            <div className="max-w-2xl mx-auto text-center">
+              <h3 className="text-2xl font-bold mb-4">
+                Stay Updated with SkillSphere
+              </h3>
+              <p className="text-blue-100 mb-6">
+                Get the latest updates on new features, success stories, and industry insights delivered to your inbox.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
+                />
+                <button className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors duration-200">
+                  Subscribe
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-700 bg-gray-900/50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="border-t border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            {/* Copyright */}
-            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 text-sm text-gray-400">
-              <span>© {currentYear} SkillSphere. All rights reserved.</span>
-              <div className="flex sm:hidden items-center space-x-4">
-                <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">
-                  Privacy
-                </Link>
-                <span>•</span>
-                <Link to="/terms-of-service" className="hover:text-blue-400 transition-colors">
-                  Terms
-                </Link>
-                <span>•</span>
-                <Link to="/cookie-policy" className="hover:text-blue-400 transition-colors">
-                  Cookies
-                </Link>
-              </div>
-              <div className="hidden sm:flex items-center space-x-4">
-                <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">
-                  Privacy
-                </Link>
-                <span>•</span>
-                <Link to="/terms-of-service" className="hover:text-blue-400 transition-colors">
-                  Terms
-                </Link>
-                <span>•</span>
-                <Link to="/cookie-policy" className="hover:text-blue-400 transition-colors">
-                  Cookies
-                </Link>
-              </div>
+            <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+              <span>© 2024 SkillSphere. Made with</span>
+              <Heart className="w-4 h-4 text-red-500 fill-current" />
+              <span>for the future of work.</span>
             </div>
-
-            {/* Trust Indicators */}
-            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-gray-400">
-              <div className="flex items-center space-x-2">
-                <Shield className="w-4 h-4 text-green-400" />
-                <span>Secure & Trusted</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4 text-blue-400" />
-                <span>10K+ Professionals</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Award className="w-4 h-4 text-yellow-400" />
-                <span>Top 3% Quality</span>
-              </div>
+            
+            <div className="flex items-center space-x-6">
+              <Link
+                to="/privacy-policy"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Privacy
+              </Link>
+              <Link
+                to="/terms-of-service"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Terms
+              </Link>
+              <Link
+                to="/cookie-policy"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Cookies
+              </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Back to Top */}
-      {scrollProgress > 10 && (
-        <div className="fixed bottom-8 right-6 sm:bottom-10 sm:right-8 z-50 animate-in slide-in-from-bottom duration-500 ease-out hover:animate-bounce-slow">
-          {/* Progress Ring */}
-          <div className="relative w-16 h-16 group">
-            <svg className="w-16 h-16 transform -rotate-90 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 64 64">
-              <circle
-                cx="32"
-                cy="32"
-                r="28"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="transparent"
-                className="text-gray-300 dark:text-gray-600 transition-colors duration-300"
-                strokeDasharray="175.93"
-                strokeDashoffset="0"
-              />
-              <circle
-                cx="32"
-                cy="32"
-                r="28"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="transparent"
-                className="text-blue-500 dark:text-blue-400 transition-all duration-300"
-                strokeDasharray="175.93"
-                strokeDashoffset={175.93 - (175.93 * scrollProgress) / 100}
-                style={{
-                  transition: 'stroke-dashoffset 0.3s ease-in-out'
-                }}
-              />
-            </svg>
-            
-            {/* Button */}
-            <button
-              onClick={scrollToTop}
-              className="absolute inset-2 w-12 h-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:via-indigo-600 dark:hover:to-purple-600 focus:from-blue-700 focus:via-indigo-700 focus:to-purple-700 dark:focus:from-blue-600 dark:focus:via-indigo-600 dark:focus:to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 focus:shadow-blue-500/50 dark:focus:shadow-blue-400/50 transition-all duration-500 hover:scale-110 hover:-translate-y-1 focus:scale-110 focus:-translate-y-1 flex items-center justify-center group backdrop-blur-sm border border-white/20 dark:border-gray-300/20 focus:border-white/40 dark:focus:border-gray-200/40 animate-pulse-slow focus:outline-none focus:ring-4 focus:ring-blue-500/25 dark:focus:ring-blue-400/25"
-              aria-label="Back to top"
-              title="Scroll to top (Ctrl/Cmd + T)"
-            >
-              <ArrowRight className="w-5 h-5 transform rotate-[-90deg] group-hover:scale-110 group-hover:-translate-y-0.5 transition-all duration-300" />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 via-indigo-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              
-              {/* Ripple Effect */}
-              <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 group-hover:scale-150 transition-all duration-500"></div>
-              
-              {/* Subtle Glow */}
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500"></div>
-            </button>
-            
-            {/* Tooltip */}
-            <div className="absolute bottom-full right-1/2 transform translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-              Scroll to top
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Scroll to Top Button */}
+      <motion.button
+        onClick={scrollToTop}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center z-50"
+      >
+        <ArrowUp className="w-6 h-6" />
+      </motion.button>
     </footer>
   );
-}
+};
+
+export default Footer;

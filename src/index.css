@@ -6,31 +6,22 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
-
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 84% 4.9%;
-
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 84% 4.9%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
-
     --radius: 0.5rem;
-
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -39,8 +30,6 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Custom light mode colors */
     --navbar-bg: 255 255 255;
     --navbar-border: 229 231 235;
     --dropdown-bg: 255 255 255;
@@ -54,25 +43,18 @@
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
-
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
@@ -84,8 +66,6 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Custom dark mode colors */
     --navbar-bg: 17 24 39;
     --navbar-border: 55 65 81;
     --dropdown-bg: 31 41 55;
@@ -94,13 +74,22 @@
     --text-secondary: 156 163 175;
     --bg-primary: 17 24 39;
     --bg-secondary: 31 41 55;
+    
+    /* Enhanced dark mode text colors */
+    --text-primary: 243 244 246;
+    --text-secondary: 156 163 175;
+    --text-muted: 107 114 128;
+    --text-accent: 59 130 246;
+    
+    /* Enhanced dark mode backgrounds */
+    --bg-gradient-start: 17 24 39;
+    --bg-gradient-end: 31 41 55;
+    --card-hover: 31 41 55;
+    --input-focus: 59 130 246;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
 
   body {
     @apply bg-background text-foreground transition-colors duration-200;
@@ -198,6 +187,20 @@
 
   .animate-pulse-slow {
     animation: pulseSlow 3s ease-in-out infinite;
+  }
+
+  /* Marquee Animation */
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-marquee {
+    animation: marquee 15s linear infinite;
+  }
+
+  .animate-marquee:hover {
+    animation-play-state: paused;
   }
 
   /* Custom Keyframes */
@@ -432,7 +435,7 @@
   .delay-400 { animation-delay: 400ms; }
   .delay-500 { animation-delay: 500ms; }
 
-  /* Added: Forced-colors overrides for high-contrast mode (replaces -ms-high-contrast) */
+  /* Forced-colors overrides for high-contrast mode */
   @media (forced-colors: active) {
     body {
       background: Canvas;
@@ -447,23 +450,30 @@
     .focus-ring {
       outline-color: Highlight;
     }
+    .bg-white, .bg-gray-50, .bg-gray-100 {
+      background: Canvas;
+    }
+    .text-gray-900, .text-gray-700, .text-gray-600 {
+      color: CanvasText;
+    }
+    .border-gray-200, .border-gray-300 {
+      border-color: ButtonBorder;
+    }
   }
 
   @media (forced-colors: active) and (prefers-color-scheme: light) {
-    /* Light high-contrast adjustments */
     .bg-primary {
       background: Canvas;
     }
   }
 
   @media (forced-colors: active) and (prefers-color-scheme: dark) {
-    /* Dark high-contrast adjustments */
     .bg-primary {
       background: Canvas;
     }
   }
 
-  /* Added: Cool rainbow gradient text utility */
+  /* Cool rainbow gradient text utility */
   .text-gradient-rainbow {
     @apply bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 bg-clip-text text-transparent animate-gradient;
   }
@@ -472,5 +482,79 @@
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+  }
+
+  /* Enhanced Homepage Animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  /* Enhanced hover effects */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Smooth transitions for interactive elements */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Enhanced focus states */
+  .focus-ring-enhanced:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px #3b82f6, 0 0 0 4px rgba(59, 130, 246, 0.1);
+  }
+
+  /* Glass morphism effects */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 }

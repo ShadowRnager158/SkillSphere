@@ -1,694 +1,648 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeContext';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { 
-  Menu, 
-  X, 
-  Bell, 
-  Briefcase, 
-  CheckCircle, 
-  DollarSign, 
-  TrendingUp, 
-  Activity, 
-  Upload, 
-  User, 
-  Calendar, 
-  GraduationCap, 
-  MapPin, 
-  Phone, 
-  Edit, 
-  MessageSquare, 
-  Send, 
-  Bot, 
-  ArrowRight, 
-  Users, 
-  Globe, 
-  Star, 
-  Zap, 
-  Shield, 
-  Award, 
-  Rocket, 
-  Clock, 
-  Target, 
-  BarChart3, 
-  ArrowUpRight, 
-  Plus, 
-  Eye, 
-  Camera, 
-  Mail, 
-  Search, 
-  Filter, 
-  Grid3X3, 
-  List, 
-  SortAsc, 
-  FilterX, 
-  Sparkles, 
-  ChevronDown, 
-  Home, 
-  FileText, 
-  MoreVertical, 
-  Reply, 
-  Trash2, 
-  Archive, 
-  Brain, 
-  BookOpen, 
-  Timer, 
-  Play, 
-  Pause, 
-  RotateCcw, 
-  Video, 
-  Download, 
-  ExternalLink, 
-  Bookmark, 
-  Share2, 
-  Settings, 
-  Info, 
-  XCircle,
-  AlertCircle,
-  CheckCircle2,
+import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Menu,
+  X,
+  Search,
+  Bell,
+  Settings,
+  LogOut,
+  User,
   Sun,
   Moon,
-  LogOut,
-  Sparkles as SparklesIcon,
+  ChevronDown,
+  Home,
+  Briefcase,
+  MessageSquare,
+  FileText,
+  Users,
+  HelpCircle,
   Building,
-  Handshake,
+  Globe,
+  Award,
+  BookOpen,
+  Shield,
+  BarChart3,
+  Sparkles,
+  Search as SearchIcon,
+  Filter,
+  Plus,
+  Calendar,
+  MapPin,
+  Brain,
+  Code,
+  Palette,
+  Database,
+  Cloud,
+  Smartphone,
+  Server,
+  Cpu,
+  HardDrive,
+  Wifi,
+  Bluetooth,
+  Battery,
+  WifiOff,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  SkipForward,
+  SkipBack,
+  Repeat,
+  Shuffle,
+  ChevronRight,
+  ChevronLeft,
+  Lock,
+  Unlock,
+  Key,
+  X as XIcon,
+  MessageSquare as MessageSquareIcon,
+  Image,
+  Video,
+  Music,
+  Folder,
+  File,
+  BarChart3 as BarChart3Icon,
+  PieChart,
+  Activity,
+  Timer,
+  CheckSquare,
+  Square,
+  Info,
+  AlertCircle,
+  ThumbsUp,
+  ThumbsDown,
+  Eye,
+  EyeOff,
+  Edit,
+  Trash2,
+  Minus,
+  Save,
+  Download,
+  ExternalLink,
+  Copy,
+  Link as LinkIcon,
   Heart,
-  Settings2,
-  CreditCard,
-  HelpCircle
+  MessageCircle,
+  Send,
+  Smile,
+  Frown,
+  Meh
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
-export default function Navbar() {
-  const { user, logout } = useAuth();
-  const { theme, isDarkMode, setTheme, toggleTheme } = useTheme();
-  const navigate = useNavigate();
+const Navbar = () => {
+  const { isAuthenticated, user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Mock notifications data
-  const [notifications, setNotifications] = useState([
-    { id: 1, message: 'New project matching your skills', time: '2m ago', unread: true, type: 'project' },
-    { id: 2, message: 'Client accepted your proposal', time: '1h ago', unread: true, type: 'proposal' },
-    { id: 3, message: 'Payment received for Project X', time: '3h ago', unread: false, type: 'payment' },
-    { id: 4, message: 'New message from John Doe', time: '30m ago', unread: true, type: 'message' },
-    { id: 5, message: 'Skill assessment completed', time: '2h ago', unread: true, type: 'assessment' },
+  // Enhanced notifications data
+  const [notifications] = useState([
+    { 
+      id: 1, 
+      message: 'New project matching your skills', 
+      time: '2m ago', 
+      unread: true, 
+      type: 'project',
+      icon: Briefcase,
+      color: 'text-blue-600',
+      action: 'View Project'
+    },
+    { 
+      id: 2, 
+      message: 'Client accepted your proposal', 
+      time: '1h ago', 
+      unread: true, 
+      type: 'proposal',
+      icon: CheckSquare,
+      color: 'text-green-600',
+      action: 'View Details'
+    },
+    { 
+      id: 3, 
+      message: 'Payment received for Project X', 
+      time: '3h ago', 
+      unread: false, 
+      type: 'payment',
+      icon: Award,
+      color: 'text-purple-600',
+      action: 'View Payment'
+    },
+    { 
+      id: 4, 
+      message: 'New message from John Doe', 
+      time: '30m ago', 
+      unread: true, 
+      type: 'message',
+      icon: MessageSquare,
+      color: 'text-orange-600',
+      action: 'Reply'
+    },
+    { 
+      id: 5, 
+      message: 'Assessment result available', 
+      time: '1d ago', 
+      unread: false, 
+      type: 'assessment',
+      icon: FileText,
+      color: 'text-indigo-600',
+      action: 'View Results'
+    },
   ]);
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
-  const markAllAsRead = () => {
-    setNotifications(prev => prev.map(notification => ({ ...notification, unread: false })));
-  };
+  // Search suggestions
+  const searchSuggestions = [
+    { type: 'skill', name: 'React Development', icon: Code, color: 'from-blue-500 to-cyan-500' },
+    { type: 'skill', name: 'UI/UX Design', icon: Palette, color: 'from-purple-500 to-pink-500' },
+    { type: 'skill', name: 'Data Science', icon: Database, color: 'from-orange-500 to-red-500' },
+    { type: 'project', name: 'E-commerce Platform', icon: Briefcase, color: 'from-green-500 to-emerald-500' },
+    { type: 'project', name: 'Mobile App Development', icon: Smartphone, color: 'from-indigo-500 to-purple-500' },
+  ];
 
-  const markAsRead = (id: number) => {
-    setNotifications(prev => prev.map(notification => 
-      notification.id === id ? { ...notification, unread: false } : notification
-    ));
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
     navigate('/');
+    setIsProfileOpen(false);
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/tasks?search=${encodeURIComponent(searchQuery.trim())}`);
+  const handleSearch = (query: string) => {
+    if (query.trim()) {
+      navigate(`/search?q=${encodeURIComponent(query)}`);
       setIsSearchOpen(false);
       setSearchQuery('');
     }
   };
 
-  const isActive = (path: string) => location.pathname === path;
+  const handleNotificationClick = (notification: any) => {
+    // Handle notification actions
+    switch (notification.type) {
+      case 'project':
+        navigate('/tasks');
+        break;
+      case 'proposal':
+        navigate('/dashboard');
+        break;
+      case 'payment':
+        navigate('/dashboard');
+        break;
+      case 'message':
+        navigate('/messages');
+        break;
+      case 'assessment':
+        navigate('/assessment');
+        break;
+    }
+    setIsNotificationsOpen(false);
+  };
+
+  const navigationItems = [
+    { name: 'Home', href: '/', icon: Home },
+    { name: 'How It Works', href: '/how-it-works', icon: Sparkles },
+    { name: 'For Clients', href: '/for-clients', icon: Building },
+    { name: 'About', href: '/about', icon: Users },
+    { name: 'Resources', href: '/resources', icon: BookOpen },
+    { name: 'Community', href: '/community', icon: Globe },
+    { name: 'Help', href: '/help', icon: HelpCircle },
+  ];
+
+  const authenticatedItems = [
+    { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
+    { name: 'Tasks', href: '/tasks', icon: Briefcase },
+    { name: 'Messages', href: '/messages', icon: MessageSquare },
+    { name: 'Assessment', href: '/assessment', icon: FileText },
+    { name: 'Certifications', href: '/certification-exams', icon: Award },
+  ];
+
+  const isActive = (href: string) => location.pathname === href;
 
   return (
-    <>
-      <nav className="sticky top-0 z-50 w-full border-b border-gray-200/50 dark:border-gray-800/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-gray-900/60">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo and Brand */}
-            <div className="flex items-center space-x-4">
-              <Link to="/" className="flex items-center space-x-3 group">
-                <div className="relative">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-                    <SparklesIcon className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="absolute -inset-1 bg-gradient-to-br from-blue-600/20 via-indigo-600/20 to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                <div className="hidden sm:block">
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-800 dark:from-white dark:via-blue-200 dark:to-indigo-200 bg-clip-text text-transparent">
-                    SkillSphere
-                  </h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 -mt-1">AI-Powered Platform</p>
-                </div>
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700'
+          : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              SkillSphere
+            </span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive(item.href)
+                    ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                {item.name}
               </Link>
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-8">
-              {/* Platform Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200">
-                    Platform
-                    <ChevronDown className="ml-1 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-64 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
-                  <DropdownMenuLabel className="text-blue-600 dark:text-blue-400 font-semibold">Platform Features</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/tasks" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                      <Briefcase className="w-5 h-5 text-blue-600" />
-                      <div>
-                        <div className="font-medium">Browse Projects</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Find amazing opportunities</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/create-task" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
-                      <Plus className="w-5 h-5 text-green-600" />
-                      <div>
-                        <div className="font-medium">Post a Project</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Get your work done</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/how-it-works" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors">
-                      <Rocket className="w-5 h-5 text-purple-600" />
-                      <div>
-                        <div className="font-medium">How It Works</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Learn the process</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/success-stories" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-yellow-50 dark:hover:bg-yellow-900/20 transition-colors">
-                      <Award className="w-5 h-5 text-yellow-600" />
-                      <div>
-                        <div className="font-medium">Success Stories</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">See real results</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* For Talent Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200">
-                    For Talent
-                    <ChevronDown className="ml-1 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-64 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
-                  <DropdownMenuLabel className="text-green-600 dark:text-green-400 font-semibold">Talent Opportunities</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/sign-up?type=skiller" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
-                      <User className="w-5 h-5 text-green-600" />
-                      <div>
-                        <div className="font-medium">Become a Skiller</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Join our talent pool</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/assessment" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors">
-                      <Brain className="w-5 h-5 text-indigo-600" />
-                      <div>
-                        <div className="font-medium">Skill Assessment</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Test your skills</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/resources" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                      <BookOpen className="w-5 h-5 text-blue-600" />
-                      <div>
-                        <div className="font-medium">Learning Resources</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Grow your skills</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* For Clients Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200">
-                    For Clients
-                    <ChevronDown className="ml-1 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-64 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
-                  <DropdownMenuLabel className="text-purple-600 dark:text-purple-400 font-semibold">Client Services</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/sign-up" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors">
-                      <Users className="w-5 h-5 text-purple-600" />
-                      <div>
-                        <div className="font-medium">Hire Talent</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Find the best professionals</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/client-guide" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                      <FileText className="w-5 h-5 text-blue-600" />
-                      <div>
-                        <div className="font-medium">Client Guide</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Get started guide</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/enterprise" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors">
-                      <Building className="w-5 h-5 text-indigo-600" />
-                      <div>
-                        <div className="font-medium">Enterprise Solutions</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">For large organizations</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Company Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200">
-                    Company
-                    <ChevronDown className="ml-1 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-64 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
-                  <DropdownMenuLabel className="text-gray-600 dark:text-gray-400 font-semibold">About Us</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/about" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                      <Info className="w-5 h-5 text-gray-600" />
-                      <div>
-                        <div className="font-medium">About Us</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Our story and mission</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/careers" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                      <Briefcase className="w-5 h-5 text-blue-600" />
-                      <div>
-                        <div className="font-medium">Careers</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Join our team</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/press" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
-                      <FileText className="w-5 h-5 text-green-600" />
-                      <div>
-                        <div className="font-medium">Press</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Media resources</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/partners" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors">
-                      <Handshake className="w-5 h-5 text-purple-600" />
-                      <div>
-                        <div className="font-medium">Partners</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Strategic partnerships</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            {/* Right Side Actions */}
-            <div className="flex items-center space-x-4">
-              {/* Theme Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleTheme}
-                className="relative w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 group"
-              >
-                <Sun className={`h-5 w-5 text-yellow-600 transition-all duration-300 ${isDarkMode ? 'rotate-90 scale-0' : 'rotate-0 scale-100'}`} />
-                <Moon className={`absolute h-5 w-5 text-blue-600 transition-all duration-300 ${isDarkMode ? 'rotate-0 scale-100' : 'rotate-90 scale-0'}`} />
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-yellow-400/20 to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </Button>
-
-              {/* Search */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSearchOpen(true)}
-                className="relative w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
-              >
-                <Search className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              </Button>
-
-              {user ? (
-                <>
-                  {/* Notifications */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="relative w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
-                      >
-                        <Bell className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                        {unreadCount > 0 && (
-                          <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-xs text-white p-0 flex items-center justify-center">
-                            {unreadCount}
-                          </Badge>
-                        )}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-80 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
-                      <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700">
-                        <DropdownMenuLabel className="text-gray-900 dark:text-gray-100 font-semibold">Notifications</DropdownMenuLabel>
-                        {unreadCount > 0 && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={markAllAsRead}
-                            className="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                          >
-                            Mark all as read
-                          </Button>
-                        )}
-                      </div>
-                      <div className="max-h-96 overflow-y-auto">
-                        {notifications.length > 0 ? (
-                          notifications.map((notification) => (
-                            <DropdownMenuItem 
-                              key={notification.id} 
-                              className="p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
-                              onClick={() => markAsRead(notification.id)}
-                            >
-                              <div className="flex items-start space-x-3 w-full">
-                                <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{notification.message}</p>
-                                    {notification.unread && (
-                                      <Badge variant="secondary" className="text-xs px-1 py-0 h-4">New</Badge>
-                                    )}
-                                  </div>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400">{notification.time}</p>
-                                </div>
-                              </div>
-                            </DropdownMenuItem>
-                          ))
-                        ) : (
-                          <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                            <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                            <p className="text-sm">No notifications</p>
-                          </div>
-                        )}
-                      </div>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  {/* User Menu */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="relative p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200">
-                        <Avatar className="w-8 h-8">
-                          <AvatarImage src={user.avatar} alt={user.name} />
-                          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-sm font-semibold">
-                            {user.name[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="ml-3 hidden sm:block text-left">
-                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{user.isSkiller ? 'Skiller' : 'Client'}</p>
-                        </div>
-                        <ChevronDown className="ml-2 h-4 w-4 text-gray-500 dark:text-gray-400" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-72 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
-                      <DropdownMenuLabel className="text-gray-900 dark:text-gray-100 font-semibold">Account</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link to="/dashboard" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                          <BarChart3 className="w-5 h-5 text-blue-600" />
-                          <div>
-                            <div className="font-medium">Dashboard</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">View your overview & analytics</div>
-                          </div>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/profile" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
-                          <User className="w-5 h-5 text-green-600" />
-                          <div>
-                            <div className="font-medium">Profile</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">Edit profile & preferences</div>
-                          </div>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/messages" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors">
-                          <MessageSquare className="w-5 h-5 text-purple-600" />
-                          <div>
-                            <div className="font-medium">Messages</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">Chat with clients & skillers</div>
-                          </div>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/tasks" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors">
-                          <Briefcase className="w-5 h-5 text-orange-600" />
-                          <div>
-                            <div className="font-medium">My Projects</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">View & manage tasks</div>
-                          </div>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link to="/settings" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                          <Settings2 className="w-5 h-5 text-gray-600" />
-                          <div>
-                            <div className="font-medium">Settings</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">Account & privacy settings</div>
-                          </div>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/help" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                          <HelpCircle className="w-5 h-5 text-blue-600" />
-                          <div>
-                            <div className="font-medium">Help & Support</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">Get help & contact support</div>
-                          </div>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleLogout} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-red-600 dark:text-red-400">
-                        <LogOut className="w-5 h-5" />
-                        <div>
-                          <div className="font-medium">Sign Out</div>
-                          <div className="text-sm">Log out of your account</div>
-                        </div>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </>
-              ) : (
-                <>
-                  {/* Auth Buttons */}
-                  <Button
-                    variant="ghost"
-                    onClick={() => navigate('/login')}
-                    className="hidden sm:flex text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200"
-                  >
-                    Sign In
-                  </Button>
-                  <Button
-                    onClick={() => navigate('/sign-up')}
-                    className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                  >
-                    Get Started
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </>
-              )}
-
-              {/* Mobile Menu Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                ) : (
-                  <Menu className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                )}
-              </Button>
-            </div>
+            ))}
           </div>
 
-          {/* Mobile Menu */}
-          {isMobileMenuOpen && (
-            <div className="lg:hidden py-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="space-y-4">
-                {/* Mobile Navigation Links */}
-                <div className="grid grid-cols-2 gap-4">
-                  <Link
-                    to="/tasks"
-                    className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Briefcase className="w-5 h-5 text-blue-600" />
-                      <span className="font-medium">Browse Projects</span>
-                    </div>
-                  </Link>
-                  <Link
-                    to="/create-task"
-                    className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Plus className="w-5 h-5 text-green-600" />
-                      <span className="font-medium">Post Project</span>
-                    </div>
-                  </Link>
-                  <Link
-                    to="/how-it-works"
-                    className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Rocket className="w-5 h-5 text-purple-600" />
-                      <div>
-                        <div className="font-medium">How It Works</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">Learn the process</div>
-                      </div>
-                    </div>
-                  </Link>
-                  <Link
-                    to="/about"
-                    className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Info className="w-5 h-5 text-gray-600" />
-                      <div>
-                        <div className="font-medium">About Us</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">Our story</div>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-
-                {/* Mobile Auth Buttons */}
-                {!user && (
-                  <div className="space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <Button
-                      variant="outline"
-                      onClick={() => navigate('/login')}
-                      className="w-full"
-                    >
-                      Sign In
-                    </Button>
-                    <Button
-                      onClick={() => navigate('/sign-up')}
-                      className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white"
-                    >
-                      Get Started
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </nav>
-
-      {/* Search Modal */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-start justify-center pt-20">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Search Projects</h3>
+          {/* Right Side Actions */}
+          <div className="flex items-center space-x-4">
+            {/* Enhanced Search */}
+            <div className="relative">
               <Button
                 variant="ghost"
-                size="icon"
-                onClick={() => setIsSearchOpen(false)}
-                className="w-8 h-8"
+                size="sm"
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
               >
-                <X className="h-4 w-4" />
+                <Search className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </Button>
+              
+              <AnimatePresence>
+                {isSearchOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full right-0 mt-2 w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+                  >
+                    <div className="p-4">
+                      <div className="relative mb-4">
+                        <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                          placeholder="Search skills, projects, users..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-10 pr-4 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                          onKeyPress={(e) => e.key === 'Enter' && handleSearch(searchQuery)}
+                        />
+                      </div>
+                      
+                      {searchQuery && (
+                        <div className="space-y-2">
+                          {searchSuggestions
+                            .filter(item => 
+                              item.name.toLowerCase().includes(searchQuery.toLowerCase())
+                            )
+                            .map((suggestion, index) => (
+                              <button
+                                key={index}
+                                onClick={() => handleSearch(suggestion.name)}
+                                className="w-full p-3 text-left rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${suggestion.color} flex items-center justify-center`}>
+                                    <suggestion.icon className="w-4 h-4 text-white" />
+                                  </div>
+                                  <div>
+                                    <div className="font-medium text-gray-900 dark:text-white">
+                                      {suggestion.name}
+                                    </div>
+                                    <div className="text-sm text-gray-500 dark:text-gray-400 capitalize">
+                                      {suggestion.type}
+                                    </div>
+                                  </div>
+                                </div>
+                              </button>
+                            ))}
+                        </div>
+                      )}
+                      
+                      <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">Quick Actions</div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate('/create-task')}
+                            className="text-xs"
+                          >
+                            <Plus className="w-3 h-3 mr-1" />
+                            Post Project
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate('/tasks')}
+                            className="text-xs"
+                          >
+                            <Briefcase className="w-3 h-3 mr-1" />
+                            Browse Tasks
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-            <form onSubmit={handleSearch} className="space-y-4">
+
+            {/* Enhanced Notifications */}
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 relative"
+              >
+                <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </Badge>
+                )}
+              </Button>
+              
+              <AnimatePresence>
+                {isNotificationsOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+                  >
+                    <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-gray-900 dark:text-white">Notifications</h3>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-xs text-blue-600 hover:text-blue-700"
+                        >
+                          Mark all read
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="max-h-96 overflow-y-auto">
+                      {notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer ${
+                            notification.unread ? 'bg-blue-50 dark:bg-blue-900/10' : ''
+                          }`}
+                          onClick={() => handleNotificationClick(notification)}
+                        >
+                          <div className="flex items-start space-x-3">
+                            <div className={`w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center`}>
+                              <notification.icon className={`w-4 h-4 ${notification.color}`} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
+                                {notification.message}
+                              </p>
+                              <div className="flex items-center justify-between mt-2">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  {notification.time}
+                                </span>
+                                <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                                  {notification.action}
+                                </span>
+                              </div>
+                            </div>
+                            {notification.unread && (
+                              <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/notifications')}
+                        className="w-full text-sm"
+                      >
+                        View All Notifications
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleTheme}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5 text-yellow-500" />
+              ) : (
+                <Moon className="w-5 h-5 text-gray-600" />
+              )}
+            </Button>
+
+            {/* User Menu */}
+            {isAuthenticated ? (
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Search for projects, skills, or categories..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-12 text-lg border-2 border-gray-200 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400"
-                  autoFocus
-                />
+                <Button
+                  variant="ghost"
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src={user?.avatar} />
+                    <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold">
+                      {user?.name?.charAt(0) || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                </Button>
+                
+                <AnimatePresence>
+                  {isProfileOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+                    >
+                      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="w-12 h-12">
+                            <AvatarImage src={user?.avatar} />
+                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-lg font-semibold">
+                              {user?.name?.charAt(0) || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-semibold text-gray-900 dark:text-white">
+                              {user?.name || 'User'}
+                            </div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              {user?.email || 'user@example.com'}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="p-2">
+                        {authenticatedItems.map((item) => (
+                          <Link
+                            key={item.name}
+                            to={item.href}
+                            onClick={() => setIsProfileOpen(false)}
+                            className="flex items-center space-x-3 w-full p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+                          >
+                            <item.icon className="w-4 h-4" />
+                            <span className="text-sm font-medium">{item.name}</span>
+                          </Link>
+                        ))}
+                      </div>
+                      
+                      <div className="p-2 border-t border-gray-200 dark:border-gray-700">
+                        <Link
+                          to="/profile"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center space-x-3 w-full p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+                        >
+                          <User className="w-4 h-4" />
+                          <span className="text-sm font-medium">Profile</span>
+                        </Link>
+                        <Link
+                          to="/settings"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center space-x-3 w-full p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+                        >
+                          <Settings className="w-4 h-4" />
+                          <span className="text-sm font-medium">Settings</span>
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center space-x-3 w-full p-3 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span className="text-sm font-medium">Sign Out</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Press Enter to search
-                </div>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Search
-                  <Search className="ml-2 h-4 w-4" />
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/login')}
+                  className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  onClick={() => navigate('/signup')}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                >
+                  Get Started
                 </Button>
               </div>
-            </form>
-            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Popular Searches</h4>
-              <div className="flex flex-wrap gap-2">
-                {['Web Development', 'Graphic Design', 'Content Writing', 'Mobile Apps', 'Data Analysis', 'Marketing'].map((term) => (
-                  <Button
-                    key={term}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setSearchQuery(term);
-                      handleSearch({ preventDefault: () => {} } as React.FormEvent);
-                    }}
-                    className="text-xs"
-                  >
-                    {term}
-                  </Button>
-                ))}
-              </div>
-            </div>
+            )}
+
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              {isMenuOpen ? (
+                <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              ) : (
+                <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              )}
+            </Button>
           </div>
         </div>
-      )}
-    </>
+
+        {/* Mobile Navigation */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden border-t border-gray-200 dark:border-gray-700"
+            >
+              <div className="py-4 space-y-2">
+                {navigationItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block px-4 py-2 text-base font-medium transition-colors duration-200 ${
+                      isActive(item.href)
+                        ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+                
+                {isAuthenticated && (
+                  <>
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Dashboard
+                    </div>
+                    {authenticatedItems.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="block px-4 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.nav>
   );
-}
+};
+
+export default Navbar;

@@ -23,6 +23,7 @@ import HowItWorks from './pages/HowItWorks';
 import About from './pages/About';
 import MessagesPage from './pages/Messages';
 import AssessmentPage from './pages/Assessment';
+import CertificationExamsPage from './pages/CertificationExams';
 import ResourcesPage from './pages/Resources';
 import ClientGuidePage from './pages/ClientGuide';
 import CookiePolicyPage from './pages/CookiePolicy';
@@ -36,7 +37,7 @@ import Help from './pages/Help';
 import Community from './pages/Community';
 import Status from './pages/Status';
 import SettingsPage from './pages/Settings';
-import PaymentPage from './pages/PaymentPage'; // Added PaymentPage import
+import PaymentPage from './pages/PaymentPage';
 
 // Context
 import { AuthProvider } from './contexts/AuthContext';
@@ -61,12 +62,13 @@ const InnerApp = () => {
         <Route path="/" element={<Layout />}>
           <Route
             index
-            element={isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage />}
+            element={isAuthenticated ? <Navigate to="/home" /> : <HomePage />}
           />
           <Route
             path="login"
-            element={isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage />}
+            element={isAuthenticated ? <Navigate to="/login" /> : <LoginPage />}
           />
+          <Route path="home" element={<HomePage />} />
           <Route path="sign-up" element={<SignUpPage />} />
           <Route path="tasks" element={<TasksPage />} />
           <Route path="tasks/:taskId" element={<TaskDetailPage />} />
@@ -78,6 +80,7 @@ const InnerApp = () => {
           <Route path="about" element={<About />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="assessment" element={<AssessmentPage />} />
+          <Route path="certification-exams" element={<CertificationExamsPage />} />
           <Route path="resources" element={<ResourcesPage />} />
           <Route path="client-guide" element={<ClientGuidePage />} />
           <Route path="cookie-policy" element={<CookiePolicyPage />} />
@@ -92,6 +95,14 @@ const InnerApp = () => {
           <Route path="status" element={<Status />} />
           <Route path="help-center" element={<Help />} />
           {/* Protected routes */}
+            <Route
+            path="home"
+            element={
+              <PrivateRoute>
+                <HomePage />
+              </PrivateRoute>
+            }
+            />
           <Route
             path="dashboard"
             element={
@@ -155,7 +166,8 @@ const App = () => {
             <TaskProvider>
               <TooltipProvider>
                 <Toaster />
-                {showSplash ? <SplashScreen /> : <InnerApp />}
+                {showSplash ? <SplashScreen /> :                 
+                <InnerApp />}
               </TooltipProvider>
             </TaskProvider>
           </UserProvider>
