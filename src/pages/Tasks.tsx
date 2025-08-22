@@ -122,10 +122,26 @@ export default function Tasks() {
   const [selectedType, setSelectedType] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [isApplying, setIsApplying] = useState<string | null>(null);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  const handleApply = async (taskId: string) => {
+    setIsApplying(taskId);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Here you would typically make an API call to apply for the task
+      console.log(`Applied for task ${taskId}`);
+      // Show success message or redirect
+    } catch (error) {
+      console.error('Failed to apply for task:', error);
+    } finally {
+      setIsApplying(null);
+    }
+  };
 
   const tasks: Task[] = [
     {
@@ -303,7 +319,7 @@ export default function Tasks() {
               </div>
             </div>
             
-            <Button>
+            <Button onClick={() => navigate('/create-task')} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
               <Plus className="w-4 h-4 mr-2" />
               Post New Task
             </Button>
@@ -498,12 +514,29 @@ export default function Tasks() {
                       </div>
                       
                       <div className="flex gap-2 mt-4">
-                        <Button variant="outline" size="sm" className="flex-1">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex-1 hover:bg-gray-50 dark:hover:bg-gray-700"
+                          onClick={() => navigate(`/tasks/${task.id}`)}
+                        >
                           <Eye className="w-4 h-4 mr-2" />
                           View
                         </Button>
-                        <Button size="sm" className="flex-1">
-                          Apply
+                        <Button 
+                          size="sm" 
+                          className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+                          onClick={() => handleApply(task.id)}
+                          disabled={isApplying === task.id}
+                        >
+                          {isApplying === task.id ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                              Applying...
+                            </>
+                          ) : (
+                            'Apply'
+                          )}
                         </Button>
                       </div>
                     </CardContent>
@@ -592,12 +625,29 @@ export default function Tasks() {
                         </div>
                         
                         <div className="flex flex-col gap-2">
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                            onClick={() => navigate(`/tasks/${task.id}`)}
+                          >
                             <Eye className="w-4 h-4 mr-2" />
                             View
                           </Button>
-                          <Button size="sm">
-                            Apply
+                          <Button 
+                            size="sm"
+                            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+                            onClick={() => handleApply(task.id)}
+                            disabled={isApplying === task.id}
+                          >
+                            {isApplying === task.id ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                                Applying...
+                              </>
+                            ) : (
+                              'Apply'
+                            )}
                           </Button>
                         </div>
                       </div>

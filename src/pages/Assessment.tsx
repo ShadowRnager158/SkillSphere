@@ -125,6 +125,8 @@ interface Assessment {
   isCompleted: boolean;
   score?: number;
   maxScore: number;
+  needScore: number; // Minimum score needed to pass
+  exceedScore: number; // Score to exceed expectations
   tags: string[];
   icon: any;
   color: string;
@@ -147,6 +149,9 @@ export default function Assessment() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('popularity');
+  const [assessmentResults, setAssessmentResults] = useState<Record<string, any>>({});
+  const [showDetailedResults, setShowDetailedResults] = useState(false);
+  const [missedQuestions, setMissedQuestions] = useState<any[]>([]);
 
   useEffect(() => {
     setIsVisible(true);
@@ -178,7 +183,7 @@ export default function Assessment() {
       description: 'Test your knowledge of JavaScript basics, ES6+ features, and modern development practices.',
       category: 'skill',
       duration: 30,
-      questions: 20,
+      questions: 25,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -186,7 +191,9 @@ export default function Assessment() {
       icon: Code,
       color: 'from-yellow-500 to-orange-500',
       popularity: 95,
-      completionRate: 78
+      completionRate: 78,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '2',
@@ -202,7 +209,9 @@ export default function Assessment() {
       icon: Code,
       color: 'from-blue-500 to-cyan-500',
       popularity: 92,
-      completionRate: 82
+      completionRate: 82,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '3',
@@ -218,7 +227,9 @@ export default function Assessment() {
       icon: Code,
       color: 'from-green-500 to-emerald-500',
       popularity: 88,
-      completionRate: 75
+      completionRate: 75,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '4',
@@ -234,7 +245,9 @@ export default function Assessment() {
       icon: Palette,
       color: 'from-purple-500 to-pink-500',
       popularity: 85,
-      completionRate: 70
+      completionRate: 70,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '5',
@@ -250,7 +263,9 @@ export default function Assessment() {
       icon: BarChart3,
       color: 'from-indigo-500 to-purple-500',
       popularity: 90,
-      completionRate: 65
+      completionRate: 65,
+      needScore: 75,
+      exceedScore: 90
     },
     {
       id: '6',
@@ -266,7 +281,9 @@ export default function Assessment() {
       icon: Cloud,
       color: 'from-blue-600 to-indigo-600',
       popularity: 87,
-      completionRate: 72
+      completionRate: 72,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '7',
@@ -282,7 +299,9 @@ export default function Assessment() {
       icon: Smartphone,
       color: 'from-green-600 to-teal-600',
       popularity: 83,
-      completionRate: 68
+      completionRate: 68,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '8',
@@ -298,7 +317,9 @@ export default function Assessment() {
       icon: Database,
       color: 'from-orange-500 to-red-500',
       popularity: 80,
-      completionRate: 73
+      completionRate: 73,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '9',
@@ -314,7 +335,9 @@ export default function Assessment() {
       icon: Users,
       color: 'from-blue-500 to-indigo-500',
       popularity: 92,
-      completionRate: 85
+      completionRate: 85,
+      needScore: 60,
+      exceedScore: 80
     },
     {
       id: '10',
@@ -330,7 +353,9 @@ export default function Assessment() {
       icon: MessageSquare,
       color: 'from-green-500 to-emerald-500',
       popularity: 89,
-      completionRate: 88
+      completionRate: 88,
+      needScore: 60,
+      exceedScore: 80
     },
     {
       id: '11',
@@ -615,6 +640,30 @@ export default function Assessment() {
       const questions = getQuestionsForAssessment(selectedAssessment.id);
       const score = calculateScore(questions, answers);
       setFinalScore(score);
+      
+      // Calculate detailed results
+      const missed = questions.filter((q, idx) => answers[idx] !== q.correctAnswer);
+      setMissedQuestions(missed);
+      
+      // Store results for profile/dashboard
+      const result = {
+        assessmentId: selectedAssessment.id,
+        title: selectedAssessment.title,
+        score,
+        maxScore: selectedAssessment.maxScore,
+        needScore: selectedAssessment.needScore,
+        exceedScore: selectedAssessment.exceedScore,
+        completedAt: new Date().toISOString(),
+        missedQuestions: missed.length,
+        totalQuestions: questions.length,
+        percentage: Math.round((score / selectedAssessment.maxScore) * 100)
+      };
+      
+      setAssessmentResults(prev => ({
+        ...prev,
+        [selectedAssessment.id]: result
+      }));
+      
       setShowResults(true);
       setIsTakingAssessment(false);
     }
@@ -734,6 +783,101 @@ export default function Assessment() {
     );
   }
 
+  if (showDetailedResults && selectedAssessment) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+        <div className="container mx-auto px-4 py-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="mb-6 flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Review Missed Questions
+              </h1>
+              <Button
+                variant="outline"
+                onClick={() => setShowDetailedResults(false)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Results
+              </Button>
+            </div>
+            
+            <div className="space-y-6">
+              {missedQuestions.map((question, index) => (
+                <Card key={index} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+                  <CardContent className="p-6">
+                    <div className="mb-4">
+                      <Badge variant="destructive" className="mb-2">
+                        Question {index + 1}
+                      </Badge>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {question.question}
+                      </h3>
+                    </div>
+                    
+                    <div className="space-y-3 mb-4">
+                      {question.options.map((option, optIndex) => (
+                        <div
+                          key={optIndex}
+                          className={`p-3 rounded-lg border-2 ${
+                            optIndex === question.correctAnswer
+                              ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-100'
+                              : optIndex === answers[Object.keys(answers).find(key => answers[key] === optIndex) || '0']
+                              ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100'
+                              : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            {optIndex === question.correctAnswer ? (
+                              <CheckCircle className="w-5 h-5 text-green-500" />
+                            ) : optIndex === answers[Object.keys(answers).find(key => answers[key] === optIndex) || '0'] ? (
+                              <X className="w-5 h-5 text-red-500" />
+                            ) : (
+                              <div className="w-5 h-5 rounded-full border-2 border-gray-300 dark:border-gray-600" />
+                            )}
+                            <span className="font-medium">{option}</span>
+                            {optIndex === question.correctAnswer && (
+                              <Badge className="ml-auto bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                                Correct Answer
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {question.explanation && (
+                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">💡 Explanation</h4>
+                        <p className="text-blue-800 dark:text-blue-200 text-sm">
+                          {question.explanation}
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            
+            <div className="mt-8 text-center">
+              <Button
+                onClick={() => setShowDetailedResults(false)}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+              >
+                Back to Results
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
   if (showResults && selectedAssessment) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
@@ -761,9 +905,44 @@ export default function Assessment() {
                   <p className="text-gray-600 dark:text-gray-400">
                     {selectedAssessment.title}
                   </p>
+                  
+                  {/* Performance Analysis */}
+                  <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div className="flex items-center justify-center gap-4 mb-3">
+                      <div className="text-center">
+                        <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                          Need: {selectedAssessment.needScore}%
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">Minimum</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                          Exceed: {selectedAssessment.exceedScore}%
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">Target</div>
+                      </div>
+                    </div>
+                    
+                    {/* Performance Status */}
+                    <div className="text-center">
+                      {finalScore >= selectedAssessment.exceedScore ? (
+                        <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                          🎉 Exceeded Expectations!
+                        </Badge>
+                      ) : finalScore >= selectedAssessment.needScore ? (
+                        <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+                          ✅ Met Requirements
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400">
+                          ⚠️ Needs Improvement
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="grid grid-cols-2 gap-4 mb-6">
                   <div className="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <div className="text-2xl font-bold text-gray-900 dark:text-white">
                       {Object.keys(answers).length}
@@ -777,8 +956,75 @@ export default function Assessment() {
                     <div className="text-sm text-gray-500 dark:text-gray-400">Total Questions</div>
                   </div>
                 </div>
+                
+                {/* Detailed Results */}
+                <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Detailed Results</h3>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Correct Answers:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        {selectedAssessment.questions - missedQuestions.length}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Missed Questions:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        {missedQuestions.length}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Accuracy:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        {Math.round(((selectedAssessment.questions - missedQuestions.length) / selectedAssessment.questions) * 100)}%
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Time Taken:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        {Math.floor((selectedAssessment.duration * 60 - timeLeft) / 60)}m {(selectedAssessment.duration * 60 - timeLeft) % 60}s
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Recommendations */}
+                <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-3">💡 Recommendations</h3>
+                  <div className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
+                    {finalScore >= selectedAssessment.exceedScore ? (
+                      <>
+                        <p>• Excellent performance! You've mastered this topic.</p>
+                        <p>• Consider taking advanced assessments in related areas.</p>
+                        <p>• Share your expertise by mentoring others.</p>
+                      </>
+                    ) : finalScore >= selectedAssessment.needScore ? (
+                      <>
+                        <p>• Good work! You've met the basic requirements.</p>
+                        <p>• Focus on the areas where you missed questions.</p>
+                        <p>• Practice regularly to improve your score.</p>
+                      </>
+                    ) : (
+                      <>
+                        <p>• Review the missed questions to understand your gaps.</p>
+                        <p>• Consider taking beginner-level assessments first.</p>
+                        <p>• Focus on fundamental concepts before retaking.</p>
+                      </>
+                    )}
+                  </div>
+                </div>
 
                 <div className="space-y-4">
+                  {missedQuestions.length > 0 && (
+                    <Button
+                      onClick={() => setShowDetailedResults(true)}
+                      variant="outline"
+                      className="w-full border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Review Missed Questions ({missedQuestions.length})
+                    </Button>
+                  )}
                   <Button
                     onClick={() => {
                       setShowResults(false);

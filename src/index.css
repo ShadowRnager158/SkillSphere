@@ -94,6 +94,18 @@
     --text-secondary: 156 163 175;
     --bg-primary: 17 24 39;
     --bg-secondary: 31 41 55;
+    
+    /* Enhanced dark mode text colors */
+    --text-primary: 243 244 246;
+    --text-secondary: 156 163 175;
+    --text-muted: 107 114 128;
+    --text-accent: 59 130 246;
+    
+    /* Enhanced dark mode backgrounds */
+    --bg-gradient-start: 17 24 39;
+    --bg-gradient-end: 31 41 55;
+    --card-hover: 31 41 55;
+    --input-focus: 59 130 246;
   }
 }
 
