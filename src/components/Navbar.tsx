@@ -559,7 +559,7 @@ const Navbar = () => {
                   Sign In
                 </Button>
                 <Button
-                  onClick={() => navigate('/signup')}
+                  onClick={() => navigate('/sign-up')}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
                 >
                   Get Started
