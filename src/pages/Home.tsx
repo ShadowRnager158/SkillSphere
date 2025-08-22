@@ -151,6 +151,33 @@ export default function HomePage() {
     { name: 'Marketing', icon: TrendingUp, color: 'from-pink-500 to-rose-500', count: '9,000+' }
   ];
 
+  const testimonials = [
+    {
+      name: "Sarah Chen",
+      role: "CEO, TechStart",
+      content: "SkillSphere delivered exceptional results. Our project was completed 2 weeks ahead of schedule with outstanding quality.",
+      avatar: "SC",
+      rating: 5,
+      company: "TechStart"
+    },
+    {
+      name: "Marcus Rodriguez",
+      role: "Product Manager, InnovateCorp",
+      content: "The talent pool here is incredible. We found a developer who exceeded all expectations and became a long-term partner.",
+      avatar: "MR",
+      rating: 5,
+      company: "InnovateCorp"
+    },
+    {
+      name: "Emily Watson",
+      role: "Freelance Designer",
+      content: "As a professional, I've found amazing opportunities and built lasting client relationships. The platform is game-changing.",
+      avatar: "EW",
+      rating: 5,
+      company: "Design Studio"
+    }
+  ];
+
   const recentTasks = tasks.slice(0, 3);
 
   const handleSearch = () => {
@@ -285,7 +312,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <div
                 key={feature.title}
@@ -387,7 +414,7 @@ export default function HomePage() {
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="w-4 h-4" />
-                          {task.dueDate}
+                          {new Date(task.createdAt).toLocaleDateString()}
                         </div>
                       </div>
                       <Button 
@@ -430,7 +457,7 @@ export default function HomePage() {
             </p>
           </div>
           
-          <TestimonialsCarousel />
+          <TestimonialsCarousel testimonials={testimonials} />
         </div>
       </section>
 
