@@ -90,8 +90,8 @@ export default function AboutPage() {
       icon: Award,
       title: "Quality",
       description: "We maintain rigorous standards for our specialists, ensuring they possess both technical proficiency and professional excellence.",
-      color: "bg-green-500/10 dark:bg-green-500/20",
-      color: "from-green-500 to-emerald-600"
+      color: "from-green-500 to-emerald-600",
+      bgColor: "bg-green-500/10 dark:bg-green-500/20"
     },
     {
       icon: Shield,

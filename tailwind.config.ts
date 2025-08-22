@@ -4,7 +4,11 @@ import tailwindcssAspectRatio from "@tailwindcss/aspect-ratio";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./src/**/*.{ts,tsx}",
+    "./src/**/*.{js,jsx}",
+    "./index.html",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -145,4 +149,11 @@ export default {
     },
   },
   plugins: [tailwindcssAnimate, tailwindcssAspectRatio],
+  // Performance optimizations
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
+  experimental: {
+    optimizeUniversalDefaults: true,
+  },
 } satisfies Config;
