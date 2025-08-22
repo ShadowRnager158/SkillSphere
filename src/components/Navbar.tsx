@@ -102,14 +102,18 @@ export default function Navbar() {
 
   // Mock notifications data
   const [notifications, setNotifications] = useState([
-    { id: 1, message: 'New project matching your skills', time: '2m ago', unread: true, type: 'project' },
-    { id: 2, message: 'Client accepted your proposal', time: '1h ago', unread: true, type: 'proposal' },
-    { id: 3, message: 'Payment received for Project X', time: '3h ago', unread: false, type: 'payment' },
-    { id: 4, message: 'New message from John Doe', time: '30m ago', unread: true, type: 'message' },
-    { id: 5, message: 'Skill assessment completed', time: '2h ago', unread: true, type: 'assessment' },
+    { id: 1, message: 'New project matching your skills', time: '2m ago', unread: true, type: 'project', priority: 'high', action: 'view' },
+    { id: 2, message: 'Client accepted your proposal', time: '1h ago', unread: true, type: 'proposal', priority: 'medium', action: 'review' },
+    { id: 3, message: 'Payment received for Project X', time: '3h ago', unread: false, type: 'payment', priority: 'low', action: 'details' },
+    { id: 4, message: 'New message from John Doe', time: '30m ago', unread: true, type: 'message', priority: 'medium', action: 'reply' },
+    { id: 5, message: 'Skill assessment completed', time: '2h ago', unread: true, type: 'assessment', priority: 'low', action: 'view' },
+    { id: 6, message: 'Deadline reminder: Project Alpha due tomorrow', time: '5h ago', unread: false, type: 'reminder', priority: 'high', action: 'extend' },
+    { id: 7, message: 'New milestone achieved: 50 projects completed', time: '1d ago', unread: false, type: 'achievement', priority: 'low', action: 'celebrate' },
+    { id: 8, message: 'System maintenance scheduled for tonight', time: '2d ago', unread: false, type: 'system', priority: 'medium', action: 'info' }
   ]);
 
   const unreadCount = notifications.filter(n => n.unread).length;
+  const highPriorityCount = notifications.filter(n => n.unread && n.priority === 'high').length;
 
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(notification => ({ ...notification, unread: false })));
@@ -119,6 +123,59 @@ export default function Navbar() {
     setNotifications(prev => prev.map(notification => 
       notification.id === id ? { ...notification, unread: false } : notification
     ));
+  };
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'project': return <Briefcase className="w-4 h-4 text-blue-500" />;
+      case 'proposal': return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'payment': return <DollarSign className="w-4 h-4 text-green-600" />;
+      case 'message': return <MessageSquare className="w-4 h-4 text-purple-500" />;
+      case 'assessment': return <Brain className="w-4 h-4 text-indigo-500" />;
+      case 'reminder': return <Clock className="w-4 h-4 text-orange-500" />;
+      case 'achievement': return <Award className="w-4 h-4 text-yellow-500" />;
+      case 'system': return <Settings className="w-4 h-4 text-gray-500" />;
+      default: return <Bell className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'border-l-red-500 bg-red-50 dark:bg-red-900/10';
+      case 'medium': return 'border-l-yellow-500 bg-yellow-50 dark:bg-yellow-900/10';
+      case 'low': return 'border-l-green-500 bg-green-50 dark:bg-green-900/10';
+      default: return 'border-l-gray-500 bg-gray-50 dark:bg-gray-900/10';
+    }
+  };
+
+  const handleNotificationAction = (notification: any) => {
+    markAsRead(notification.id);
+    // Handle different notification actions
+    switch (notification.action) {
+      case 'view':
+        navigate('/tasks');
+        break;
+      case 'review':
+        navigate('/dashboard');
+        break;
+      case 'details':
+        navigate('/profile');
+        break;
+      case 'reply':
+        navigate('/messages');
+        break;
+      case 'extend':
+        navigate('/tasks');
+        break;
+      case 'celebrate':
+        navigate('/profile');
+        break;
+      case 'info':
+        navigate('/status');
+        break;
+      default:
+        break;
+    }
   };
 
   const handleLogout = () => {
@@ -377,19 +434,46 @@ export default function Navbar() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="relative w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
+                        className={`relative w-10 h-10 rounded-xl transition-all duration-200 ${
+                          unreadCount > 0 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30' 
+                            : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
+                        }`}
                       >
-                        <Bell className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                        <Bell className={`h-5 w-5 transition-colors duration-200 ${
+                          unreadCount > 0 
+                            ? 'text-blue-600 dark:text-blue-400' 
+                            : 'text-gray-600 dark:text-gray-400'
+                        }`} />
                         {unreadCount > 0 && (
-                          <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-xs text-white p-0 flex items-center justify-center">
+                          <Badge className={`absolute -top-1 -right-1 h-5 w-5 rounded-full text-xs text-white p-0 flex items-center justify-center transition-all duration-200 ${
+                            highPriorityCount > 0 
+                              ? 'bg-red-500 animate-pulse' 
+                              : 'bg-blue-500'
+                          }`}>
                             {unreadCount}
                           </Badge>
                         )}
+                        {unreadCount === 0 && (
+                          <div className="absolute -top-1 -right-1 w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                        )}
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-80 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
+                    <DropdownMenuContent align="end" className="w-96 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
                       <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700">
-                        <DropdownMenuLabel className="text-gray-900 dark:text-gray-100 font-semibold">Notifications</DropdownMenuLabel>
+                        <div className="flex items-center gap-2">
+                          <DropdownMenuLabel className="text-gray-900 dark:text-gray-100 font-semibold">Notifications</DropdownMenuLabel>
+                          {unreadCount > 0 && (
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200">
+                              {unreadCount} new
+                            </Badge>
+                          )}
+                          {highPriorityCount > 0 && (
+                            <Badge variant="destructive" className="text-xs">
+                              {highPriorityCount} urgent
+                            </Badge>
+                          )}
+                        </div>
                         {unreadCount > 0 && (
                           <Button
                             variant="ghost"
@@ -406,19 +490,31 @@ export default function Navbar() {
                           notifications.map((notification) => (
                             <DropdownMenuItem 
                               key={notification.id} 
-                              className="p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
-                              onClick={() => markAsRead(notification.id)}
+                              className={`p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-200 cursor-pointer border-l-4 ${getPriorityColor(notification.priority)}`}
+                              onClick={() => handleNotificationAction(notification)}
                             >
                               <div className="flex items-start space-x-3 w-full">
-                                <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                                <div className="flex-shrink-0 mt-1">
+                                  {getNotificationIcon(notification.type)}
+                                </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-1">
                                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{notification.message}</p>
                                     {notification.unread && (
-                                      <Badge variant="secondary" className="text-xs px-1 py-0 h-4">New</Badge>
+                                      <Badge variant="secondary" className="text-xs px-1 py-0 h-4 bg-blue-100 text-blue-700 border-blue-200">New</Badge>
+                                    )}
+                                    {notification.priority === 'high' && (
+                                      <Badge variant="destructive" className="text-xs px-1 py-0 h-4">Urgent</Badge>
                                     )}
                                   </div>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400">{notification.time}</p>
+                                  <div className="flex items-center justify-between">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">{notification.time}</p>
+                                    <div className="flex items-center gap-1">
+                                      <span className="text-xs text-gray-400 capitalize">{notification.type}</span>
+                                      <span className="text-xs text-gray-400">•</span>
+                                      <span className="text-xs text-gray-400 capitalize">{notification.action}</span>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </DropdownMenuItem>
@@ -427,8 +523,14 @@ export default function Navbar() {
                           <div className="p-4 text-center text-gray-500 dark:text-gray-400">
                             <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
                             <p className="text-sm">No notifications</p>
+                            <p className="text-xs mt-1">You're all caught up!</p>
                           </div>
                         )}
+                      </div>
+                      <div className="p-3 border-t border-gray-200 dark:border-gray-700">
+                        <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/notifications')}>
+                          View All Notifications
+                        </Button>
                       </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
