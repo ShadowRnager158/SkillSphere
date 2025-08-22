@@ -88,8 +88,15 @@ import {
   Repeat,
   Shuffle
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+
+// Enhanced Components
+import { AnimatedElement } from '@/components/Animations';
+import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
+import LazyLoader from '@/components/LazyLoader';
+import { CardSkeleton } from '@/components/LazyLoader';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Task {
   id: string;
@@ -199,73 +206,105 @@ export default function Tasks() {
         avatar: 'ST',
         rating: 4.7
       },
-      skills: ['AI/ML', 'Python', 'NLP', 'API Integration'],
+      skills: ['AI/ML', 'NLP', 'Python', 'CRM Integration'],
       location: 'Austin, TX',
       type: 'remote',
-      createdAt: '2024-01-15',
+      createdAt: '2024-01-20',
       progress: 100,
       applicants: 15,
       views: 234
     },
     {
       id: '4',
-      title: 'Database Migration & Optimization',
-      description: 'Migrate existing MySQL database to PostgreSQL and optimize performance. Include data validation and backup procedures.',
+      title: 'Cloud Infrastructure Migration',
+      description: 'Migrate on-premise infrastructure to AWS cloud. Implement auto-scaling, load balancing, and monitoring solutions.',
       status: 'open',
       priority: 'urgent',
-      budget: 6000,
-      deadline: '2024-03-01',
+      budget: 25000,
+      deadline: '2024-03-30',
       client: {
-        name: 'DataFlow',
-        avatar: 'DF',
+        name: 'CloudCorp',
+        avatar: 'CC',
         rating: 4.6
       },
-      skills: ['PostgreSQL', 'MySQL', 'Database Migration', 'Performance Optimization'],
+      skills: ['AWS', 'DevOps', 'Docker', 'Kubernetes'],
       location: 'Seattle, WA',
       type: 'onsite',
       createdAt: '2024-02-05',
       progress: 0,
       applicants: 6,
-      views: 67
+      views: 78
     },
     {
       id: '5',
-      title: 'Cloud Infrastructure Setup',
-      description: 'Set up scalable cloud infrastructure using AWS. Configure load balancers, auto-scaling, and monitoring systems.',
-      status: 'paused',
+      title: 'Cybersecurity Audit & Implementation',
+      description: 'Conduct comprehensive security audit and implement security measures including penetration testing and compliance.',
+      status: 'open',
+      priority: 'high',
+      budget: 18000,
+      deadline: '2024-04-15',
+      client: {
+        name: 'SecureBank',
+        avatar: 'SB',
+        rating: 4.9
+      },
+      skills: ['Cybersecurity', 'Penetration Testing', 'Compliance', 'Security Audit'],
+      location: 'Boston, MA',
+      type: 'hybrid',
+      createdAt: '2024-02-10',
+      progress: 0,
+      applicants: 9,
+      views: 112
+    },
+    {
+      id: '6',
+      title: 'Data Analytics Dashboard',
+      description: 'Create interactive data visualization dashboard for business intelligence. Include real-time data processing and reporting.',
+      status: 'in-progress',
       priority: 'medium',
-      budget: 10000,
+      budget: 9500,
       deadline: '2024-03-20',
       client: {
-        name: 'CloudScale',
-        avatar: 'CS',
-        rating: 4.5
+        name: 'DataInsights',
+        avatar: 'DI',
+        rating: 4.8
       },
-      skills: ['AWS', 'DevOps', 'Infrastructure', 'Monitoring'],
-      location: 'Remote',
+      skills: ['Data Visualization', 'Python', 'React', 'SQL'],
+      location: 'Chicago, IL',
       type: 'remote',
       createdAt: '2024-01-30',
-      progress: 30,
-      applicants: 10,
-      views: 123
+      progress: 45,
+      applicants: 11,
+      views: 145
     }
   ];
 
-  const getStatusColor = (status: Task['status']) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300';
-      case 'in-progress': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300';
-      case 'completed': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300';
-      case 'paused': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300';
+      case 'open': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'in-progress': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+      case 'completed': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400';
+      case 'paused': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
     }
   };
 
-  const getPriorityColor = (priority: Task['priority']) => {
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'low': return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
-      case 'medium': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300';
-      case 'high': return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300';
-      case 'urgent': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300';
+      case 'low': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+      case 'high': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400';
+      case 'urgent': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'remote': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+      case 'onsite': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'hybrid': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
     }
   };
 
@@ -273,7 +312,6 @@ export default function Tasks() {
     const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          task.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
-    
     const matchesStatus = selectedStatus === 'all' || task.status === selectedStatus;
     const matchesPriority = selectedPriority === 'all' || task.priority === selectedPriority;
     const matchesType = selectedType === 'all' || task.type === selectedType;
@@ -281,340 +319,312 @@ export default function Tasks() {
     return matchesSearch && matchesStatus && matchesPriority && matchesType;
   });
 
-  const sortedTasks = [...filteredTasks].sort((a, b) => {
-    switch (sortBy) {
-      case 'newest':
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      case 'oldest':
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      case 'budget-high':
-        return b.budget - a.budget;
-      case 'budget-low':
-        return a.budget - b.budget;
-      case 'deadline':
-        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
-      default:
-        return 0;
-    }
-  });
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+      />
+    ));
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
-      {/* Header */}
-      <section className="py-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
-                <Briefcase className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tasks & Projects</h1>
-                <p className="text-gray-600 dark:text-gray-400">Find and manage your next opportunity</p>
-              </div>
-            </div>
-            
-            <Button onClick={() => navigate('/create-task')} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
-              <Plus className="w-4 h-4 mr-2" />
-              Post New Task
-            </Button>
-          </motion.div>
-        </div>
-      </section>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <ResponsiveContainer maxWidth="7xl" className="py-8 px-4">
+        <AnimatedElement animation="fade-in">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Available Tasks
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Discover exciting opportunities and projects that match your skills and expertise
+            </p>
+          </div>
 
-      {/* Filters and Search */}
-      <section className="py-6">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {/* Search and Filters */}
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 mb-8">
+            <div className="space-y-6">
+              {/* Search Bar */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
-                  placeholder="Search tasks..."
+                  type="text"
+                  placeholder="Search tasks, skills, or keywords..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm"
                 />
               </div>
-              
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-4 py-2 bg-white/50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
-              >
-                <option value="all">All Status</option>
-                <option value="open">Open</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="paused">Paused</option>
-              </select>
-              
-              <select
-                value={selectedPriority}
-                onChange={(e) => setSelectedPriority(e.target.value)}
-                className="px-4 py-2 bg-white/50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
-              >
-                <option value="all">All Priority</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="urgent">Urgent</option>
-              </select>
-              
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                className="px-4 py-2 bg-white/50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
-              >
-                <option value="all">All Types</option>
-                <option value="remote">Remote</option>
-                <option value="onsite">Onsite</option>
-                <option value="hybrid">Hybrid</option>
-              </select>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-2 bg-white/50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm"
-                >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="budget-high">Budget: High to Low</option>
-                  <option value="budget-low">Budget: Low to High</option>
-                  <option value="deadline">Deadline</option>
-                </select>
-                
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  {sortedTasks.length} tasks found
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={viewMode === 'grid' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setViewMode('grid')}
-                >
-                  <Grid className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'list' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setViewMode('list')}
-                >
-                  <List className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Tasks Grid */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
+              {/* Filter Controls */}
+              <ResponsiveGrid cols={{ sm: 2, md: 4 }} gap={4}>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Status</Label>
+                  <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                    <SelectTrigger className="border-2 focus:border-blue-500 dark:focus:border-blue-400">
+                      <SelectValue placeholder="All Statuses" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="open">Open</SelectItem>
+                      <SelectItem value="in-progress">In Progress</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="paused">Paused</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Priority</Label>
+                  <Select value={selectedPriority} onValueChange={setSelectedPriority}>
+                    <SelectTrigger className="border-2 focus:border-blue-500 dark:focus:border-blue-400">
+                      <SelectValue placeholder="All Priorities" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Priorities</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Type</Label>
+                  <Select value={selectedType} onValueChange={setSelectedType}>
+                    <SelectTrigger className="border-2 focus:border-blue-500 dark:focus:border-blue-400">
+                      <SelectValue placeholder="All Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Types</SelectItem>
+                      <SelectItem value="remote">Remote</SelectItem>
+                      <SelectItem value="onsite">Onsite</SelectItem>
+                      <SelectItem value="hybrid">Hybrid</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Sort By</Label>
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger className="border-2 focus:border-blue-500 dark:focus:border-blue-400">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="newest">Newest First</SelectItem>
+                      <SelectItem value="oldest">Oldest First</SelectItem>
+                      <SelectItem value="budget-high">Highest Budget</SelectItem>
+                      <SelectItem value="budget-low">Lowest Budget</SelectItem>
+                      <SelectItem value="deadline">Deadline</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </ResponsiveGrid>
+
+              {/* View Mode Toggle */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {filteredTasks.length} tasks found
+                  </span>
+                </div>
+                
+                <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                  <Button
+                    variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('grid')}
+                    className="rounded-md"
+                  >
+                    <Grid className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'list' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('list')}
+                    className="rounded-md"
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tasks Grid/List */}
           {viewMode === 'grid' ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {sortedTasks.map((task, index) => (
-                <motion.div
-                  key={task.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-                  transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                >
-                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-                            {task.title}
-                          </h3>
-                          <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-3">
-                            {task.description}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 mb-4">
-                        <Badge className={getStatusColor(task.status)}>
-                          {task.status.replace('-', ' ')}
-                        </Badge>
-                        <Badge className={getPriorityColor(task.priority)}>
-                          {task.priority}
-                        </Badge>
-                        <Badge variant="outline">
-                          {task.type}
-                        </Badge>
-                      </div>
-                      
-                      <div className="space-y-3 mb-4">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">Budget</span>
-                          <span className="font-semibold text-gray-900 dark:text-white">${task.budget.toLocaleString()}</span>
-                        </div>
-                        
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">Deadline</span>
-                          <span className="text-gray-900 dark:text-white">{new Date(task.deadline).toLocaleDateString()}</span>
-                        </div>
-                        
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">Location</span>
-                          <span className="text-gray-900 dark:text-white">{task.location}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                          {task.client.avatar}
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">{task.client.name}</p>
-                          <div className="flex items-center gap-1">
-                            <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                            <span className="text-xs text-gray-600 dark:text-gray-400">{task.client.rating}</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex flex-wrap gap-1 mb-4">
-                        {task.skills.slice(0, 3).map((skill, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs">
-                            {skill}
-                          </Badge>
-                        ))}
-                        {task.skills.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{task.skills.length - 3} more
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <span>{task.applicants} applicants</span>
-                        <span>{task.views} views</span>
-                      </div>
-                      
-                      <div className="flex gap-2 mt-4">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="flex-1 hover:bg-gray-50 dark:hover:bg-gray-700"
-                          onClick={() => navigate(`/tasks/${task.id}`)}
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          View
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
-                          onClick={() => handleApply(task.id)}
-                          disabled={isApplying === task.id}
-                        >
-                          {isApplying === task.id ? (
-                            <>
-                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                              Applying...
-                            </>
-                          ) : (
-                            'Apply'
-                          )}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="space-y-4"
-            >
-              {sortedTasks.map((task, index) => (
-                <motion.div
-                  key={task.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: isVisible ? 1 : 0, x: isVisible ? 0 : -20 }}
-                  transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                >
-                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-6">
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex-1">
-                              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                                {task.title}
-                              </h3>
-                              <p className="text-gray-600 dark:text-gray-400 mb-3">
-                                {task.description}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-2">
+            <ResponsiveGrid cols={{ sm: 1, md: 2, lg: 3 }} gap={6}>
+              {filteredTasks.map((task, index) => (
+                <LazyLoader key={task.id} placeholder={<CardSkeleton />}>
+                  <AnimatedElement animation="slide-up" delay={index * 0.1}>
+                    <Card className="group overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                      <CardHeader className="pb-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
                               <Badge className={getStatusColor(task.status)}>
                                 {task.status.replace('-', ' ')}
                               </Badge>
                               <Badge className={getPriorityColor(task.priority)}>
                                 {task.priority}
                               </Badge>
+                              <Badge className={getTypeColor(task.type)}>
+                                {task.type}
+                              </Badge>
+                            </div>
+                            <CardTitle className="text-lg line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                              {task.title}
+                            </CardTitle>
+                          </div>
+                        </div>
+                        
+                        <CardDescription className="line-clamp-3 text-sm">
+                          {task.description}
+                        </CardDescription>
+                      </CardHeader>
+
+                      <CardContent className="space-y-4">
+                        {/* Client Info */}
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            {task.client.avatar}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-900 dark:text-white">{task.client.name}</p>
+                            <div className="flex items-center gap-1">
+                              {renderStars(task.client.rating)}
+                              <span className="text-sm text-gray-500 dark:text-gray-400">
+                                {task.client.rating}
+                              </span>
                             </div>
                           </div>
-                          
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                            <div className="flex items-center gap-2">
-                              <DollarSign className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm text-gray-600 dark:text-gray-400">${task.budget.toLocaleString()}</span>
+                        </div>
+
+                        {/* Skills */}
+                        <div className="flex flex-wrap gap-2">
+                          {task.skills.slice(0, 3).map((skill, idx) => (
+                            <Badge key={idx} variant="outline" className="text-xs">
+                              {skill}
+                            </Badge>
+                          ))}
+                          {task.skills.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{task.skills.length - 3} more
+                            </Badge>
+                          )}
+                        </div>
+
+                        {/* Progress Bar for In-Progress Tasks */}
+                        {task.status === 'in-progress' && (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-gray-600 dark:text-gray-400">Progress</span>
+                              <span className="font-medium">{task.progress}%</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm text-gray-600 dark:text-gray-400">{new Date(task.deadline).toLocaleDateString()}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm text-gray-600 dark:text-gray-400">{task.location}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <User className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm text-gray-600 dark:text-gray-400">{task.applicants} applicants</span>
-                            </div>
+                            <Progress value={task.progress} className="h-2" />
                           </div>
-                          
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                                {task.client.avatar}
-                              </div>
-                              <div>
-                                <p className="text-sm font-medium text-gray-900 dark:text-white">{task.client.name}</p>
-                                <div className="flex items-center gap-1">
-                                  <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                                  <span className="text-xs text-gray-600 dark:text-gray-400">{task.client.rating}</span>
+                        )}
+
+                        {/* Task Stats */}
+                        <div className="grid grid-cols-3 gap-4 text-center">
+                          <div>
+                            <div className="text-lg font-bold text-gray-900 dark:text-white">
+                              ${task.budget.toLocaleString()}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">Budget</div>
+                          </div>
+                          <div>
+                            <div className="text-lg font-bold text-gray-900 dark:text-white">
+                              {task.applicants}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">Applicants</div>
+                          </div>
+                          <div>
+                            <div className="text-lg font-bold text-gray-900 dark:text-white">
+                              {task.views}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">Views</div>
+                          </div>
+                        </div>
+
+                        {/* Location & Deadline */}
+                        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            {task.location}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            {new Date(task.deadline).toLocaleDateString()}
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2">
+                          <Button 
+                            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                            size="sm"
+                            onClick={() => handleApply(task.id)}
+                            disabled={isApplying === task.id}
+                          >
+                            {isApplying === task.id ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                                Applying...
+                              </>
+                            ) : (
+                              <>
+                                <Rocket className="w-4 h-4 mr-2" />
+                                Apply Now
+                              </>
+                            )}
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </AnimatedElement>
+                </LazyLoader>
+              ))}
+            </ResponsiveGrid>
+          ) : (
+            <div className="space-y-4">
+              {filteredTasks.map((task, index) => (
+                <LazyLoader key={task.id} placeholder={<CardSkeleton />}>
+                  <AnimatedElement animation="slide-up" delay={index * 0.1}>
+                    <Card className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300">
+                      <CardContent className="p-6">
+                        <div className="flex gap-6">
+                          {/* Task Info */}
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Badge className={getStatusColor(task.status)}>
+                                    {task.status.replace('-', ' ')}
+                                  </Badge>
+                                  <Badge className={getPriorityColor(task.priority)}>
+                                    {task.priority}
+                                  </Badge>
+                                  <Badge className={getTypeColor(task.type)}>
+                                    {task.type}
+                                  </Badge>
                                 </div>
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                                  {task.title}
+                                </h3>
+                                <p className="text-gray-600 dark:text-gray-300 line-clamp-2 mb-4">
+                                  {task.description}
+                                </p>
                               </div>
                             </div>
                             
-                            <div className="flex flex-wrap gap-1">
+                            {/* Skills */}
+                            <div className="flex flex-wrap gap-2 mb-4">
                               {task.skills.slice(0, 4).map((skill, idx) => (
                                 <Badge key={idx} variant="outline" className="text-xs">
                                   {skill}
@@ -622,43 +632,82 @@ export default function Tasks() {
                               ))}
                             </div>
                           </div>
+
+                          {/* Client Info */}
+                          <div className="text-center min-w-[120px]">
+                            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold mx-auto mb-2">
+                              {task.client.avatar}
+                            </div>
+                            <p className="font-medium text-gray-900 dark:text-white text-sm">{task.client.name}</p>
+                            <div className="flex items-center justify-center gap-1 mt-1">
+                              {renderStars(task.client.rating)}
+                            </div>
+                          </div>
+
+                          {/* Stats */}
+                          <div className="text-center min-w-[100px]">
+                            <div className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                              ${task.budget.toLocaleString()}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">Budget</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              {task.applicants} applicants
+                            </div>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="flex flex-col gap-2 min-w-[120px]">
+                            <Button 
+                              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                              size="sm"
+                              onClick={() => handleApply(task.id)}
+                              disabled={isApplying === task.id}
+                            >
+                              {isApplying === task.id ? 'Applying...' : 'Apply Now'}
+                            </Button>
+                            <Button variant="outline" size="sm">
+                              View Details
+                            </Button>
+                          </div>
                         </div>
-                        
-                        <div className="flex flex-col gap-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            className="hover:bg-gray-50 dark:hover:bg-gray-700"
-                            onClick={() => navigate(`/tasks/${task.id}`)}
-                          >
-                            <Eye className="w-4 h-4 mr-2" />
-                            View
-                          </Button>
-                          <Button 
-                            size="sm"
-                            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
-                            onClick={() => handleApply(task.id)}
-                            disabled={isApplying === task.id}
-                          >
-                            {isApplying === task.id ? (
-                              <>
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                                Applying...
-                              </>
-                            ) : (
-                              'Apply'
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                      </CardContent>
+                    </Card>
+                  </AnimatedElement>
+                </LazyLoader>
               ))}
-            </motion.div>
+            </div>
           )}
-        </div>
-      </section>
+
+          {/* No Results */}
+          {filteredTasks.length === 0 && (
+            <AnimatedElement animation="fade-in">
+              <div className="text-center py-12">
+                <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Search className="w-12 h-12 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  No tasks found
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  Try adjusting your search criteria or filters
+                </p>
+                <Button 
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedStatus('all');
+                    setSelectedPriority('all');
+                    setSelectedType('all');
+                  }}
+                  variant="outline"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Clear Filters
+                </Button>
+              </div>
+            </AnimatedElement>
+          )}
+        </AnimatedElement>
+      </ResponsiveContainer>
     </div>
   );
 }

@@ -24,8 +24,13 @@ import {
   Briefcase,
   Clock
 } from "lucide-react";
-import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+
+// Enhanced Components
+import { AnimatedElement } from '@/components/Animations';
+import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
+import LazyLoader from '@/components/LazyLoader';
+import { CardSkeleton } from '@/components/LazyLoader';
 
 export default function AboutPage() {
   const [isVisible, setIsVisible] = useState(false);
@@ -85,8 +90,8 @@ export default function AboutPage() {
       icon: Award,
       title: "Quality",
       description: "We maintain rigorous standards for our specialists, ensuring they possess both technical proficiency and professional excellence.",
-      color: "from-green-500 to-emerald-600",
-      bgColor: "bg-green-500/10 dark:bg-green-500/20"
+      color: "bg-green-500/10 dark:bg-green-500/20",
+      color: "from-green-500 to-emerald-600"
     },
     {
       icon: Shield,
@@ -120,12 +125,8 @@ export default function AboutPage() {
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-400/10 dark:bg-purple-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
         
-        <div className="relative container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-            transition={{ duration: 0.8 }}
-          >
+        <ResponsiveContainer maxWidth="7xl" className="relative text-center">
+          <AnimatedElement animation="fade-in" delay={0.2}>
             <Badge variant="secondary" className="mb-6 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/50">
               🚀 Since 2023
             </Badge>
@@ -140,20 +141,15 @@ export default function AboutPage() {
             <p className="text-xl lg:text-2xl mb-12 text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
               Connecting businesses with top AI specialists since 2023, we're reimagining how work gets done in the AI age.
             </p>
-          </motion.div>
-        </div>
+          </AnimatedElement>
+        </ResponsiveContainer>
       </section>
 
       {/* Our Story */}
       <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <motion.div 
-              className="grid lg:grid-cols-2 gap-16 items-center"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
+        <ResponsiveContainer maxWidth="6xl">
+          <ResponsiveGrid cols={{ lg: 2 }} gap={16} className="items-center">
+            <AnimatedElement animation="slide-up" delay={0.3}>
               <div className="space-y-6">
                 <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
                   Our Story
@@ -174,7 +170,9 @@ export default function AboutPage() {
                   </p>
                 </div>
               </div>
-              
+            </AnimatedElement>
+            
+            <AnimatedElement animation="slide-up" delay={0.4}>
               <div className="relative">
                 <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 dark:from-blue-500/30 dark:to-purple-500/30 rounded-3xl p-8 backdrop-blur-sm border border-white/20 dark:border-gray-700/50">
                   <div className="aspect-square bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-xl flex items-center justify-center backdrop-blur-sm">
@@ -189,228 +187,200 @@ export default function AboutPage() {
                 <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-green-400 rounded-full animate-bounce delay-1000"></div>
                 <div className="absolute top-1/2 -right-8 w-4 h-4 bg-purple-400 rounded-full animate-pulse"></div>
               </div>
-            </motion.div>
-          </div>
-        </div>
+            </AnimatedElement>
+          </ResponsiveGrid>
+        </ResponsiveContainer>
       </section>
 
       {/* Our Values */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="max-w-6xl mx-auto"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
+        <ResponsiveContainer maxWidth="6xl">
+          <AnimatedElement animation="fade-in" delay={0.5}>
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
                 Our Values
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                The principles that guide everything we do
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                The principles that guide everything we do at SkillSphere
               </p>
             </div>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              {values.map((value, index) => (
-                <motion.div
-                  key={value.title}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-                  transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                >
-                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group">
-                    <CardContent className="p-8">
-                      <div className={`w-16 h-16 ${value.bgColor} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                        <div className={`w-10 h-10 bg-gradient-to-r ${value.color} rounded-xl flex items-center justify-center`}>
-                          <value.icon className="w-6 h-6 text-white" />
-                        </div>
+          </AnimatedElement>
+
+          <ResponsiveGrid cols={{ sm: 1, md: 3 }} gap={8}>
+            {values.map((value, index) => (
+              <LazyLoader key={value.title} placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={0.6 + index * 0.1}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <CardContent className="p-8 text-center">
+                      <div className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-r ${value.color} flex items-center justify-center`}>
+                        <value.icon className="w-10 h-10 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{value.title}</h3>
-                      <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                        {value.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                         {value.description}
                       </p>
                     </CardContent>
                   </Card>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
+                </AnimatedElement>
+              </LazyLoader>
+            ))}
+          </ResponsiveGrid>
+        </ResponsiveContainer>
       </section>
 
-      {/* Team */}
+      {/* Stats Section */}
       <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="max-w-6xl mx-auto"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
+        <ResponsiveContainer maxWidth="6xl">
+          <AnimatedElement animation="fade-in" delay={0.7}>
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                Our Leadership Team
+                By The Numbers
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Meet the visionaries behind SkillSphere
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Our impact in connecting AI talent with global opportunities
               </p>
             </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {teamMembers.map((member, index) => (
-                <motion.div
-                  key={member.name}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-                  transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
-                  className="group"
-                >
-                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-center">
-                    <CardContent className="p-6">
-                      <div className={`w-24 h-24 bg-gradient-to-r ${member.gradient} rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold text-2xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+          </AnimatedElement>
+
+          <ResponsiveGrid cols={{ sm: 2, md: 4 }} gap={8}>
+            {stats.map((stat, index) => (
+              <LazyLoader key={stat.label} placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="scale-in" delay={0.8 + index * 0.1}>
+                  <div className="text-center">
+                    <div className={`w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-r ${stat.color} flex items-center justify-center shadow-lg`}>
+                      <stat.icon className="w-10 h-10 text-white" />
+                    </div>
+                    <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                      {stat.value}
+                    </div>
+                    <div className="text-gray-600 dark:text-gray-400 font-medium">
+                      {stat.label}
+                    </div>
+                  </div>
+                </AnimatedElement>
+              </LazyLoader>
+            ))}
+          </ResponsiveGrid>
+        </ResponsiveContainer>
+      </section>
+
+      {/* Team Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+        <ResponsiveContainer maxWidth="6xl">
+          <AnimatedElement animation="fade-in" delay={0.9}>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                Meet Our Team
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                The visionaries and experts behind SkillSphere's mission
+              </p>
+            </div>
+          </AnimatedElement>
+
+          <ResponsiveGrid cols={{ sm: 1, md: 2, lg: 4 }} gap={8}>
+            {teamMembers.map((member, index) => (
+              <LazyLoader key={member.name} placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={1.0 + index * 0.1}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <CardContent className="p-6 text-center">
+                      <div className={`w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r ${member.gradient} flex items-center justify-center text-white font-bold text-2xl shadow-lg`}>
                         {member.avatar}
                       </div>
-                      <h3 className="font-bold text-xl mb-2 text-gray-900 dark:text-white">{member.name}</h3>
-                      <p className="text-blue-600 dark:text-blue-400 font-medium mb-3">{member.title}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                        {member.name}
+                      </h3>
+                      <p className="text-blue-600 dark:text-blue-400 font-medium mb-3">
+                        {member.title}
+                      </p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 leading-relaxed">
                         {member.bio}
                       </p>
-                      
-                      <div className="flex justify-center space-x-3">
-                        <a href={member.linkedin} className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300">
-                          <Linkedin className="w-4 h-4" />
-                        </a>
-                        <a href={member.twitter} className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300">
-                          <Twitter className="w-4 h-4" />
-                        </a>
+                      <div className="flex justify-center gap-3">
+                        <Button variant="outline" size="sm" asChild>
+                          <Link to={member.linkedin}>
+                            <Linkedin className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                        <Button variant="outline" size="sm" asChild>
+                          <Link to={member.twitter}>
+                            <Twitter className="w-4 h-4" />
+                          </Link>
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
+                </AnimatedElement>
+              </LazyLoader>
+            ))}
+          </ResponsiveGrid>
+        </ResponsiveContainer>
       </section>
 
-      {/* Stats */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-800 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-indigo-700/90 dark:from-blue-700/90 dark:to-indigo-800/90">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-pulse"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl animate-pulse delay-1000"></div>
-        </div>
-        
-        <div className="relative container mx-auto px-4">
-          <motion.div 
-            className="max-w-6xl mx-auto"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-            transition={{ duration: 0.8, delay: 1.0 }}
-          >
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                SkillSphere By The Numbers
-              </h2>
-              <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-                Our impact in numbers
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-                  transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
-                  className="text-center group"
-                >
-                  <div className={`w-16 h-16 mx-auto mb-4 bg-white/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                    <div className={`w-10 h-10 bg-gradient-to-r ${stat.color} rounded-xl flex items-center justify-center`}>
-                      <stat.icon className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-                  <div className="text-4xl md:text-5xl font-bold mb-2">{stat.value}</div>
-                  <div className="text-lg text-blue-100">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Press & Recognition */}
+      {/* Press Recognition */}
       <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="max-w-6xl mx-auto"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-          >
+        <ResponsiveContainer maxWidth="6xl">
+          <AnimatedElement animation="fade-in" delay={1.1}>
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                Press & Recognition
+                Press Recognition
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Featured in leading publications worldwide
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Featured in leading technology and business publications
               </p>
             </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {pressLogos.map((press, index) => (
-                <motion.div
-                  key={press.name}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-                  transition={{ duration: 0.6, delay: 1.6 + index * 0.1 }}
-                  className="group"
-                >
-                  <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/20 dark:border-gray-700/50">
-                    <div className="aspect-[3/1] flex items-center justify-center">
-                      <span className="text-2xl font-bold text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
+          </AnimatedElement>
+
+          <ResponsiveGrid cols={{ sm: 2, md: 4 }} gap={8}>
+            {pressLogos.map((press, index) => (
+              <LazyLoader key={press.name} placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="scale-in" delay={1.2 + index * 0.1}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <CardContent className="p-8 text-center">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-gray-500 to-gray-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">
                         {press.logo}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {press.name}
+                      </h3>
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            ))}
+          </ResponsiveGrid>
+        </ResponsiveContainer>
       </section>
 
-      {/* Contact CTA */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="max-w-4xl mx-auto text-center"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-            transition={{ duration: 0.8, delay: 1.8 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              Get in Touch
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-              Have questions about our company or services? Our team is here to help.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg font-semibold rounded-2xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105">
-                <Link to="/support" className="flex items-center gap-2">
-                  Contact Us
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="border-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 px-8 py-4 text-lg font-semibold rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105">
-                <Link to="/careers">Join Our Team</Link>
-              </Button>
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600">
+        <ResponsiveContainer maxWidth="4xl">
+          <AnimatedElement animation="fade-in" delay={1.3}>
+            <div className="text-center text-white">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                Ready to Get Started?
+              </h2>
+              <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+                Join thousands of businesses and AI specialists who are already transforming their work with SkillSphere
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button size="lg" variant="secondary" asChild>
+                  <Link to="/signup">
+                    Get Started Today
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600" asChild>
+                  <Link to="/contact">
+                    Contact Sales
+                  </Link>
+                </Button>
+              </div>
             </div>
-          </motion.div>
-        </div>
+          </AnimatedElement>
+        </ResponsiveContainer>
       </section>
     </div>
   );
