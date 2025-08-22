@@ -302,4 +302,4 @@ export function useLazyLoading(options: {
 }
 
 // Default export for easier importing
-export default LazyLoader;
+// export default LazyLoader;

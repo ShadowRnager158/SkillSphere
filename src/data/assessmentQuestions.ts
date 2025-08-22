@@ -824,7 +824,7 @@ export const assessmentQuestions: AssessmentQuestions = {
       tags: ['DOM Manipulation', 'Modal Rendering']
     }
   ],
-  '2': [
+  '2-advanced': [
     // Additional React Development Questions (2-26 to 2-50)
     {
       id: '2-26',
@@ -1226,9 +1226,8 @@ export const assessmentQuestions: AssessmentQuestions = {
       skill: 'Suspense',
       tags: ['Suspense', 'Loading States', 'Fallback']
     }
-  ]
-};
-    // Additional JavaScript Fundamentals Questions (1-26 to 1-50)
+  ],
+  '1-advanced': [ // Additional JavaScript Fundamentals Questions (1-26 to 1-50)
     {
       id: '1-26',
       question: 'What is the purpose of the Symbol type in JavaScript?',
