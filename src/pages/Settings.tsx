@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   User, 
   Shield, 
@@ -35,10 +36,158 @@ import {
   Edit,
   Download,
   Trash2,
-  Monitor
+  Monitor,
+  Database,
+  FileText,
+  Activity,
+  Zap,
+  Clock,
+  Calendar,
+  MapPin,
+  Building,
+  Phone,
+  Camera,
+  QrCode,
+  Fingerprint,
+  Shield as ShieldIcon,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  Info,
+  ExternalLink,
+  RefreshCw,
+  History,
+  Archive,
+  HardDrive,
+  Cloud,
+  Wifi,
+  WifiOff,
+  Smartphone as Mobile,
+  Tablet,
+  Laptop,
+  Monitor as Desktop,
+  Tv,
+  Watch,
+  Headphones,
+  Speaker,
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  Gamepad2,
+  Gamepad2Off,
+  BookOpen,
+  BookOpenCheck,
+  GraduationCap,
+  Award,
+  Trophy,
+  Star,
+  Heart,
+  HeartOff,
+  ThumbsUp,
+  ThumbsDown,
+  MessageSquare,
+  MessageCircle,
+  Mail as Email,
+  Inbox,
+  Send,
+  Reply,
+  Forward,
+  Archive as ArchiveIcon,
+  Trash,
+  Folder,
+  FolderOpen,
+  File,
+  FilePlus,
+  FileMinus,
+  FileX,
+  FileCheck,
+  FileSearch,
+  FileText as FileTextIcon,
+  Image,
+  Video as VideoIcon,
+  Music,
+  Film,
+  Code,
+  Terminal,
+  Command,
+  Power,
+  PowerOff,
+  Battery,
+  BatteryCharging,
+  BatteryFull,
+  BatteryLow,
+  Wifi as WifiIcon,
+  Bluetooth,
+  BluetoothOff,
+  Usb,
+  HardDrive as HardDriveIcon,
+  Cpu,
+  MemoryStick,
+  Network,
+  Server,
+  Database as DatabaseIcon,
+  Cloud as CloudIcon,
+  Globe as GlobeIcon,
+  Map,
+  Navigation,
+  Compass,
+  Target,
+  Crosshair,
+  Flag,
+  Home,
+  Building2,
+  Store,
+  ShoppingCart,
+  CreditCard as CreditCardIcon,
+  Wallet,
+  PiggyBank,
+  TrendingUp,
+  TrendingDown,
+  BarChart3,
+  PieChart,
+  LineChart,
+  AreaChart,
+  ScatterChart,
+  Radar,
+  Gauge,
+  Timer,
+  Stopwatch,
+  Clock as ClockIcon,
+  Calendar as CalendarIcon,
+  AlarmClock,
+  Hourglass,
+  Timer as TimerIcon,
+  CalendarDays,
+  CalendarRange,
+  CalendarCheck,
+  CalendarX,
+  CalendarPlus,
+  CalendarMinus,
+  CalendarClock,
+  CalendarOff,
+  CalendarHeart,
+  CalendarStar,
+  CalendarUser,
+  CalendarSearch,
+  CalendarEdit,
+  CalendarTrash,
+  CalendarSettings,
+  CalendarPlus2,
+  CalendarMinus2,
+  CalendarCheck2,
+  CalendarX2,
+  CalendarClock2,
+  CalendarOff2,
+  CalendarHeart2,
+  CalendarStar2,
+  CalendarUser2,
+  CalendarSearch2,
+  CalendarEdit2,
+  CalendarTrash2,
+  CalendarSettings2
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { Phone } from 'lucide-react';
 
 export default function SettingsPage() {
   const { user, updateUser } = useAuth();
@@ -46,6 +195,7 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [activeTab, setActiveTab] = useState('profile');
   const [formData, setFormData] = useState({
     email: user?.email || '',
     currentPassword: '',
@@ -53,8 +203,20 @@ export default function SettingsPage() {
     confirmPassword: '',
     language: 'en',
     timezone: 'UTC',
-    currency: 'USD'
+    currency: 'USD',
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    phone: user?.phone || '',
+    company: user?.company || '',
+    position: user?.position || '',
+    bio: user?.bio || '',
+    website: user?.website || '',
+    location: user?.location || '',
+    skills: user?.skills || [],
+    hourlyRate: user?.hourlyRate || 0,
+    availability: user?.availability || 'available'
   });
+  
   const [notifications, setNotifications] = useState({
     email: true,
     push: true,
@@ -62,15 +224,115 @@ export default function SettingsPage() {
     projectUpdates: true,
     messages: true,
     marketing: false,
-    weeklyDigest: true
+    weeklyDigest: true,
+    securityAlerts: true,
+    systemUpdates: true,
+    newFeatures: false,
+    communityUpdates: false,
+    skillAssessments: true,
+    paymentNotifications: true,
+    milestoneUpdates: true,
+    deadlineReminders: true,
+    clientFeedback: true,
+    skillRecommendations: true,
+    learningSuggestions: true,
+    networkingOpportunities: false,
+    eventInvitations: false
   });
+  
   const [privacy, setPrivacy] = useState({
     profileVisibility: 'public',
     showEmail: false,
     showPhone: false,
     showLocation: true,
     allowMessages: true,
-    showOnlineStatus: true
+    showOnlineStatus: true,
+    showLastSeen: false,
+    showSkills: true,
+    showProjects: true,
+    showReviews: true,
+    showEarnings: false,
+    showAvailability: true,
+    allowSearchIndexing: true,
+    showInRecommendations: true,
+    allowAnalytics: true,
+    allowCookies: true,
+    allowThirdParty: false,
+    allowDataSharing: false,
+    allowMarketing: false,
+    allowResearch: false
+  });
+
+  const [security, setSecurity] = useState({
+    twoFactorAuth: false,
+    biometricAuth: false,
+    sessionTimeout: 30,
+    maxLoginAttempts: 5,
+    requirePasswordChange: false,
+    passwordExpiryDays: 90,
+    loginNotifications: true,
+    deviceManagement: true,
+    apiAccess: false,
+    webhookSecurity: true,
+    auditLogging: true,
+    dataEncryption: true,
+    backupEnabled: true,
+    backupFrequency: 'daily',
+    backupRetention: 30
+  });
+
+  const [performance, setPerformance] = useState({
+    autoSave: true,
+    autoSaveInterval: 5,
+    cacheEnabled: true,
+    cacheSize: 100,
+    compressionEnabled: true,
+    lazyLoading: true,
+    preloadImages: false,
+    preloadVideos: false,
+    backgroundSync: true,
+    offlineMode: false,
+    dataUsage: 'balanced',
+    animationSpeed: 'normal',
+    reduceMotion: false,
+    highContrast: false,
+    largeText: false
+  });
+
+  const [accessibility, setAccessibility] = useState({
+    screenReader: false,
+    keyboardNavigation: true,
+    focusIndicators: true,
+    colorBlindMode: false,
+    dyslexiaFriendly: false,
+    highContrast: false,
+    largeText: false,
+    reduceMotion: false,
+    soundEffects: true,
+    voiceCommands: false,
+    gestureNavigation: false,
+    oneHandedMode: false,
+    autoScroll: false,
+    readingMode: false,
+    nightMode: false
+  });
+
+  const [dataManagement, setDataManagement] = useState({
+    dataRetention: 365,
+    autoArchive: true,
+    archiveAfter: 90,
+    exportFormat: 'json',
+    backupLocation: 'cloud',
+    syncDevices: true,
+    crossPlatformSync: true,
+    dataPortability: true,
+    dataDeletion: false,
+    dataAnonymization: false,
+    dataLocalization: false,
+    dataResidency: 'global',
+    complianceMode: false,
+    auditTrail: true,
+    dataRecovery: true
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -86,6 +348,22 @@ export default function SettingsPage() {
     setPrivacy(prev => ({ ...prev, [key]: value }));
   };
 
+  const handleSecurityChange = (key: string, value: string | boolean | number) => {
+    setSecurity(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handlePerformanceChange = (key: string, value: string | boolean | number) => {
+    setPerformance(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleAccessibilityChange = (key: string, value: boolean) => {
+    setAccessibility(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleDataManagementChange = (key: string, value: string | boolean | number) => {
+    setDataManagement(prev => ({ ...prev, [key]: value }));
+  };
+
   const handleSave = async () => {
     try {
       // Here you would typically save to backend
@@ -98,33 +376,77 @@ export default function SettingsPage() {
       toast({
         title: "Error",
         description: "Failed to save settings. Please try again.",
-        variant: "destructive",
       });
     }
   };
 
-  const handlePasswordChange = async () => {
-    if (formData.newPassword !== formData.confirmPassword) {
-      toast({
-        title: "Error",
-        description: "New passwords don't match.",
-        variant: "destructive",
-      });
-      return;
-    }
+  const exportData = () => {
+    const data = {
+      profile: formData,
+      notifications,
+      privacy,
+      security,
+      performance,
+      accessibility,
+      dataManagement,
+      exportDate: new Date().toISOString()
+    };
     
-    try {
-      // Here you would typically update password
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `skillsphere-settings-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Data Exported",
+      description: "Your settings have been exported successfully.",
+    });
+  };
+
+  const importData = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target?.result as string);
+        // Here you would validate and apply the imported data
+        toast({
+          title: "Data Imported",
+          description: "Settings imported successfully. Please review and save.",
+        });
+      } catch (error) {
+        toast({
+          title: "Import Error",
+          description: "Failed to import settings. Please check the file format.",
+          variant: "destructive"
+        });
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const resetToDefaults = () => {
+    if (confirm('Are you sure you want to reset all settings to defaults? This action cannot be undone.')) {
+      // Reset all settings to defaults
       toast({
-        title: "Password Updated",
-        description: "Your password has been changed successfully.",
+        title: "Settings Reset",
+        description: "All settings have been reset to defaults.",
       });
-      setFormData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
-    } catch (error) {
+    }
+  };
+
+  const clearAllData = () => {
+    if (confirm('Are you sure you want to clear all data? This action cannot be undone and will permanently delete all your information.')) {
+      // Clear all data
       toast({
-        title: "Error",
-        description: "Failed to update password. Please try again.",
-        variant: "destructive",
+        title: "Data Cleared",
+        description: "All data has been cleared successfully.",
+        variant: "destructive"
       });
     }
   };
@@ -147,430 +469,595 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className={`min-h-screen py-8 transition-colors duration-300 ${
-      isDarkMode 
-        ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900' 
-        : 'bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50'
-    }`}>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-6 md:mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-              isDarkMode ? 'bg-blue-600/20' : 'bg-blue-100'
-            }`}>
-              <SettingsIcon className={`w-6 h-6 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-            </div>
-            <div>
-              <h1 className={`text-2xl sm:text-3xl font-bold mb-2 ${
-                isDarkMode ? 'text-white' : 'text-gray-900'
-              }`}>Settings</h1>
-              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                Manage your account preferences and privacy settings
-              </p>
-            </div>
-          </div>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            Settings & Preferences
+          </h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Customize your SkillSphere experience with advanced controls and preferences
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-          {/* Main Settings */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Account Settings */}
-            <Card className={`border-0 shadow-lg transition-colors duration-300 ${
-              isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white'
-            }`}>
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Button onClick={exportData} variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+            <Download className="w-6 h-6" />
+            <span className="text-sm">Export Data</span>
+          </Button>
+          <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+            <label className="cursor-pointer flex flex-col items-center gap-2">
+              <Upload className="w-6 h-6" />
+              <span className="text-sm">Import Data</span>
+              <input type="file" accept=".json" onChange={importData} className="hidden" />
+            </label>
+          </Button>
+          <Button onClick={resetToDefaults} variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+            <RefreshCw className="w-6 h-6" />
+            <span className="text-sm">Reset Defaults</span>
+          </Button>
+          <Button onClick={clearAllData} variant="destructive" className="h-auto p-4 flex flex-col items-center gap-2">
+            <Trash2 className="w-6 h-6" />
+            <span className="text-sm">Clear All Data</span>
+          </Button>
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          <TabsList className="grid w-full grid-cols-7 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+            <TabsTrigger value="profile" className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex items-center gap-2">
+              <Bell className="w-4 h-4" />
+              Notifications
+            </TabsTrigger>
+            <TabsTrigger value="privacy" className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              Privacy
+            </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center gap-2">
+              <Lock className="w-4 h-4" />
+              Security
+            </TabsTrigger>
+            <TabsTrigger value="performance" className="flex items-center gap-2">
+              <Zap className="w-4 h-4" />
+              Performance
+            </TabsTrigger>
+            <TabsTrigger value="accessibility" className="flex items-center gap-2">
+              <Eye className="w-4 h-4" />
+              Accessibility
+            </TabsTrigger>
+            <TabsTrigger value="data" className="flex items-center gap-2">
+              <Database className="w-4 h-4" />
+              Data
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Profile Settings */}
+          <TabsContent value="profile" className="space-y-6">
+            <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className={`text-xl flex items-center gap-2 ${
-                  isDarkMode ? 'text-white' : 'text-gray-900'
-                }`}>
-                  <User className="w-5 h-5 text-blue-600" />
-                  Account Settings
+                <CardTitle className="flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  Profile Information
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="email" className="text-gray-700 font-medium">Email Address</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      placeholder="Enter your first name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      placeholder="Enter your last name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
                     <Input
                       id="email"
                       name="email"
                       type="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="mt-2"
-                      disabled={!isEditing}
+                      placeholder="Enter your email"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="language" className="text-gray-700 font-medium">Language</Label>
-                    <Select value={formData.language} onValueChange={(value) => setFormData(prev => ({ ...prev, language: value }))} disabled={!isEditing}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue />
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder="Enter your phone number"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="company">Company</Label>
+                    <Input
+                      id="company"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleInputChange}
+                      placeholder="Enter your company name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="position">Position</Label>
+                    <Input
+                      id="position"
+                      name="position"
+                      value={formData.position}
+                      onChange={handleInputChange}
+                      placeholder="Enter your job title"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Bio</Label>
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    value={formData.bio}
+                    onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+                    placeholder="Tell us about yourself..."
+                    className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="language">Language</Label>
+                    <Select value={formData.language} onValueChange={(value) => setFormData(prev => ({ ...prev, language: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select language" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="en">English</SelectItem>
                         <SelectItem value="es">Spanish</SelectItem>
                         <SelectItem value="fr">French</SelectItem>
                         <SelectItem value="de">German</SelectItem>
+                        <SelectItem value="it">Italian</SelectItem>
+                        <SelectItem value="pt">Portuguese</SelectItem>
+                        <SelectItem value="ru">Russian</SelectItem>
+                        <SelectItem value="zh">Chinese</SelectItem>
+                        <SelectItem value="ja">Japanese</SelectItem>
+                        <SelectItem value="ko">Korean</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <Label htmlFor="timezone" className="text-gray-700 font-medium">Timezone</Label>
-                    <Select value={formData.timezone} onValueChange={(value) => setFormData(prev => ({ ...prev, timezone: value }))} disabled={!isEditing}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue />
+                  <div className="space-y-2">
+                    <Label htmlFor="timezone">Timezone</Label>
+                    <Select value={formData.timezone} onValueChange={(value) => setFormData(prev => ({ ...prev, timezone: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select timezone" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="UTC">UTC</SelectItem>
                         <SelectItem value="EST">Eastern Time</SelectItem>
+                        <SelectItem value="CST">Central Time</SelectItem>
+                        <SelectItem value="MST">Mountain Time</SelectItem>
                         <SelectItem value="PST">Pacific Time</SelectItem>
-                        <SelectItem value="GMT">Greenwich Mean Time</SelectItem>
+                        <SelectItem value="GMT">GMT</SelectItem>
+                        <SelectItem value="CET">Central European Time</SelectItem>
+                        <SelectItem value="JST">Japan Standard Time</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <Label htmlFor="currency" className="text-gray-700 font-medium">Currency</Label>
-                    <Select value={formData.currency} onValueChange={(value) => setFormData(prev => ({ ...prev, currency: value }))} disabled={!isEditing}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue />
+                  <div className="space-y-2">
+                    <Label htmlFor="currency">Currency</Label>
+                    <Select value={formData.currency} onValueChange={(value) => setFormData(prev => ({ ...prev, currency: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select currency" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="USD">USD ($)</SelectItem>
                         <SelectItem value="EUR">EUR (€)</SelectItem>
                         <SelectItem value="GBP">GBP (£)</SelectItem>
                         <SelectItem value="JPY">JPY (¥)</SelectItem>
+                        <SelectItem value="CAD">CAD (C$)</SelectItem>
+                        <SelectItem value="AUD">AUD (A$)</SelectItem>
+                        <SelectItem value="CHF">CHF (CHF)</SelectItem>
+                        <SelectItem value="CNY">CNY (¥)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
-                
-                {isEditing ? (
-                  <div className="flex gap-3 pt-4">
-                    <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700">
-                      <Save className="w-4 h-4 mr-2" />
-                      Save Changes
-                    </Button>
-                    <Button variant="outline" onClick={() => setIsEditing(false)}>
-                      <X className="w-4 h-4 mr-2" />
-                      Cancel
-                    </Button>
-                  </div>
-                ) : (
-                  <Button onClick={() => setIsEditing(true)} variant="outline">
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Settings
-                  </Button>
-                )}
               </CardContent>
             </Card>
+          </TabsContent>
 
-            {/* Password Change */}
-            <Card className="border-0 shadow-lg">
+          {/* Notifications Settings */}
+          <TabsContent value="notifications" className="space-y-6">
+            <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-                  <Lock className="w-5 h-5 text-red-600" />
-                  Change Password
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="currentPassword" className="text-gray-700 font-medium">Current Password</Label>
-                    <div className="relative mt-2">
-                      <Input
-                        id="currentPassword"
-                        name="currentPassword"
-                        type={showPassword ? "text" : "password"}
-                        value={formData.currentPassword}
-                        onChange={handleInputChange}
-                        className="pr-10"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="newPassword" className="text-gray-700 font-medium">New Password</Label>
-                    <Input
-                      id="newPassword"
-                      name="newPassword"
-                      type="password"
-                      value={formData.newPassword}
-                      onChange={handleInputChange}
-                      className="mt-2"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="confirmPassword" className="text-gray-700 font-medium">Confirm New Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className="mt-2"
-                  />
-                </div>
-                <Button onClick={handlePasswordChange} className="bg-red-600 hover:bg-red-700">
-                  <Key className="w-4 h-4 mr-2" />
-                  Update Password
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Notification Settings */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-yellow-600" />
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="w-5 h-5" />
                   Notification Preferences
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-5 h-5 text-blue-600" />
-                      <div>
-                        <p className="font-medium">Email Notifications</p>
-                        <p className="text-sm text-gray-500">Receive notifications via email</p>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {Object.entries(notifications).map(([key, value]) => (
+                    <div key={key} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                      <div className="space-y-1">
+                        <Label className="text-sm font-medium capitalize">
+                          {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                        </Label>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Receive notifications for {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                        </p>
                       </div>
+                      <Switch
+                        checked={value}
+                        onCheckedChange={(checked) => handleNotificationChange(key, checked)}
+                      />
                     </div>
-                    <Switch
-                      checked={notifications.email}
-                      onCheckedChange={(checked) => handleNotificationChange('email', checked)}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Smartphone className="w-5 h-5 text-green-600" />
-                      <div>
-                        <p className="font-medium">Push Notifications</p>
-                        <p className="text-sm text-gray-500">Receive push notifications</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={notifications.push}
-                      onCheckedChange={(checked) => handleNotificationChange('push', checked)}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-purple-600" />
-                      <div>
-                        <p className="font-medium">Project Updates</p>
-                        <p className="text-sm text-gray-500">Get notified about project changes</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={notifications.projectUpdates}
-                      onCheckedChange={(checked) => handleNotificationChange('projectUpdates', checked)}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-5 h-5 text-indigo-600" />
-                      <div>
-                        <p className="font-medium">Messages</p>
-                        <p className="text-sm text-gray-500">Notify about new messages</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={notifications.messages}
-                      onCheckedChange={(checked) => handleNotificationChange('messages', checked)}
-                    />
-                  </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
-            {/* Privacy Settings */}
-            <Card className="border-0 shadow-lg">
+          {/* Privacy Settings */}
+          <TabsContent value="privacy" className="space-y-6">
+            <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-green-600" />
-                  Privacy & Security
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="w-5 h-5" />
+                  Privacy & Visibility
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="profileVisibility" className="text-gray-700 font-medium">Profile Visibility</Label>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Profile Visibility</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Control who can see your profile</p>
+                    </div>
                     <Select value={privacy.profileVisibility} onValueChange={(value) => handlePrivacyChange('profileVisibility', value)}>
-                      <SelectTrigger className="mt-2">
+                      <SelectTrigger className="w-32">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="public">Public</SelectItem>
                         <SelectItem value="private">Private</SelectItem>
                         <SelectItem value="friends">Friends Only</SelectItem>
+                        <SelectItem value="network">Network Only</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Eye className="w-5 h-5 text-blue-600" />
-                      <div>
-                        <p className="font-medium">Show Email</p>
-                        <p className="text-sm text-gray-500">Display email on profile</p>
+                  {Object.entries(privacy).filter(([key]) => key !== 'profileVisibility').map(([key, value]) => (
+                    <div key={key} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                      <div className="space-y-1">
+                        <Label className="text-sm font-medium capitalize">
+                          {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                        </Label>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {typeof value === 'boolean' 
+                            ? `Allow ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}`
+                            : `Set ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}`
+                          }
+                        </p>
                       </div>
+                      {typeof value === 'boolean' ? (
+                        <Switch
+                          checked={value}
+                          onCheckedChange={(checked) => handlePrivacyChange(key, checked)}
+                        />
+                      ) : (
+                        <Select value={value as string} onValueChange={(val) => handlePrivacyChange(key, val)}>
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="public">Public</SelectItem>
+                            <SelectItem value="private">Private</SelectItem>
+                            <SelectItem value="friends">Friends Only</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Security Settings */}
+          <TabsContent value="security" className="space-y-6">
+            <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lock className="w-5 h-5" />
+                  Security & Authentication
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Two-Factor Authentication</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Add an extra layer of security</p>
                     </div>
                     <Switch
-                      checked={privacy.showEmail}
-                      onCheckedChange={(checked) => handlePrivacyChange('showEmail', checked)}
+                      checked={security.twoFactorAuth}
+                      onCheckedChange={(checked) => handleSecurityChange('twoFactorAuth', checked)}
                     />
                   </div>
                   
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Phone className="w-5 h-5 text-green-600" />
-                      <div>
-                        <p className="font-medium">Show Phone</p>
-                        <p className="text-sm text-gray-500">Display phone on profile</p>
-                      </div>
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Biometric Authentication</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Use fingerprint or face ID</p>
                     </div>
                     <Switch
-                      checked={privacy.showPhone}
-                      onCheckedChange={(checked) => handlePrivacyChange('showPhone', checked)}
+                      checked={security.biometricAuth}
+                      onCheckedChange={(checked) => handleSecurityChange('biometricAuth', checked)}
                     />
                   </div>
-                  
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Globe className="w-5 h-5 text-purple-600" />
-                      <div>
-                        <p className="font-medium">Show Location</p>
-                        <p className="text-sm text-gray-500">Display location on profile</p>
-                      </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Session Timeout</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Auto-logout after inactivity</p>
+                    </div>
+                    <Select value={security.sessionTimeout.toString()} onValueChange={(value) => handleSecurityChange('sessionTimeout', parseInt(value))}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="15">15 minutes</SelectItem>
+                        <SelectItem value="30">30 minutes</SelectItem>
+                        <SelectItem value="60">1 hour</SelectItem>
+                        <SelectItem value="120">2 hours</SelectItem>
+                        <SelectItem value="0">Never</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Login Notifications</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Get notified of new logins</p>
                     </div>
                     <Switch
-                      checked={privacy.showLocation}
-                      onCheckedChange={(checked) => handlePrivacyChange('showLocation', checked)}
+                      checked={security.loginNotifications}
+                      onCheckedChange={(checked) => handleSecurityChange('loginNotifications', checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Device Management</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Manage active sessions</p>
+                    </div>
+                    <Switch
+                      checked={security.deviceManagement}
+                      onCheckedChange={(checked) => handleSecurityChange('deviceManagement', checked)}
                     />
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </TabsContent>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Theme Settings */}
-            <Card className="border-0 shadow-lg">
+          {/* Performance Settings */}
+          <TabsContent value="performance" className="space-y-6">
+            <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-lg text-gray-900 flex items-center gap-2">
-                  <Palette className="w-5 h-5 text-purple-600" />
-                  Appearance
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5" />
+                  Performance & Optimization
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                                 <div>
-                   <Label className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Theme</Label>
-                   <div className="grid grid-cols-3 gap-2 mt-2">
-                     <Button
-                       variant={theme === 'light' ? 'default' : 'outline'}
-                       size="sm"
-                       onClick={() => setTheme('light')}
-                       className={`flex flex-col items-center gap-1 h-auto py-3 transition-all duration-200 ${
-                         theme === 'light' ? 'bg-blue-600 hover:bg-blue-700' : ''
-                       }`}
-                     >
-                       <Sun className={`w-4 h-4 ${theme === 'light' ? 'text-white' : 'text-gray-600'}`} />
-                       <span className={`text-xs ${theme === 'light' ? 'text-white' : 'text-gray-600'}`}>Light</span>
-                     </Button>
-                     <Button
-                       variant={theme === 'dark' ? 'default' : 'outline'}
-                       size="sm"
-                       onClick={() => setTheme('dark')}
-                       className={`flex flex-col items-center gap-1 h-auto py-3 transition-all duration-200 ${
-                         theme === 'dark' ? 'bg-gray-800 hover:bg-gray-900' : ''
-                       }`}
-                     >
-                       <Moon className={`w-4 h-4 ${theme === 'dark' ? 'text-white' : 'text-gray-600'}`} />
-                       <span className={`text-xs ${theme === 'dark' ? 'text-white' : 'text-gray-600'}`}>Dark</span>
-                     </Button>
-                     <Button
-                       variant={theme === 'auto' ? 'default' : 'outline'}
-                       size="sm"
-                       onClick={() => setTheme('auto')}
-                       className={`flex flex-col items-center gap-1 h-auto py-3 transition-all duration-200 ${
-                         theme === 'auto' ? 'bg-purple-600 hover:bg-purple-700' : ''
-                       }`}
-                     >
-                       <Monitor className={`w-4 h-4 ${theme === 'auto' ? 'text-white' : 'text-gray-600'}`} />
-                       <span className={`text-xs ${theme === 'auto' ? 'text-white' : 'text-gray-600'}`}>Auto</span>
-                     </Button>
-                   </div>
-                 </div>
-              </CardContent>
-            </Card>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Auto-save</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Automatically save your work</p>
+                    </div>
+                    <Switch
+                      checked={performance.autoSave}
+                      onCheckedChange={(checked) => handlePerformanceChange('autoSave', checked)}
+                    />
+                  </div>
 
-            {/* Account Status */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-lg text-gray-900 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                  Account Status
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Email Verified</span>
-                  <Badge variant="default" className="bg-green-100 text-green-800">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Verified
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Two-Factor Auth</span>
-                  <Badge variant="outline" className="text-gray-600">
-                    Not Enabled
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Last Login</span>
-                  <span className="text-sm text-gray-900">2 hours ago</span>
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Cache Enabled</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Store data locally for faster access</p>
+                    </div>
+                    <Switch
+                      checked={performance.cacheEnabled}
+                      onCheckedChange={(checked) => handlePerformanceChange('cacheEnabled', checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Animation Speed</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Control UI animation speed</p>
+                    </div>
+                    <Select value={performance.animationSpeed} onValueChange={(value) => handlePerformanceChange('animationSpeed', value)}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="slow">Slow</SelectItem>
+                        <SelectItem value="normal">Normal</SelectItem>
+                        <SelectItem value="fast">Fast</SelectItem>
+                        <SelectItem value="off">Off</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Reduce Motion</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Minimize animations for accessibility</p>
+                    </div>
+                    <Switch
+                      checked={performance.reduceMotion}
+                      onCheckedChange={(checked) => handlePerformanceChange('reduceMotion', checked)}
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
-            {/* Quick Actions */}
-            <Card className="border-0 shadow-lg">
+          {/* Accessibility Settings */}
+          <TabsContent value="accessibility" className="space-y-6">
+            <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-lg text-gray-900 flex items-center gap-2">
-                  <SettingsIcon className="w-5 h-5 text-blue-600" />
-                  Quick Actions
+                <CardTitle className="flex items-center gap-2">
+                  <Eye className="w-5 h-5" />
+                  Accessibility Features
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full justify-start">
-                  <Download className="w-4 h-4 mr-2" />
-                  Export Data
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Account
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <AlertTriangle className="w-4 h-4 mr-2" />
-                  Report Issue
-                </Button>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Screen Reader Support</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Enable screen reader compatibility</p>
+                    </div>
+                    <Switch
+                      checked={accessibility.screenReader}
+                      onCheckedChange={(checked) => handleAccessibilityChange('screenReader', checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">High Contrast</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Increase color contrast</p>
+                    </div>
+                    <Switch
+                      checked={accessibility.highContrast}
+                      onCheckedChange={(checked) => handleAccessibilityChange('highContrast', checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Large Text</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Increase text size</p>
+                    </div>
+                    <Switch
+                      checked={accessibility.largeText}
+                      onCheckedChange={(checked) => handleAccessibilityChange('largeText', checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Keyboard Navigation</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Navigate using keyboard only</p>
+                    </div>
+                    <Switch
+                      checked={accessibility.keyboardNavigation}
+                      onCheckedChange={(checked) => handleAccessibilityChange('keyboardNavigation', checked)}
+                    />
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          </div>
+          </TabsContent>
+
+          {/* Data Management Settings */}
+          <TabsContent value="data" className="space-y-6">
+            <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Database className="w-5 h-5" />
+                  Data & Storage
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Data Retention</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">How long to keep your data</p>
+                    </div>
+                    <Select value={dataManagement.dataRetention.toString()} onValueChange={(value) => handleDataManagementChange('dataRetention', parseInt(value))}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="30">30 days</SelectItem>
+                        <SelectItem value="90">90 days</SelectItem>
+                        <SelectItem value="180">180 days</SelectItem>
+                        <SelectItem value="365">1 year</SelectItem>
+                        <SelectItem value="0">Forever</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Auto-archive</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Automatically archive old data</p>
+                    </div>
+                    <Switch
+                      checked={dataManagement.autoArchive}
+                      onCheckedChange={(checked) => handleDataManagementChange('autoArchive', checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Cross-platform Sync</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Sync data across devices</p>
+                    </div>
+                    <Switch
+                      checked={dataManagement.crossPlatformSync}
+                      onCheckedChange={(checked) => handleDataManagementChange('crossPlatformSync', checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Data Portability</Label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Export your data anytime</p>
+                    </div>
+                    <Switch
+                      checked={dataManagement.dataPortability}
+                      onCheckedChange={(checked) => handleDataManagementChange('dataPortability', checked)}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* Save Button */}
+        <div className="flex justify-center mt-8">
+          <Button onClick={handleSave} size="lg" className="px-8 py-3">
+            <Save className="w-4 h-4 mr-2" />
+            Save All Changes
+          </Button>
         </div>
       </div>
     </div>
