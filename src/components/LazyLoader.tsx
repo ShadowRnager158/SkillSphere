@@ -300,3 +300,6 @@ export function useLazyLoading(options: {
 
   return { isVisible, elementRef };
 }
+
+// Default export for easier importing
+export default LazyLoader;

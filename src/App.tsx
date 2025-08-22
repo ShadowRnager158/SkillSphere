@@ -48,7 +48,12 @@ import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
 import SplashScreen from './components/SplashScreen';
 
-// New InnerApp component to handle routing and auth checks
+// Enhanced Components
+import AccessibilityProvider from './components/Accessibility';
+import AnimationsProvider from './components/Animations';
+import ResponsiveDesign from './components/ResponsiveDesign';
+
+// InnerApp
 const InnerApp = () => {
   const { isAuthenticated, loading } = useAuth();
 
@@ -59,52 +64,52 @@ const InnerApp = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route element={<Layout />}>
+          {/* Public Routes */}
           <Route
-            index
-            element={isAuthenticated ? <Navigate to="/home" /> : <HomePage />}
-          />
-          <Route
-            path="login"
-            element={isAuthenticated ? <Navigate to="/login" /> : <LoginPage />}
-          />
-          <Route path="home" element={<HomePage />} />
-          <Route path="sign-up" element={<SignUpPage />} />
-          <Route path="tasks" element={<TasksPage />} />
-          <Route path="tasks/:taskId" element={<TaskDetailPage />} />
-          <Route path="for-clients" element={<ForClients />} />
-          <Route path="terms-of-service" element={<TermsOfService />} />
-          <Route path="privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="support" element={<Support />} />
-          <Route path="how-it-works" element={<HowItWorks />} />
-          <Route path="about" element={<About />} />
-          <Route path="messages" element={<MessagesPage />} />
-          <Route path="assessment" element={<AssessmentPage />} />
-          <Route path="certification-exams" element={<CertificationExamsPage />} />
-          <Route path="resources" element={<ResourcesPage />} />
-          <Route path="client-guide" element={<ClientGuidePage />} />
-          <Route path="cookie-policy" element={<CookiePolicyPage />} />
-          <Route path="success-stories" element={<SuccessStories />} />
-          <Route path="gdpr" element={<GDPR />} />
-          <Route path="enterprise" element={<Enterprise />} />
-          <Route path="careers" element={<Careers />} />
-          <Route path="press" element={<Press />} />
-          <Route path="partners" element={<Partners />} />
-          <Route path="help" element={<Help />} />
-          <Route path="community" element={<Community />} />
-          <Route path="status" element={<Status />} />
-          <Route path="help-center" element={<Help />} />
-          {/* Protected routes */}
-            <Route
-            path="home"
+            path="/"
             element={
-              <PrivateRoute>
-                <HomePage />
-              </PrivateRoute>
+              isAuthenticated ? <Navigate to="/dashboard" replace /> : <HomePage />
             }
-            />
+          />
           <Route
-            path="dashboard"
+            path="/home"
+            element={
+              isAuthenticated ? <Navigate to="/dashboard" replace /> : <HomePage />
+            }
+          />
+          <Route
+            path="/login"
+            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />}
+          />
+          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/tasks" element={<TasksPage />} />
+          <Route path="/tasks/:taskId" element={<TaskDetailPage />} />
+          <Route path="/for-clients" element={<ForClients />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/assessment" element={<AssessmentPage />} />
+          <Route path="/certification-exams" element={<CertificationExamsPage />} />
+          <Route path="/resources" element={<ResourcesPage />} />
+          <Route path="/client-guide" element={<ClientGuidePage />} />
+          <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+          <Route path="/success-stories" element={<SuccessStories />} />
+          <Route path="/gdpr" element={<GDPR />} />
+          <Route path="/enterprise" element={<Enterprise />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/press" element={<Press />} />
+          <Route path="/partners" element={<Partners />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/status" element={<Status />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/dashboard"
             element={
               <PrivateRoute>
                 <Dashboard />
@@ -112,7 +117,7 @@ const InnerApp = () => {
             }
           />
           <Route
-            path="profile"
+            path="/profile"
             element={
               <PrivateRoute>
                 <ProfilePage />
@@ -120,7 +125,7 @@ const InnerApp = () => {
             }
           />
           <Route
-            path="settings"
+            path="/settings"
             element={
               <PrivateRoute>
                 <SettingsPage />
@@ -128,7 +133,7 @@ const InnerApp = () => {
             }
           />
           <Route
-            path="create-task"
+            path="/create-task"
             element={
               <PrivateRoute>
                 <CreateTaskPage />
@@ -136,7 +141,7 @@ const InnerApp = () => {
             }
           />
           <Route
-            path="payment"
+            path="/payment"
             element={
               <PrivateRoute>
                 <PaymentPage />
@@ -161,17 +166,22 @@ const App = () => {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <AuthProvider>
-          <UserProvider>
-            <TaskProvider>
-              <TooltipProvider>
-                <Toaster />
-                {showSplash ? <SplashScreen /> :                 
-                <InnerApp />}
-              </TooltipProvider>
-            </TaskProvider>
-          </UserProvider>
-        </AuthProvider>
+        <AccessibilityProvider>
+          <AnimationsProvider>
+            <ResponsiveDesign>
+              <AuthProvider>
+                <UserProvider>
+                  <TaskProvider>
+                    <TooltipProvider>
+                      <Toaster />
+                      {showSplash ? <SplashScreen /> : <InnerApp />}
+                    </TooltipProvider>
+                  </TaskProvider>
+                </UserProvider>
+              </AuthProvider>
+            </ResponsiveDesign>
+          </AnimationsProvider>
+        </AccessibilityProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

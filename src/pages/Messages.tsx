@@ -13,10 +13,6 @@ import {
   Image,
   Paperclip,
   Smile,
-<<<<<<< Current (Your changes)
-=======
-  Send,
->>>>>>> Incoming (Background Agent changes)
   User,
   Clock,
   Check,
@@ -103,6 +99,12 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+// Enhanced Components
+import { AnimatedElement } from '@/components/Animations';
+import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
+import LazyLoader from '@/components/LazyLoader';
+import { CardSkeleton } from '@/components/LazyLoader';
 
 interface Message {
   id: string;

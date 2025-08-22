@@ -119,6 +119,12 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { Phone } from 'lucide-react';
 
+// Enhanced Components
+import { AnimatedElement } from '@/components/Animations';
+import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
+import LazyLoader from '@/components/LazyLoader';
+import { CardSkeleton } from '@/components/LazyLoader';
+
 export default function SettingsPage() {
   const { user, updateUser } = useAuth();
   const { theme, isDarkMode, setTheme } = useTheme();
