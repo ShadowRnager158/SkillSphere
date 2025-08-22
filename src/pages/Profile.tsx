@@ -115,11 +115,8 @@ import {
   ThumbsUp,
   ThumbsDown,
   MessageCircle,
-  Send,
-  Eye,
-  EyeOff
+  Send
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
@@ -223,6 +220,13 @@ export default function Profile() {
     { id: 3, title: 'Team Player', description: 'Successfully led 3 team projects', icon: Users, date: '2024-01-15' }
   ];
 
+  const stats = [
+    { label: 'Projects Completed', value: '24', icon: CheckCircle, color: 'text-green-600 dark:text-green-400' },
+    { label: 'Assessments Taken', value: '12', icon: Brain, color: 'text-blue-600 dark:text-blue-400' },
+    { label: 'Client Rating', value: '4.9', icon: Star, color: 'text-yellow-600 dark:text-yellow-400' },
+    { label: 'Earnings', value: '$45K', icon: DollarSign, color: 'text-purple-600 dark:text-purple-400' }
+  ];
+
   const handleSaveProfile = () => {
     setProfileData(editData);
     setIsEditing(false);
@@ -259,22 +263,17 @@ export default function Profile() {
   const averageScore = Math.round(assessmentHistory.reduce((acc, assessment) => acc + assessment.score, 0) / assessmentHistory.length);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
       <section className="py-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center justify-between"
-          >
+          <div className={`flex items-center justify-between transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
                 <User className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile Dashboard</h1>
                 <p className="text-gray-600 dark:text-gray-400">Manage your account and track your progress</p>
               </div>
             </div>
@@ -288,7 +287,7 @@ export default function Profile() {
                 Edit Profile
               </Button>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -297,143 +296,106 @@ export default function Profile() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Profile Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
+            <div className={`lg:col-span-1 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <div className="relative inline-block">
-                      <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <User className="w-12 h-12 text-white" />
+                    <div className="relative inline-block mb-4">
+                      <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                        {profileData.name.split(' ').map(n => n[0]).join('')}
                       </div>
-                      <Button size="sm" className="absolute bottom-2 right-2 w-8 h-8 rounded-full p-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full p-0 bg-white dark:bg-gray-800"
+                      >
                         <Camera className="w-4 h-4" />
                       </Button>
                     </div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                      {isEditing ? editData.name : profileData.name}
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      {isEditing ? editData.position : profileData.position} at {isEditing ? editData.company : profileData.company}
-                    </p>
-                    <div className="flex justify-center space-x-4">
-                      <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
-                        <Star className="w-3 h-3 mr-1" />
-                        Pro Member
-                      </Badge>
-                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        Verified
-                      </Badge>
+                    
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{profileData.name}</h2>
+                    <p className="text-gray-600 dark:text-gray-400 mb-1">{profileData.position}</p>
+                    <p className="text-gray-500 dark:text-gray-500 text-sm mb-4">{profileData.company}</p>
+                    
+                    <div className="flex justify-center gap-2 mb-4">
+                      {profileData.skills.slice(0, 3).map((skill, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {skill}
+                        </Badge>
+                      ))}
+                      {profileData.skills.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{profileData.skills.length - 3}
+                        </Badge>
+                      )}
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <Mail className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {isEditing ? editData.email : profileData.email}
-                      </span>
+                    <div className="flex items-center gap-3 text-sm">
+                      <Mail className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">{profileData.email}</span>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <Phone className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {isEditing ? editData.phone : profileData.phone}
-                      </span>
+                    <div className="flex items-center gap-3 text-sm">
+                      <Phone className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">{profileData.phone}</span>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {isEditing ? editData.location : profileData.location}
-                      </span>
+                    <div className="flex items-center gap-3 text-sm">
+                      <MapPin className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">{profileData.location}</span>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <Globe className="w-4 h-4 text-gray-400" />
-                      <a href={isEditing ? editData.website : profileData.website} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                        {isEditing ? editData.website : profileData.website}
-                      </a>
+                    <div className="flex items-center gap-3 text-sm">
+                      <Globe className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">{profileData.website}</span>
                     </div>
                   </div>
 
-                  {isEditing && (
-                    <div className="mt-6 space-y-4">
-                      <div>
-                        <Label htmlFor="name">Name</Label>
-                        <Input
-                          id="name"
-                          value={editData.name}
-                          onChange={(e) => setEditData({...editData, name: e.target.value})}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          value={editData.email}
-                          onChange={(e) => setEditData({...editData, email: e.target.value})}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="phone">Phone</Label>
-                        <Input
-                          id="phone"
-                          value={editData.phone}
-                          onChange={(e) => setEditData({...editData, phone: e.target.value})}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="bio">Bio</Label>
-                        <Textarea
-                          id="bio"
-                          value={editData.bio}
-                          onChange={(e) => setEditData({...editData, bio: e.target.value})}
-                          className="mt-1"
-                          rows={3}
-                        />
-                      </div>
-                      <div className="flex space-x-3">
-                        <Button onClick={handleSaveProfile} className="flex-1">
-                          <Save className="w-4 h-4 mr-2" />
-                          Save
-                        </Button>
-                        <Button variant="outline" onClick={handleCancelEdit} className="flex-1">
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+                  <div className="mt-6">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bio</Label>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{profileData.bio}</p>
+                  </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
 
-            {/* Assessment History */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="lg:col-span-2"
-            >
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
+            {/* Main Content */}
+            <div className={`lg:col-span-2 space-y-6 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              {/* Stats Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {stats.map((stat, index) => (
+                  <div
+                    key={stat.label}
+                    className={`transition-all duration-700 delay-${index * 100} ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                  >
+                    <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                      <CardContent className="p-4 text-center">
+                        <div className="inline-flex p-2 rounded-full bg-gray-100 dark:bg-gray-700 mb-3">
+                          <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+
+              {/* Assessment Performance */}
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-gray-900 dark:text-white">Assessment History</CardTitle>
-                      <CardDescription>Track your learning progress and achievements</CardDescription>
+                      <CardTitle className="text-xl text-gray-900 dark:text-white">Assessment Performance</CardTitle>
+                      <CardDescription className="text-gray-600 dark:text-gray-400">
+                        Your recent assessment results and progress
+                      </CardDescription>
                     </div>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center gap-3">
                       <div className="text-center">
-                        <div className={`text-2xl font-bold ${getScoreColor(averageScore)}`}>
-                          {averageScore}%
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">Avg Score</div>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-white">{averageScore}%</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Average Score</div>
                       </div>
-                      <Button onClick={handleTakeAssessment}>
+                      <Button onClick={handleTakeAssessment} size="sm">
                         <Plus className="w-4 h-4 mr-2" />
                         Take Assessment
                       </Button>
@@ -442,104 +404,75 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {assessmentHistory.map((assessment) => (
-                      <div key={assessment.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <h3 className="font-semibold text-gray-900 dark:text-white">
-                              {assessment.title}
-                            </h3>
-                            <Badge className={getScoreBadge(assessment.score)}>
-                              {assessment.score}%
-                            </Badge>
-                            <Badge variant="outline">
-                              {assessment.category}
-                            </Badge>
+                    {assessmentHistory.map((assessment, index) => (
+                      <div
+                        key={assessment.id}
+                        className={`flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg transition-all duration-700 delay-${index * 100} ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                            <Brain className="w-6 h-6 text-white" />
                           </div>
-                          <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-                            <span>Completed: {new Date(assessment.date).toLocaleDateString()}</span>
-                            <span>Time: {assessment.timeSpent}</span>
-                            <span>Questions: {assessment.questions}</span>
-                            <span>Correct: {assessment.correctAnswers}/{assessment.questions}</span>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-white">{assessment.title}</h4>
+                            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                              <Badge variant="outline" className="text-xs">{assessment.category}</Badge>
+                              <span>•</span>
+                              <span>{assessment.date}</span>
+                              <span>•</span>
+                              <span>{assessment.timeSpent}</span>
+                            </div>
                           </div>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleViewAssessment(assessment)}
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          View
-                        </Button>
+                        <div className="text-right">
+                          <div className={`text-2xl font-bold ${getScoreColor(assessment.score)}`}>
+                            {assessment.score}%
+                          </div>
+                          <Badge className={`text-xs ${getScoreBadge(assessment.score)}`}>
+                            {assessment.correctAnswers}/{assessment.questions} correct
+                          </Badge>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
-          </div>
 
-          {/* Skills and Projects */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-            {/* Skills */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-            >
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
+              {/* Active Projects */}
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-gray-900 dark:text-white">Skills & Expertise</CardTitle>
-                  <CardDescription>Your technical skills and competencies</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {profileData.skills.map((skill, index) => (
-                      <Badge key={index} className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                  <Button variant="outline" className="mt-4">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Skill
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Recent Projects */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-            >
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
-                <CardHeader>
-                  <CardTitle className="text-gray-900 dark:text-white">Recent Projects</CardTitle>
-                  <CardDescription>Your active and completed projects</CardDescription>
+                  <CardTitle className="text-xl text-gray-900 dark:text-white">Active Projects</CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-gray-400">
+                    Projects you're currently working on
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {projects.map((project) => (
-                      <div key={project.id} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
-                            {project.title}
-                          </h3>
-                          <Badge className={project.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'}>
-                            {project.status}
-                          </Badge>
+                    {projects.map((project, index) => (
+                      <div
+                        key={project.id}
+                        className={`p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg transition-all duration-700 delay-${index * 100} ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold text-gray-900 dark:text-white">{project.title}</h4>
+                          <Badge variant="outline" className="text-xs">{project.status}</Badge>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                          {project.description}
-                        </p>
-                        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                          <span>Budget: {project.budget}</span>
-                          <span>Due: {new Date(project.deadline).toLocaleDateString()}</span>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{project.description}</p>
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                            <span>Budget: {project.budget}</span>
+                            <span>Deadline: {project.deadline}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {project.team.map((member, idx) => (
+                              <div key={idx} className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                                {member}
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                        <div className="mt-3">
-                          <div className="flex items-center justify-between text-sm mb-1">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
                             <span>Progress</span>
                             <span>{project.progress}%</span>
                           </div>
@@ -548,132 +481,91 @@ export default function Profile() {
                       </div>
                     ))}
                   </div>
-                  <Button variant="outline" className="w-full mt-4" onClick={() => navigate('/projects')}>
-                    View All Projects
-                  </Button>
                 </CardContent>
               </Card>
-            </motion.div>
-          </div>
 
-          {/* Achievements */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
-            className="mt-8"
-          >
-            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white">Achievements & Badges</CardTitle>
-                <CardDescription>Your accomplishments and recognition</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {achievements.map((achievement) => (
-                    <div key={achievement.id} className="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg">
-                      <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <achievement.icon className="w-6 h-6 text-white" />
+              {/* Achievements */}
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-xl text-gray-900 dark:text-white">Recent Achievements</CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-gray-400">
+                    Milestones and accomplishments you've earned
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {achievements.map((achievement, index) => (
+                      <div
+                        key={achievement.id}
+                        className={`text-center p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg transition-all duration-700 delay-${index * 100} ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                      >
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <achievement.icon className="w-6 h-6 text-white" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{achievement.title}</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{achievement.description}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500">{achievement.date}</p>
                       </div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                        {achievement.title}
-                      </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                        {achievement.description}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {new Date(achievement.date).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Assessment Detail Modal */}
-      <AnimatePresence>
-        {showAssessmentModal && selectedAssessment && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Assessment Details</h2>
-                <Button variant="ghost" size="sm" onClick={() => setShowAssessmentModal(false)}>
+      {/* Assessment Modal */}
+      {showAssessmentModal && selectedAssessment && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-2xl mx-4 bg-white dark:bg-gray-800">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl text-gray-900 dark:text-white">
+                  Assessment Details
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAssessmentModal(false)}
+                >
                   <X className="w-4 h-4" />
                 </Button>
               </div>
-              
-              <div className="space-y-6">
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    {selectedAssessment.title}
-                  </h3>
-                  <div className={`text-4xl font-bold ${getScoreColor(selectedAssessment.score)} mb-2`}>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Score</Label>
+                  <div className={`text-2xl font-bold ${getScoreColor(selectedAssessment.score)}`}>
                     {selectedAssessment.score}%
                   </div>
-                  <Badge className={getScoreBadge(selectedAssessment.score)}>
-                    {selectedAssessment.score >= 90 ? 'Excellent' : 
-                     selectedAssessment.score >= 80 ? 'Good' : 
-                     selectedAssessment.score >= 70 ? 'Average' : 'Needs Improvement'}
-                  </Badge>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {selectedAssessment.correctAnswers}/{selectedAssessment.questions}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Correct Answers</div>
-                  </div>
-                  <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {selectedAssessment.timeSpent}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Time Spent</div>
-                  </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Category</Label>
+                  <div className="text-gray-900 dark:text-white">{selectedAssessment.category}</div>
                 </div>
-                
-                <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Completed on</div>
-                  <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {new Date(selectedAssessment.date).toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Time Spent</Label>
+                  <div className="text-gray-900 dark:text-white">{selectedAssessment.timeSpent}</div>
                 </div>
-                
-                <div className="flex space-x-3">
-                  <Button variant="outline" className="flex-1" onClick={() => setShowAssessmentModal(false)}>
-                    Close
-                  </Button>
-                  <Button className="flex-1" onClick={() => {
-                    setShowAssessmentModal(false);
-                    navigate('/assessment');
-                  }}>
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Retake Assessment
-                  </Button>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Questions</Label>
+                  <div className="text-gray-900 dark:text-white">{selectedAssessment.questions}</div>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <Button 
+                  onClick={() => setShowAssessmentModal(false)}
+                  className="w-full"
+                >
+                  Close
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

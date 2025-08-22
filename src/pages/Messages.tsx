@@ -51,14 +51,6 @@ import {
   Bluetooth,
   Battery,
   WifiOff,
-  Volume2 as Volume2Icon,
-  VolumeX as VolumeXIcon,
-  Play as PlayIcon,
-  Pause as PauseIcon,
-  SkipForward as SkipForwardIcon,
-  SkipBack as SkipBackIcon,
-  Repeat as RepeatIcon,
-  Shuffle as ShuffleIcon,
   Plus,
   Filter,
   SortAsc,
@@ -107,7 +99,6 @@ import {
   Brain,
   Sparkles
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 interface Message {
@@ -144,6 +135,7 @@ export default function Messages() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [filterStatus, setFilterStatus] = useState<'all' | 'unread' | 'online'>('all');
   const [sortBy, setSortBy] = useState<'recent' | 'name' | 'unread'>('recent');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
 
   useEffect(() => {
     setIsVisible(true);
@@ -200,8 +192,16 @@ export default function Messages() {
       messages: [
         {
           id: '1',
-          content: 'Can we schedule a call for tomorrow?',
+          content: 'Hi Mike! I wanted to discuss the project timeline.',
           timestamp: '9:15 AM',
+          isOwn: true,
+          status: 'read',
+          type: 'text'
+        },
+        {
+          id: '2',
+          content: 'Sure! Can we schedule a call for tomorrow?',
+          timestamp: '9:20 AM',
           isOwn: false,
           status: 'read',
           type: 'text'
@@ -210,9 +210,9 @@ export default function Messages() {
     },
     {
       id: '3',
-      name: 'David Kim',
-      avatar: 'DK',
-      lastMessage: 'I sent you the updated API documentation',
+      name: 'Emily Watson',
+      avatar: 'EW',
+      lastMessage: 'The files have been uploaded to the shared drive.',
       timestamp: '3 hours ago',
       unreadCount: 1,
       isOnline: true,
@@ -221,8 +221,16 @@ export default function Messages() {
       messages: [
         {
           id: '1',
-          content: 'I sent you the updated API documentation',
-          timestamp: '7:45 AM',
+          content: 'Hi Emily, could you share the project files?',
+          timestamp: '8:00 AM',
+          isOwn: true,
+          status: 'read',
+          type: 'text'
+        },
+        {
+          id: '2',
+          content: 'Of course! The files have been uploaded to the shared drive.',
+          timestamp: '8:05 AM',
           isOwn: false,
           status: 'delivered',
           type: 'text'
@@ -231,9 +239,9 @@ export default function Messages() {
     },
     {
       id: '4',
-      name: 'Emily Wilson',
-      avatar: 'EW',
-      lastMessage: 'The client loved the presentation!',
+      name: 'David Kim',
+      avatar: 'DK',
+      lastMessage: 'Looking forward to our collaboration!',
       timestamp: '1 day ago',
       unreadCount: 0,
       isOnline: false,
@@ -242,8 +250,45 @@ export default function Messages() {
       messages: [
         {
           id: '1',
-          content: 'The client loved the presentation!',
+          content: 'Hi David! I\'m excited to work with you on this project.',
           timestamp: 'Yesterday',
+          isOwn: true,
+          status: 'read',
+          type: 'text'
+        },
+        {
+          id: '2',
+          content: 'Looking forward to our collaboration!',
+          timestamp: 'Yesterday',
+          isOwn: false,
+          status: 'read',
+          type: 'text'
+        }
+      ]
+    },
+    {
+      id: '5',
+      name: 'Lisa Park',
+      avatar: 'LP',
+      lastMessage: 'The meeting notes are ready for review.',
+      timestamp: '2 days ago',
+      unreadCount: 0,
+      isOnline: false,
+      status: 'archived',
+      isPinned: false,
+      messages: [
+        {
+          id: '1',
+          content: 'Hi Lisa, could you prepare the meeting notes?',
+          timestamp: '2 days ago',
+          isOwn: true,
+          status: 'read',
+          type: 'text'
+        },
+        {
+          id: '2',
+          content: 'The meeting notes are ready for review.',
+          timestamp: '2 days ago',
           isOwn: false,
           status: 'read',
           type: 'text'
@@ -254,35 +299,44 @@ export default function Messages() {
 
   const filteredConversations = conversations
     .filter(conv => {
-      const matchesSearch = conv.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           conv.lastMessage.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesFilter = filterStatus === 'all' || 
-                           (filterStatus === 'unread' && conv.unreadCount > 0) ||
-                           (filterStatus === 'online' && conv.isOnline);
-      return matchesSearch && matchesFilter;
+      if (filterStatus === 'unread') return conv.unreadCount > 0;
+      if (filterStatus === 'online') return conv.isOnline;
+      return true;
     })
+    .filter(conv => 
+      conv.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      conv.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
+    )
     .sort((a, b) => {
-      switch (sortBy) {
-        case 'recent':
-          return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
-        case 'name':
-          return a.name.localeCompare(b.name);
-        case 'unread':
-          return b.unreadCount - a.unreadCount;
-        default:
-          return 0;
+      if (sortBy === 'recent') {
+        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
       }
+      if (sortBy === 'name') {
+        return a.name.localeCompare(b.name);
+      }
+      if (sortBy === 'unread') {
+        return b.unreadCount - a.unreadCount;
+      }
+      return 0;
     });
 
-  const selectedConv = conversations.find(conv => conv.id === selectedConversation);
+  const currentConversation = conversations.find(conv => conv.id === selectedConversation);
 
   const handleSendMessage = () => {
-    if (newMessage.trim() && selectedConversation) {
-      // Here you would typically send the message to the backend
-      console.log('Sending message:', newMessage);
-      setNewMessage('');
-      setIsTyping(false);
-    }
+    if (!newMessage.trim() || !currentConversation) return;
+
+    const message: Message = {
+      id: Date.now().toString(),
+      content: newMessage,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      isOwn: true,
+      status: 'sent',
+      type: 'text'
+    };
+
+    // In a real app, you would send this to the backend
+    console.log('Sending message:', message);
+    setNewMessage('');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -292,354 +346,307 @@ export default function Messages() {
     }
   };
 
-  const getStatusIcon = (status: Message['status']) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'sent':
-        return <Check className="w-3 h-3 text-gray-400" />;
-      case 'delivered':
-        return <CheckCheck className="w-3 h-3 text-blue-500" />;
-      case 'read':
-        return <CheckCheck className="w-3 h-3 text-green-500" />;
-      default:
-        return null;
+      case 'sent': return <Check className="w-3 h-3 text-gray-400" />;
+      case 'delivered': return <CheckCheck className="w-3 h-3 text-blue-400" />;
+      case 'read': return <CheckCheck className="w-3 h-3 text-green-400" />;
+      default: return null;
     }
   };
 
-  const getMessageTime = (timestamp: string) => {
-    const now = new Date();
-    const messageTime = new Date(timestamp);
-    const diffInHours = (now.getTime() - messageTime.getTime()) / (1000 * 60 * 60);
-    
-    if (diffInHours < 1) {
-      return 'Just now';
-    } else if (diffInHours < 24) {
-      return `${Math.floor(diffInHours)}h ago`;
-    } else {
-      return messageTime.toLocaleDateString();
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'archived': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      case 'blocked': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
-      {/* Header */}
-      <section className="py-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Messages</h1>
-                <p className="text-gray-600 dark:text-gray-400">Stay connected with your team</p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl flex items-center justify-center">
+              <MessageSquare className="w-8 h-8 text-white" />
             </div>
-            <div className="flex items-center space-x-3">
-              <Button variant="outline" size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                New Chat
-              </Button>
-              <Button variant="outline" size="sm">
-                <Settings className="w-4 h-4" />
-              </Button>
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">Messages</h1>
+              <p className="text-xl text-gray-600 dark:text-gray-300">
+                Connect and collaborate with your team and clients
+              </p>
             </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Messages Interface */}
-      <section className="py-6">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
-            {/* Conversations List */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: isVisible ? 1 : 0, x: isVisible ? 0 : -20 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="lg:col-span-1"
-            >
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl h-full">
-                <CardContent className="p-4 h-full flex flex-col">
-                  {/* Search and Filters */}
-                  <div className="mb-4 space-y-3">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        placeholder="Search conversations..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
-                      />
-                    </div>
-                    
-                    <div className="flex space-x-2">
-                      <select
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value as any)}
-                        className="flex-1 px-3 py-2 text-sm bg-white/50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="all">All</option>
-                        <option value="unread">Unread</option>
-                        <option value="online">Online</option>
-                      </select>
-                      
-                      <select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value as any)}
-                        className="flex-1 px-3 py-2 text-sm bg-white/50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="recent">Recent</option>
-                        <option value="name">Name</option>
-                        <option value="unread">Unread</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Conversations */}
-                  <div className="flex-1 overflow-y-auto space-y-2">
-                    {filteredConversations.map((conversation) => (
-                      <motion.div
-                        key={conversation.id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                          selectedConversation === conversation.id
-                            ? 'bg-blue-100 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
-                            : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                        }`}
-                        onClick={() => setSelectedConversation(conversation.id)}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className="relative">
-                            <Avatar className="w-10 h-10">
-                              <AvatarImage src={conversation.avatar} />
-                              <AvatarFallback className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-                                {conversation.avatar}
-                              </AvatarFallback>
-                            </Avatar>
-                            {conversation.isOnline && (
-                              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
-                            )}
-                          </div>
-                          
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between">
-                              <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">
-                                {conversation.name}
-                              </h3>
-                              <div className="flex items-center space-x-1">
-                                {conversation.isPinned && (
-                                  <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                                )}
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
-                                  {getMessageTime(conversation.timestamp)}
-                                </span>
-                              </div>
-                            </div>
-                            
-                            <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                              {conversation.lastMessage}
-                            </p>
-                          </div>
-                          
-                          {conversation.unreadCount > 0 && (
-                            <Badge className="bg-blue-600 text-white text-xs">
-                              {conversation.unreadCount}
-                            </Badge>
-                          )}
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Chat Area */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, x: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="lg:col-span-2"
-            >
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl h-full">
-                <CardContent className="p-0 h-full flex flex-col">
-                  {selectedConv ? (
-                    <>
-                      {/* Chat Header */}
-                      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div className="relative">
-                              <Avatar className="w-10 h-10">
-                                <AvatarImage src={selectedConv.avatar} />
-                                <AvatarFallback className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-                                  {selectedConv.avatar}
-                                </AvatarFallback>
-                              </Avatar>
-                              {selectedConv.isOnline && (
-                                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
-                              )}
-                            </div>
-                            <div>
-                              <h3 className="font-semibold text-gray-900 dark:text-white">
-                                {selectedConv.name}
-                              </h3>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {selectedConv.isOnline ? 'Online' : 'Offline'}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center space-x-2">
-                            <Button variant="outline" size="sm">
-                              <Phone className="w-4 h-4" />
-                            </Button>
-                            <Button variant="outline" size="sm">
-                              <Video className="w-4 h-4" />
-                            </Button>
-                            <Button variant="outline" size="sm">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Messages */}
-                      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                        {selectedConv.messages.map((message) => (
-                          <motion.div
-                            key={message.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}
-                          >
-                            <div className={`max-w-xs lg:max-w-md ${
-                              message.isOwn 
-                                ? 'bg-blue-600 text-white' 
-                                : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-                            } rounded-lg px-4 py-2`}>
-                              <p className="text-sm">{message.content}</p>
-                              <div className={`flex items-center justify-between mt-1 text-xs ${
-                                message.isOwn ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
-                              }`}>
-                                <span>{message.timestamp}</span>
-                                {message.isOwn && getStatusIcon(message.status)}
-                              </div>
-                            </div>
-                          </motion.div>
-                        ))}
-                        
-                        {isTyping && (
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex justify-start"
-                          >
-                            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-2">
-                              <div className="flex space-x-1">
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                              </div>
-                            </div>
-                          </motion.div>
-                        )}
-                      </div>
-
-                      {/* Message Input */}
-                      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowAttachmentMenu(!showAttachmentMenu)}
-                          >
-                            <Paperclip className="w-4 h-4" />
-                          </Button>
-                          
-                          <div className="flex-1 relative">
-                            <Input
-                              placeholder="Type a message..."
-                              value={newMessage}
-                              onChange={(e) => {
-                                setNewMessage(e.target.value);
-                                setIsTyping(e.target.value.length > 0);
-                              }}
-                              onKeyPress={handleKeyPress}
-                              className="bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
-                            />
-                            {showEmojiPicker && (
-                              <div className="absolute bottom-full mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-2 shadow-lg">
-                                {/* Emoji picker would go here */}
-                                <div className="text-sm text-gray-500">Emoji picker</div>
-                              </div>
-                            )}
-                          </div>
-                          
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                          >
-                            <Smile className="w-4 h-4" />
-                          </Button>
-                          
-                          <Button
-                            onClick={handleSendMessage}
-                            disabled={!newMessage.trim()}
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
-                          >
-                            <Send className="w-4 h-4" />
-                          </Button>
-                        </div>
-                        
-                        {showAttachmentMenu && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mt-2 flex space-x-2"
-                          >
-                            <Button variant="outline" size="sm">
-                              <Image className="w-4 h-4 mr-2" />
-                              Image
-                            </Button>
-                            <Button variant="outline" size="sm">
-                              <File className="w-4 h-4 mr-2" />
-                              File
-                            </Button>
-                            <Button variant="outline" size="sm">
-                              <Camera className="w-4 h-4 mr-2" />
-                              Camera
-                            </Button>
-                          </motion.div>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex-1 flex items-center justify-center">
-                      <div className="text-center">
-                        <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                          Select a conversation
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-400">
-                          Choose a conversation from the list to start messaging
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
           </div>
         </div>
-      </section>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Conversations List */}
+          <div className="lg:col-span-1">
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg h-[600px]">
+              <CardContent className="p-4">
+                {/* Search and Filters */}
+                <div className="mb-4 space-y-3">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      placeholder="Search conversations..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button
+                      variant={filterStatus === 'all' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setFilterStatus('all')}
+                      className="flex-1"
+                    >
+                      All
+                    </Button>
+                    <Button
+                      variant={filterStatus === 'unread' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setFilterStatus('unread')}
+                      className="flex-1"
+                    >
+                      Unread
+                    </Button>
+                    <Button
+                      variant={filterStatus === 'online' ? 'default' : 'outline'}
+                      size="sm}
+                      onClick={() => setFilterStatus('online')}
+                      className="flex-1"
+                    >
+                      Online
+                    </Button>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant={sortBy === 'recent' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSortBy('recent')}
+                      className="flex-1"
+                    >
+                      Recent
+                    </Button>
+                    <Button
+                      variant={sortBy === 'name' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSortBy('name')}
+                      className="flex-1"
+                    >
+                      Name
+                    </Button>
+                    <Button
+                      variant={sortBy === 'unread' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSortBy('unread')}
+                      className="flex-1"
+                    >
+                      Unread
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Conversations */}
+                <div className="space-y-2 max-h-[450px] overflow-y-auto">
+                  {filteredConversations.map((conversation) => (
+                    <div
+                      key={conversation.id}
+                      onClick={() => setSelectedConversation(conversation.id)}
+                      className={`p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                        selectedConversation === conversation.id 
+                          ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700' 
+                          : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <Avatar className="w-12 h-12">
+                            <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold">
+                              {conversation.avatar}
+                            </AvatarFallback>
+                          </Avatar>
+                          {conversation.isOnline && (
+                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                          )}
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+                              {conversation.name}
+                            </h3>
+                            <div className="flex items-center gap-1">
+                              {conversation.isPinned && (
+                                <Star className="w-3 h-3 text-yellow-500" />
+                              )}
+                              <Badge variant="outline" className={`text-xs ${getStatusColor(conversation.status)}`}>
+                                {conversation.status}
+                              </Badge>
+                            </div>
+                          </div>
+                          
+                          <p className="text-sm text-gray-600 dark:text-gray-400 truncate mb-1">
+                            {conversation.lastMessage}
+                          </p>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-500 dark:text-gray-500">
+                              {conversation.timestamp}
+                            </span>
+                            {conversation.unreadCount > 0 && (
+                              <Badge className="bg-blue-600 text-white text-xs">
+                                {conversation.unreadCount}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Chat Area */}
+          <div className="lg:col-span-2">
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg h-[600px]">
+              {currentConversation ? (
+                <>
+                  {/* Chat Header */}
+                  <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="w-10 h-10">
+                          <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold">
+                            {currentConversation.avatar}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                            {currentConversation.name}
+                          </h3>
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${currentConversation.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                              {currentConversation.isOnline ? 'Online' : 'Offline'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm">
+                          <Phone className="w-4 h-4" />
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Video className="w-4 h-4" />
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Messages */}
+                  <div className="flex-1 p-4 space-y-4 max-h-[400px] overflow-y-auto">
+                    {currentConversation.messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div className={`max-w-xs lg:max-w-md p-3 rounded-lg ${
+                          message.isOwn
+                            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                        }`}>
+                          <p className="text-sm">{message.content}</p>
+                          <div className={`flex items-center justify-between mt-2 text-xs ${
+                            message.isOwn ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
+                          }`}>
+                            <span>{message.timestamp}</span>
+                            {message.isOwn && getStatusIcon(message.status)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {isTyping && (
+                      <div className="flex justify-start">
+                        <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+                          <div className="flex items-center gap-1">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Message Input */}
+                  <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowAttachmentMenu(!showAttachmentMenu)}
+                      >
+                        <Paperclip className="w-4 h-4" />
+                      </Button>
+                      
+                      <Input
+                        placeholder="Type your message..."
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        className="flex-1"
+                      />
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      >
+                        <Smile className="w-4 h-4" />
+                      </Button>
+                      
+                      <Button
+                        onClick={handleSendMessage}
+                        disabled={!newMessage.trim()}
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                      >
+                        <Send className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      Select a conversation
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Choose a conversation from the list to start messaging
+                    </p>
+                  </div>
+                </div>
+              )}
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
