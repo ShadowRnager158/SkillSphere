@@ -112,6 +112,12 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+
+// Enhanced Components
+import { AnimatedElement } from '@/components/Animations';
+import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
+import { LazyLoader } from '@/components/LazyLoader';
+import { CardSkeleton } from '@/components/LazyLoader';
 import { getQuestionsForAssessment, calculateScore, Question } from '@/data/assessmentQuestions';
 
 interface Assessment {

@@ -119,6 +119,12 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+// Enhanced Components
+import { AnimatedElement } from '@/components/Animations';
+import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
+import { LazyLoader } from '@/components/LazyLoader';
+import { CardSkeleton } from '@/components/LazyLoader';
+
 export default function Profile() {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);

@@ -59,6 +59,13 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import InteractiveStats from '@/components/InteractiveStats';
 import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 
+// Enhanced Components
+import { AnimatedElement } from '@/components/Animations';
+import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
+import { LazyLoader } from '@/components/LazyLoader';
+import { CardSkeleton } from '@/components/LazyLoader';
+import ThemeToggle from '@/components/ThemeToggle';
+
 export default function HomePage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -189,57 +196,66 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
-      <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className={`text-center relative z-10 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <div className={`w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-8 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
-              <Rocket className="w-12 h-12 text-white" />
-            </div>
+      <ResponsiveContainer maxWidth="7xl" padding="lg">
+        <section className="relative pt-20 pb-16 overflow-hidden">
+          <div className="text-center relative z-10">
+            <AnimatedElement animation="bounce-in" trigger="mount" delay={100}>
+              <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-8">
+                <Rocket className="w-12 h-12 text-white" />
+              </div>
+            </AnimatedElement>
             
-            <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-6 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              Find the Perfect
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
-                Professional
-              </span>
-            </h1>
+            <AnimatedElement animation="fade-in" trigger="mount" delay={300}>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-6">
+                Find the Perfect
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+                  Professional
+                </span>
+              </h1>
+            </AnimatedElement>
             
-            <p className={`text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              Connect with skilled professionals worldwide. Post projects, find talent, and get work done faster than ever before.
-            </p>
+            <AnimatedElement animation="slide-up" trigger="mount" delay={500}>
+              <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Connect with skilled professionals worldwide. Post projects, find talent, and get work done faster than ever before.
+              </p>
+            </AnimatedElement>
 
             {/* Search Bar */}
-            <div className={`max-w-2xl mx-auto mb-8 transition-all duration-1000 delay-800 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search for skills, projects, or professionals..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  className="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:bg-gray-800 dark:text-white transition-all duration-200"
-                />
-                <Button 
-                  onClick={handleSearch}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-xl"
-                >
-                  Search
-                </Button>
+            <AnimatedElement animation="slide-up" trigger="mount" delay={700}>
+              <div className="max-w-2xl mx-auto mb-8">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search for skills, projects, or professionals..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                    className="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:bg-gray-800 dark:text-white transition-all duration-200"
+                  />
+                  <Button 
+                    onClick={handleSearch}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-xl"
+                  >
+                    Search
+                  </Button>
+                </div>
               </div>
-            </div>
+            </AnimatedElement>
 
             {/* CTA Buttons */}
-            <div className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-1000 delay-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              {isAuthenticated ? (
-                <>
-                  <Button 
-                    onClick={() => navigate('/create-task')}
-                    size="lg"
-                    className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                  >
-                    <Plus className="w-5 h-5 mr-2" />
-                    Post a Project
-                  </Button>
+            <AnimatedElement animation="slide-up" trigger="mount" delay={900}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                {isAuthenticated ? (
+                  <>
+                    <Button 
+                      onClick={() => navigate('/create-task')}
+                      size="lg"
+                      className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                    >
+                      <Plus className="w-5 h-5 mr-2" />
+                      Post a Project
+                    </Button>
                   <Button 
                     onClick={() => navigate('/tasks')}
                     size="lg"
@@ -301,22 +317,26 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white/50 dark:bg-gray-800/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Why Choose SkillSphere?
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              We provide the tools and platform you need to succeed in the modern gig economy.
-            </p>
-          </div>
+      <ResponsiveContainer maxWidth="7xl" padding="lg">
+        <section className="py-16 bg-white/50 dark:bg-gray-800/50">
+          <AnimatedElement animation="fade-in" trigger="scroll">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                Why Choose SkillSphere?
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                We provide the tools and platform you need to succeed in the modern gig economy.
+              </p>
+            </div>
+          </AnimatedElement>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ResponsiveGrid cols={{ sm: 1, md: 2, lg: 3 }} gap="lg">
             {features.map((feature, index) => (
-              <div
+              <AnimatedElement 
                 key={feature.title}
-                className={`group transition-all duration-700 delay-${index * 100} ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                animation="scale-in" 
+                trigger="scroll" 
+                delay={index * 100}
               >
                 <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700">
                   <div className={`inline-flex p-4 rounded-full bg-gradient-to-r ${feature.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
@@ -325,29 +345,33 @@ export default function HomePage() {
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">{feature.title}</h3>
                   <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
                 </div>
-              </div>
+              </AnimatedElement>
             ))}
-          </div>
-        </div>
-      </section>
+          </ResponsiveGrid>
+        </section>
+      </ResponsiveContainer>
 
       {/* Categories Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Explore Popular Categories
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Find professionals in your industry or discover new opportunities.
-            </p>
-          </div>
+      <ResponsiveContainer maxWidth="7xl" padding="lg">
+        <section className="py-16">
+          <AnimatedElement animation="fade-in" trigger="scroll">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                Explore Popular Categories
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                Find professionals in your industry or discover new opportunities.
+              </p>
+            </div>
+          </AnimatedElement>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ResponsiveGrid cols={{ sm: 1, md: 2, lg: 3 }} gap="lg">
             {categories.map((category, index) => (
-              <div
+              <AnimatedElement 
                 key={category.name}
-                className={`group transition-all duration-700 delay-${index * 100} ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                animation="slide-up" 
+                trigger="scroll" 
+                delay={index * 100}
               >
                 <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700 cursor-pointer">
                   <div className={`inline-flex p-4 rounded-full bg-gradient-to-r ${category.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
@@ -364,30 +388,34 @@ export default function HomePage() {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>
-              </div>
+              </AnimatedElement>
             ))}
-          </div>
-        </div>
-      </section>
+          </ResponsiveGrid>
+        </section>
+      </ResponsiveContainer>
 
       {/* Recent Tasks Section */}
       {isAuthenticated && recentTasks.length > 0 && (
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white/50 dark:bg-gray-800/50">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Recent Projects
-              </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Check out the latest opportunities posted by our clients.
-              </p>
-            </div>
+        <ResponsiveContainer maxWidth="7xl" padding="lg">
+          <section className="py-16 bg-white/50 dark:bg-gray-800/50">
+            <AnimatedElement animation="fade-in" trigger="scroll">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                  Recent Projects
+                </h2>
+                <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                  Check out the latest opportunities posted by our clients.
+                </p>
+              </div>
+            </AnimatedElement>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ResponsiveGrid cols={{ sm: 1, md: 2, lg: 3 }} gap="lg">
               {recentTasks.map((task, index) => (
-                <div
+                <AnimatedElement 
                   key={task.id}
-                  className={`group transition-all duration-700 delay-${index * 100} ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                  animation="slide-up" 
+                  trigger="scroll" 
+                  delay={index * 100}
                 >
                   <Card className="h-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                     <CardHeader>
@@ -426,75 +454,87 @@ export default function HomePage() {
                       </Button>
                     </CardContent>
                   </Card>
-                </div>
+                </AnimatedElement>
               ))}
-            </div>
+            </ResponsiveGrid>
 
-            <div className="text-center mt-8">
-              <Button 
-                onClick={() => navigate('/tasks')}
-                variant="outline"
-                size="lg"
-                className="px-8 py-4 text-lg border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full"
-              >
-                View All Projects
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-          </div>
-        </section>
+            <AnimatedElement animation="slide-up" trigger="scroll" delay={300}>
+              <div className="text-center mt-8">
+                <Button 
+                  onClick={() => navigate('/tasks')}
+                  variant="outline"
+                  size="lg"
+                  className="px-8 py-4 text-lg border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full"
+                >
+                  View All Projects
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </div>
+            </AnimatedElement>
+          </section>
+        </ResponsiveContainer>
       )}
 
       {/* Testimonials Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              What Our Users Say
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Join thousands of satisfied professionals and clients who trust SkillSphere.
-            </p>
-          </div>
+      <ResponsiveContainer maxWidth="7xl" padding="lg">
+        <section className="py-16">
+          <AnimatedElement animation="fade-in" trigger="scroll">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                What Our Users Say
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                Join thousands of satisfied professionals and clients who trust SkillSphere.
+              </p>
+            </div>
+          </AnimatedElement>
           
-          <TestimonialsCarousel testimonials={testimonials} />
-        </div>
-      </section>
+          <AnimatedElement animation="slide-up" trigger="scroll" delay={200}>
+            <TestimonialsCarousel testimonials={testimonials} />
+          </AnimatedElement>
+        </section>
+      </ResponsiveContainer>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join our community of professionals and clients. Start posting projects or find your next opportunity today.
-          </p>
+      <ResponsiveContainer maxWidth="4xl" padding="lg">
+        <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
+          <AnimatedElement animation="fade-in" trigger="scroll">
+            <div className="text-center">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+                Ready to Get Started?
+              </h2>
+              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                Join our community of professionals and clients. Start posting projects or find your next opportunity today.
+              </p>
+            </div>
+          </AnimatedElement>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {!isAuthenticated && (
+          <AnimatedElement animation="slide-up" trigger="scroll" delay={200}>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              {!isAuthenticated && (
+                <Button 
+                  size="lg"
+                  variant="secondary"
+                  className="px-8 py-4 text-lg bg-white text-blue-600 hover:bg-gray-100 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  onClick={() => navigate('/signup')}
+                >
+                  <Rocket className="w-5 h-5 mr-2" />
+                  Get Started Free
+                </Button>
+              )}
               <Button 
                 size="lg"
-                variant="secondary"
-                className="px-8 py-4 text-lg bg-white text-blue-600 hover:bg-gray-100 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                onClick={() => navigate('/signup')}
+                variant="outline"
+                className="px-8 py-4 text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                onClick={() => navigate('/tasks')}
               >
-                <Rocket className="w-5 h-5 mr-2" />
-                Get Started Free
+                <Eye className="w-5 h-5 mr-2" />
+                Browse Projects
               </Button>
-            )}
-            <Button 
-              size="lg"
-              variant="outline"
-              className="px-8 py-4 text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-              onClick={() => navigate('/tasks')}
-            >
-              <Eye className="w-5 h-5 mr-2" />
-              Browse Projects
-            </Button>
-          </div>
-        </div>
-      </section>
+            </div>
+          </AnimatedElement>
+        </section>
+      </ResponsiveContainer>
     </div>
   );
 }

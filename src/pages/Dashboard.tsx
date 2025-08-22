@@ -51,6 +51,12 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
+// Enhanced Components
+import { AnimatedElement } from '@/components/Animations';
+import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
+import { LazyLoader } from '@/components/LazyLoader';
+import { CardSkeleton } from '@/components/LazyLoader';
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
@@ -291,18 +297,13 @@ export default function Dashboard() {
       {/* Stats Grid */}
       <section className="py-8">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-          >
+          <ResponsiveGrid cols={{ sm: 1, md: 2, lg: 4 }} gap="lg" className="mb-8">
             {stats.map((stat, index) => (
-              <motion.div
+              <AnimatedElement 
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-                transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
+                animation="scale-in" 
+                trigger="scroll" 
+                delay={index * 100}
               >
                 <Card 
                   className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer group"
@@ -338,17 +339,17 @@ export default function Dashboard() {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </AnimatedElement>
             ))}
-          </motion.div>
+          </ResponsiveGrid>
 
           {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <ResponsiveGrid cols={{ sm: 1, lg: 3 }} gap="xl">
             {/* Projects */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+            <AnimatedElement 
+              animation="slide-up" 
+              trigger="scroll" 
+              delay={200}
               className="lg:col-span-2"
             >
               <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">

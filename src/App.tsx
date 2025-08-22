@@ -48,6 +48,11 @@ import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
 import SplashScreen from './components/SplashScreen';
 
+// Enhanced Components
+import { AccessibilityProvider } from './components/Accessibility';
+import { AnimationsProvider } from './components/Animations';
+import ResponsiveDesign from './components/ResponsiveDesign';
+
 // New InnerApp component to handle routing and auth checks
 const InnerApp = () => {
   const { isAuthenticated, loading } = useAuth();
@@ -152,16 +157,22 @@ const App = () => {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <AuthProvider>
-          <UserProvider>
-            <TaskProvider>
-              <TooltipProvider>
-                <Toaster />
-                {showSplash ? <SplashScreen /> : <InnerApp />}
-              </TooltipProvider>
-            </TaskProvider>
-          </UserProvider>
-        </AuthProvider>
+        <AccessibilityProvider>
+          <AnimationsProvider>
+            <ResponsiveDesign>
+              <AuthProvider>
+                <UserProvider>
+                  <TaskProvider>
+                    <TooltipProvider>
+                      <Toaster />
+                      {showSplash ? <SplashScreen /> : <InnerApp />}
+                    </TooltipProvider>
+                  </TaskProvider>
+                </UserProvider>
+              </AuthProvider>
+            </ResponsiveDesign>
+          </AnimationsProvider>
+        </AccessibilityProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
