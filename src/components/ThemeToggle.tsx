@@ -1,95 +1,223 @@
-import { Moon, Sun, Monitor } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
+import { 
+  Sun, 
+  Moon, 
+  Monitor, 
+  ChevronDown,
+  Check,
+  Settings
+} from 'lucide-react';
 
-export default function ThemeToggle() {
-  const { theme, setTheme, isDarkMode } = useTheme();
-  const [isVisible, setIsVisible] = useState(false);
+interface ThemeToggleProps {
+  className?: string;
+  variant?: 'default' | 'compact' | 'full';
+}
 
-  useEffect(() => {
-    // Show the toggle after a short delay
-    const timer = setTimeout(() => setIsVisible(true), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+export default function ThemeToggle({ className = '', variant = 'default' }: ThemeToggleProps) {
+  const { theme, isDarkMode, setTheme, systemPreference, isSystemTheme } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const themes = [
+    { value: 'light', label: 'Light', icon: Sun, description: 'Light theme' },
+    { value: 'dark', label: 'Dark', icon: Moon, description: 'Dark theme' },
+    { value: 'auto', label: 'Auto', icon: Monitor, description: `Follows system (${systemPreference})` }
+  ];
+
+  const currentTheme = themes.find(t => t.value === theme);
+  const CurrentIcon = currentTheme?.icon || Monitor;
 
   const handleThemeChange = (newTheme: 'light' | 'dark' | 'auto') => {
     setTheme(newTheme);
+    setIsOpen(false);
   };
 
-  if (!isVisible) return null;
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
-  return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <div className="relative group">
-        {/* Main Toggle Button */}
+  // Compact variant (just the toggle button)
+  if (variant === 'compact') {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={toggleDropdown}
+        className={`relative p-2 rounded-lg transition-all duration-200 hover:bg-theme-bg-secondary focus-ring ${className}`}
+        aria-label="Toggle theme"
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+      >
+        <CurrentIcon className="w-5 h-5 transition-transform duration-200 group-hover:rotate-12" />
+        
+        {isOpen && (
+          <div className="absolute top-full right-0 mt-2 w-48 bg-theme-bg-secondary border border-theme-border rounded-lg shadow-lg z-50 animate-scale-in">
+            {themes.map((themeOption) => (
+              <button
+                key={themeOption.value}
+                onClick={() => handleThemeChange(themeOption.value as 'light' | 'dark' | 'auto')}
+                className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-theme-border/20 transition-colors duration-200 ${
+                  theme === themeOption.value ? 'bg-theme-accent/10 text-theme-accent' : 'text-theme-text-primary'
+                }`}
+                aria-label={`Switch to ${themeOption.label} theme`}
+              >
+                <themeOption.icon className="w-4 h-4" />
+                <div className="flex-1">
+                  <div className="font-medium">{themeOption.label}</div>
+                  <div className="text-xs text-theme-text-secondary">{themeOption.description}</div>
+                </div>
+                {theme === themeOption.value && (
+                  <Check className="w-4 h-4 text-theme-accent" />
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+      </Button>
+    );
+  }
+
+  // Full variant (detailed theme selector)
+  if (variant === 'full') {
+    return (
+      <div className={`relative ${className}`}>
         <Button
-          size="lg"
           variant="outline"
-          className="w-14 h-14 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-2 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group-hover:rotate-12"
-          onClick={() => handleThemeChange(isDarkMode ? 'light' : 'dark')}
+          onClick={toggleDropdown}
+          className="flex items-center gap-2 px-4 py-2 border-theme-border bg-theme-bg-secondary hover:bg-theme-border/20 transition-all duration-200 focus-ring"
+          aria-label="Select theme"
+          aria-expanded={isOpen}
+          aria-haspopup="true"
         >
-          {isDarkMode ? (
-            <Sun className="w-6 h-6 text-yellow-500 group-hover:rotate-180 transition-transform duration-500" />
-          ) : (
-            <Moon className="w-6 h-6 text-blue-600 group-hover:rotate-180 transition-transform duration-500" />
+          <CurrentIcon className="w-4 h-4" />
+          <span className="hidden sm:inline">{currentTheme?.label}</span>
+          {isSystemTheme && (
+            <span className="hidden sm:inline text-xs text-theme-text-secondary">
+              ({systemPreference})
+            </span>
           )}
+          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         </Button>
 
-        {/* Theme Options Dropdown */}
-        <div className="absolute bottom-16 right-0 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
-          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 min-w-[200px]">
-            <div className="space-y-1">
-              <button
-                onClick={() => handleThemeChange('light')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                  theme === 'light' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
-                }`}
-              >
-                <Sun className="w-5 h-5" />
-                <span className="font-medium">Light</span>
-                {theme === 'light' && (
-                  <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse" />
-                )}
-              </button>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <div 
+              className="fixed inset-0 z-40" 
+              onClick={() => setIsOpen(false)}
+              aria-hidden="true"
+            />
+            
+            {/* Dropdown */}
+            <div className="absolute top-full right-0 mt-2 w-64 bg-theme-bg-secondary border border-theme-border rounded-xl shadow-2xl z-50 animate-scale-in">
+              <div className="p-4 border-b border-theme-border">
+                <h3 className="font-semibold text-theme-text-primary mb-2">Choose Theme</h3>
+                <p className="text-sm text-theme-text-secondary">
+                  Select your preferred color scheme
+                </p>
+              </div>
               
-              <button
-                onClick={() => handleThemeChange('dark')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                  theme === 'dark' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
-                }`}
-              >
-                <Moon className="w-5 h-5" />
-                <span className="font-medium">Dark</span>
-                {theme === 'dark' && (
-                  <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse" />
-                )}
-              </button>
+              <div className="p-2">
+                {themes.map((themeOption) => (
+                  <button
+                    key={themeOption.value}
+                    onClick={() => handleThemeChange(themeOption.value as 'light' | 'dark' | 'auto')}
+                    className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all duration-200 ${
+                      theme === themeOption.value 
+                        ? 'bg-theme-accent/10 border border-theme-accent/20' 
+                        : 'hover:bg-theme-border/20 border border-transparent'
+                    }`}
+                    aria-label={`Switch to ${themeOption.label} theme`}
+                  >
+                    <div className={`p-2 rounded-lg ${
+                      theme === themeOption.value 
+                        ? 'bg-theme-accent text-white' 
+                        : 'bg-theme-bg-primary text-theme-text-secondary'
+                    }`}>
+                      <themeOption.icon className="w-4 h-4" />
+                    </div>
+                    
+                    <div className="flex-1">
+                      <div className="font-medium text-theme-text-primary">
+                        {themeOption.label}
+                      </div>
+                      <div className="text-xs text-theme-text-secondary">
+                        {themeOption.description}
+                      </div>
+                    </div>
+                    
+                    {theme === themeOption.value && (
+                      <Check className="w-4 h-4 text-theme-accent" />
+                    )}
+                  </button>
+                ))}
+              </div>
               
-              <button
-                onClick={() => handleThemeChange('auto')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                  theme === 'auto' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
-                }`}
-              >
-                <Monitor className="w-5 h-5" />
-                <span className="font-medium">Auto</span>
-                {theme === 'auto' && (
-                  <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse" />
-                )}
-              </button>
+              <div className="p-4 border-t border-theme-border bg-theme-bg-primary/50">
+                <div className="flex items-center gap-2 text-xs text-theme-text-secondary">
+                  <Settings className="w-3 h-3" />
+                  <span>Theme preference is saved automatically</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Tooltip */}
-        <div className="absolute bottom-20 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-          <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap">
-            Theme Settings
-            <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
-    </div>
+    );
+  }
+
+  // Default variant (simple toggle)
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={toggleDropdown}
+      className={`relative p-2 rounded-lg transition-all duration-200 hover:bg-theme-bg-secondary focus-ring group ${className}`}
+      aria-label="Toggle theme"
+      aria-expanded={isOpen}
+      aria-haspopup="true"
+    >
+      <Sun className={`w-5 h-5 transition-all duration-500 ${
+        isDarkMode ? 'rotate-90 scale-0' : 'rotate-0 scale-100'
+      } absolute`} />
+      <Moon className={`w-5 h-5 transition-all duration-500 ${
+        isDarkMode ? 'rotate-0 scale-100' : '-rotate-90 scale-0'
+      } absolute`} />
+      
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 z-40" 
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          
+          {/* Dropdown */}
+          <div className="absolute top-full right-0 mt-2 w-48 bg-theme-bg-secondary border border-theme-border rounded-lg shadow-lg z-50 animate-scale-in">
+            {themes.map((themeOption) => (
+              <button
+                key={themeOption.value}
+                onClick={() => handleThemeChange(themeOption.value as 'light' | 'dark' | 'auto')}
+                className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-theme-border/20 transition-colors duration-200 ${
+                  theme === themeOption.value ? 'bg-theme-accent/10 text-theme-accent' : 'text-theme-text-primary'
+                }`}
+                aria-label={`Switch to ${themeOption.label} theme`}
+              >
+                <themeOption.icon className="w-4 h-4" />
+                <div className="flex-1">
+                  <div className="font-medium">{themeOption.label}</div>
+                  <div className="text-xs text-theme-text-secondary">{themeOption.description}</div>
+                </div>
+                {theme === themeOption.value && (
+                  <Check className="w-4 h-4 text-theme-accent" />
+                )}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </Button>
   );
 }
