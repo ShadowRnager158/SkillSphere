@@ -49,8 +49,8 @@ import PrivateRoute from './components/PrivateRoute';
 import SplashScreen from './components/SplashScreen';
 
 // Enhanced Components
-import { AccessibilityProvider } from './components/Accessibility';
-import { AnimationsProvider } from './components/Animations';
+import AccessibilityProvider from './components/Accessibility';
+import AnimationsProvider from './components/Animations';
 import ResponsiveDesign from './components/ResponsiveDesign';
 
 // New InnerApp component to handle routing and auth checks

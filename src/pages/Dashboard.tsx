@@ -54,7 +54,7 @@ import { useNavigate } from 'react-router-dom';
 // Enhanced Components
 import { AnimatedElement } from '@/components/Animations';
 import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
-import { LazyLoader } from '@/components/LazyLoader';
+import LazyLoader from '@/components/LazyLoader';
 import { CardSkeleton } from '@/components/LazyLoader';
 
 export default function Dashboard() {
@@ -413,13 +413,13 @@ export default function Dashboard() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </AnimatedElement>
 
             {/* Sidebar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
+            <AnimatedElement 
+              animation="slide-up" 
+              trigger="scroll" 
+              delay={400}
               className="space-y-6"
             >
               {/* Recent Tasks */}
@@ -485,8 +485,8 @@ export default function Dashboard() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
-          </div>
+            </AnimatedElement>
+          </ResponsiveGrid>
         </div>
       </section>
     </div>

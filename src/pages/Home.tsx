@@ -62,7 +62,7 @@ import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 // Enhanced Components
 import { AnimatedElement } from '@/components/Animations';
 import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
-import { LazyLoader } from '@/components/LazyLoader';
+import LazyLoader from '@/components/LazyLoader';
 import { CardSkeleton } from '@/components/LazyLoader';
 import ThemeToggle from '@/components/ThemeToggle';
 
@@ -256,41 +256,42 @@ export default function HomePage() {
                       <Plus className="w-5 h-5 mr-2" />
                       Post a Project
                     </Button>
-                  <Button 
-                    onClick={() => navigate('/tasks')}
-                    size="lg"
-                    variant="outline"
-                    className="px-8 py-4 text-lg border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                  >
-                    <Eye className="w-5 h-5 mr-2" />
-                    Browse Projects
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button 
-                    onClick={() => navigate('/signup')}
-                    size="lg"
-                    className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                  >
-                    <Rocket className="w-5 h-5 mr-2" />
-                    Get Started Free
-                  </Button>
-                  <Button 
-                    onClick={() => navigate('/signin')}
-                    size="lg"
-                    variant="outline"
-                    className="px-8 py-4 text-lg border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                  >
-                    <ArrowRight className="w-5 h-5 mr-2" />
-                    Sign In
-                  </Button>
-                </>
-              )}
-            </div>
+                    <Button 
+                      onClick={() => navigate('/tasks')}
+                      size="lg"
+                      variant="outline"
+                      className="px-8 py-4 text-lg border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                    >
+                      <Eye className="w-5 h-5 mr-2" />
+                      Browse Projects
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      onClick={() => navigate('/signup')}
+                      size="lg"
+                      className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                    >
+                      <Rocket className="w-5 h-5 mr-2" />
+                      Get Started Free
+                    </Button>
+                    <Button 
+                      onClick={() => navigate('/signin')}
+                      size="lg"
+                      variant="outline"
+                      className="px-8 py-4 text-lg border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                    >
+                      <ArrowRight className="w-5 h-5 mr-2" />
+                      Sign In
+                    </Button>
+                  </>
+                )}
+              </div>
+            </AnimatedElement>
           </div>
-        </div>
-      </section>
+        </section>
+      </ResponsiveContainer>
 
       {/* Stats Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
@@ -496,7 +497,7 @@ export default function HomePage() {
       </ResponsiveContainer>
 
       {/* CTA Section */}
-      <ResponsiveContainer maxWidth="4xl" padding="lg">
+      <ResponsiveContainer maxWidth="7xl" padding="lg">
         <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
           <AnimatedElement animation="fade-in" trigger="scroll">
             <div className="text-center">

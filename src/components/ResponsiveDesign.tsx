@@ -20,7 +20,7 @@ interface ResponsiveDesignProps {
 interface ResponsiveContainerProps {
   children: ReactNode;
   className?: string;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '7xl' | 'full';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' | '7xl' | 'full';
   padding?: 'none' | 'sm' | 'md' | 'lg';
 }
 
