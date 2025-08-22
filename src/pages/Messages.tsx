@@ -13,7 +13,7 @@ import {
   Image,
   Paperclip,
   Smile,
-  Send2,
+  Send,
   User,
   Clock,
   Check,
