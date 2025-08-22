@@ -35,7 +35,7 @@ import {
   Download,
   Archive,
   Tag,
-  Filter3,
+  Filter,
   Sliders,
   Settings,
   Bell,
@@ -189,7 +189,7 @@ export default function Assessment() {
       description: 'Test your knowledge of JavaScript basics, ES6+ features, and modern development practices.',
       category: 'skill',
       duration: 30,
-      questions: 25,
+      questions: 50,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -207,7 +207,7 @@ export default function Assessment() {
       description: 'Assess your React skills including hooks, components, state management, and best practices.',
       category: 'skill',
       duration: 45,
-      questions: 20,
+      questions: 50,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -377,7 +377,9 @@ export default function Assessment() {
       icon: Target,
       color: 'from-purple-500 to-pink-500',
       popularity: 94,
-      completionRate: 76
+      completionRate: 76,
+      needScore: 65,
+      exceedScore: 85
     },
     {
       id: '12',
@@ -393,7 +395,9 @@ export default function Assessment() {
       icon: Brain,
       color: 'from-indigo-500 to-purple-500',
       popularity: 91,
-      completionRate: 79
+      completionRate: 79,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '13',
@@ -409,7 +413,9 @@ export default function Assessment() {
       icon: Briefcase,
       color: 'from-blue-600 to-cyan-600',
       popularity: 96,
-      completionRate: 90
+      completionRate: 90,
+      needScore: 60,
+      exceedScore: 80
     },
     {
       id: '14',
@@ -425,7 +431,9 @@ export default function Assessment() {
       icon: Building,
       color: 'from-gray-500 to-slate-500',
       popularity: 88,
-      completionRate: 87
+      completionRate: 87,
+      needScore: 55,
+      exceedScore: 75
     },
     {
       id: '15',
@@ -441,7 +449,9 @@ export default function Assessment() {
       icon: Sparkles,
       color: 'from-yellow-500 to-orange-500',
       popularity: 86,
-      completionRate: 74
+      completionRate: 74,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '16',
@@ -457,7 +467,9 @@ export default function Assessment() {
       icon: Shield,
       color: 'from-green-600 to-emerald-600',
       popularity: 84,
-      completionRate: 82
+      completionRate: 82,
+      needScore: 60,
+      exceedScore: 80
     },
     {
       id: '17',
@@ -473,7 +485,9 @@ export default function Assessment() {
       icon: Clock,
       color: 'from-blue-500 to-indigo-500',
       popularity: 93,
-      completionRate: 86
+      completionRate: 86,
+      needScore: 65,
+      exceedScore: 80
     },
     {
       id: '18',
@@ -489,7 +503,9 @@ export default function Assessment() {
       icon: Users,
       color: 'from-purple-500 to-pink-500',
       popularity: 90,
-      completionRate: 84
+      completionRate: 84,
+      needScore: 60,
+      exceedScore: 80
     },
     {
       id: '19',
@@ -505,7 +521,9 @@ export default function Assessment() {
       icon: RefreshCw,
       color: 'from-teal-500 to-cyan-500',
       popularity: 87,
-      completionRate: 81
+      completionRate: 81,
+      needScore: 55,
+      exceedScore: 75
     },
     {
       id: '20',
@@ -521,7 +539,9 @@ export default function Assessment() {
       icon: Brain,
       color: 'from-indigo-600 to-purple-600',
       popularity: 89,
-      completionRate: 71
+      completionRate: 71,
+      needScore: 75,
+      exceedScore: 90
     },
     {
       id: '21',
@@ -537,7 +557,9 @@ export default function Assessment() {
       icon: Heart,
       color: 'from-pink-500 to-rose-500',
       popularity: 85,
-      completionRate: 77
+      completionRate: 77,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '22',
@@ -553,7 +575,9 @@ export default function Assessment() {
       icon: Zap,
       color: 'from-yellow-600 to-orange-600',
       popularity: 82,
-      completionRate: 73
+      completionRate: 73,
+      needScore: 70,
+      exceedScore: 85
     },
     {
       id: '23',
@@ -569,7 +593,9 @@ export default function Assessment() {
       icon: Shield,
       color: 'from-green-500 to-emerald-500',
       popularity: 91,
-      completionRate: 89
+      completionRate: 89,
+      needScore: 65,
+      exceedScore: 80
     },
     {
       id: '24',
@@ -585,7 +611,9 @@ export default function Assessment() {
       icon: BookOpen,
       color: 'from-blue-500 to-cyan-500',
       popularity: 88,
-      completionRate: 80
+      completionRate: 80,
+      needScore: 70,
+      exceedScore: 85
     }
   ];
 
@@ -633,7 +661,7 @@ export default function Assessment() {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       } else {
         // Assessment completed
-        const score = calculateScore(questions, answers);
+        const score = calculateScore(answers, questions);
         setFinalScore(score);
         setShowResults(true);
         setIsTakingAssessment(false);
@@ -644,7 +672,7 @@ export default function Assessment() {
   const handleFinishAssessment = () => {
     if (selectedAssessment) {
       const questions = getQuestionsForAssessment(selectedAssessment.id);
-      const score = calculateScore(questions, answers);
+      const score = calculateScore(answers, questions);
       setFinalScore(score);
       
       // Calculate detailed results
