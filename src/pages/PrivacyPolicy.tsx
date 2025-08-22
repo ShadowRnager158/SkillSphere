@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { motion } from 'framer-motion';
-import {
+import { 
   Shield,
   Eye,
   Lock,
@@ -15,22 +14,49 @@ import {
   Globe,
   Sparkles,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  Download,
+  ExternalLink,
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  Minus,
+  Info,
+  Key,
+  Database,
+  Cloud,
+  Smartphone,
+  Palette,
+  Shield as ShieldIcon,
+  Unlock,
+  Users2,
+  Briefcase,
+  GraduationCap,
+  Target as TargetIcon,
+  Zap as ZapIcon,
+  Lightbulb,
+  Coffee,
+  Beer,
+  Trophy,
+  Gift
 } from 'lucide-react';
 
-export default function PrivacyPolicy() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [lastUpdated] = useState('March 15, 2024');
+// Enhanced Components
+import { AnimatedElement } from '@/components/Animations';
+import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
+import LazyLoader from '@/components/LazyLoader';
+import { CardSkeleton } from '@/components/LazyLoader';
 
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
+export default function PrivacyPolicy() {
+  const [lastUpdated] = useState('March 15, 2024');
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   const sections = [
     {
       id: 'information-we-collect',
       title: 'Information We Collect',
       icon: Eye,
+      color: "from-blue-500 to-cyan-500",
       content: [
         {
           subtitle: 'Personal Information',
@@ -50,6 +76,7 @@ export default function PrivacyPolicy() {
       id: 'how-we-use-information',
       title: 'How We Use Your Information',
       icon: Sparkles,
+      color: "from-green-500 to-emerald-500",
       content: [
         {
           subtitle: 'Service Provision',
@@ -69,6 +96,7 @@ export default function PrivacyPolicy() {
       id: 'information-sharing',
       title: 'Information Sharing and Disclosure',
       icon: Users,
+      color: "from-purple-500 to-pink-500",
       content: [
         {
           subtitle: 'With Your Consent',
@@ -88,6 +116,7 @@ export default function PrivacyPolicy() {
       id: 'data-security',
       title: 'Data Security',
       icon: Lock,
+      color: "from-orange-500 to-red-500",
       content: [
         {
           subtitle: 'Security Measures',
@@ -99,7 +128,7 @@ export default function PrivacyPolicy() {
         },
         {
           subtitle: 'Access Controls',
-          text: 'We limit access to personal information to authorized personnel who need it to perform their job functions and maintain strict access controls.'
+          text: 'We maintain strict access controls and regularly review our security practices to ensure the highest level of data protection.'
         }
       ]
     },
@@ -107,18 +136,19 @@ export default function PrivacyPolicy() {
       id: 'your-rights',
       title: 'Your Rights and Choices',
       icon: CheckCircle,
+      color: "from-indigo-500 to-purple-500",
       content: [
         {
           subtitle: 'Access and Update',
-          text: 'You have the right to access, update, or correct your personal information through your account settings or by contacting us directly.'
+          text: 'You have the right to access, update, and correct your personal information at any time through your account settings or by contacting us directly.'
         },
         {
           subtitle: 'Data Portability',
-          text: 'You may request a copy of your personal data in a structured, machine-readable format for transfer to another service provider.'
+          text: 'You can request a copy of your personal data in a structured, machine-readable format for transfer to another service provider.'
         },
         {
           subtitle: 'Deletion Rights',
-          text: 'You can request deletion of your account and associated personal information, subject to certain legal and contractual obligations.'
+          text: 'You may request deletion of your personal information, subject to certain legal and contractual obligations we may have.'
         }
       ]
     },
@@ -126,197 +156,311 @@ export default function PrivacyPolicy() {
       id: 'international-transfers',
       title: 'International Data Transfers',
       icon: Globe,
+      color: "from-teal-500 to-blue-500",
       content: [
         {
           subtitle: 'Global Operations',
-          text: 'Your information may be transferred to and processed in countries other than your own, including countries that may have different data protection laws.'
+          text: 'As a global platform, we may transfer your information to countries other than your own, including countries that may have different data protection laws.'
         },
         {
           subtitle: 'Adequate Protection',
-          text: 'We ensure that such transfers comply with applicable data protection laws and implement appropriate safeguards to protect your information.'
+          text: 'We ensure that any international transfers of your data are conducted in compliance with applicable data protection laws and regulations.'
+        },
+        {
+          subtitle: 'Standard Contractual Clauses',
+          text: 'Where required, we implement appropriate safeguards such as standard contractual clauses to protect your data during international transfers.'
         }
       ]
     }
   ];
 
-  const contactInfo = {
-    email: 'privacy@skillsphere.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Innovation Drive, San Francisco, CA 94105, USA'
+  const keyPoints = [
+    {
+      icon: Shield,
+      title: "Data Protection",
+      description: "Your privacy is our top priority. We implement industry-leading security measures to protect your information.",
+      color: "from-blue-500 to-cyan-500"
+    },
+    {
+      icon: Lock,
+      title: "Secure Storage",
+      description: "All data is encrypted and stored securely using enterprise-grade security protocols and infrastructure.",
+      color: "from-green-500 to-emerald-500"
+    },
+    {
+      icon: Users,
+      title: "User Control",
+      description: "You have full control over your data. Access, update, or delete your information at any time.",
+      color: "from-purple-500 to-pink-500"
+    },
+    {
+      icon: Globe,
+      title: "Global Compliance",
+      description: "We comply with international data protection regulations including GDPR, CCPA, and other applicable laws.",
+      color: "from-orange-500 to-red-500"
+    }
+  ];
+
+  const toggleSection = (sectionId: string) => {
+    setExpandedSection(expandedSection === sectionId ? null : sectionId);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
-      {/* Header */}
-      <section className="py-16 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
-          >
-            <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-8">
-              <Shield className="w-10 h-10 text-white" />
-            </div>
-            <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden py-24 lg:py-32">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-indigo-600/20 dark:from-blue-900/30 dark:via-purple-900/30 dark:to-indigo-900/30">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-blue-400/10 dark:bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-400/10 dark:bg-purple-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        
+        <ResponsiveContainer maxWidth="7xl" className="relative text-center">
+          <AnimatedElement animation="fade-in" delay={0.2}>
+            <Badge variant="secondary" className="mb-6 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/50">
+              🔒 Privacy & Security
+            </Badge>
+            
+            <h1 className="text-5xl lg:text-7xl font-bold mb-8 leading-tight text-gray-900 dark:text-white">
               Privacy Policy
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
-              We are committed to protecting your privacy and ensuring the security of your personal information.
-            </p>
             
-            <div className="flex items-center justify-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-              <div className="flex items-center space-x-2">
-                <Calendar className="w-4 h-4" />
-                <span>Last updated: {lastUpdated}</span>
-              </div>
-              <Badge className="bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400">
-                Current Version
-              </Badge>
+            <p className="text-xl lg:text-2xl mb-12 text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              We are committed to protecting your privacy and ensuring the security of your personal information. Learn how we collect, use, and safeguard your data.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg">
+                <Download className="w-5 h-5 mr-2" />
+                Download PDF
+              </Button>
+              <Button size="lg" variant="outline" className="border-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 px-8 py-4 text-lg">
+                <ExternalLink className="w-5 h-5 mr-2" />
+                View Full Policy
+              </Button>
             </div>
-          </motion.div>
-        </div>
+
+            <div className="mt-8 text-sm text-gray-600 dark:text-gray-400">
+              <Calendar className="w-4 h-4 inline mr-2" />
+              Last updated: {lastUpdated}
+            </div>
+          </AnimatedElement>
+        </ResponsiveContainer>
       </section>
 
-      {/* Content */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto space-y-12">
-            {/* Introduction */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
-                <CardContent className="p-8">
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                    Introduction
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                    At SkillSphere, we respect your privacy and are committed to protecting your personal information. 
-                    This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you 
-                    use our AI-powered talent marketplace platform.
-                  </p>
-                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                    By using our services, you agree to the collection and use of information in accordance with this policy. 
-                    If you have any questions about this Privacy Policy, please contact us using the information provided below.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
+      {/* Key Points */}
+      <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+        <ResponsiveContainer maxWidth="6xl">
+          <AnimatedElement animation="fade-in" delay={0.4}>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                Our Privacy Commitment
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                We believe in transparency and giving you control over your personal information
+              </p>
+            </div>
+          </AnimatedElement>
 
-            {/* Policy Sections */}
+          <ResponsiveGrid cols={{ sm: 1, md: 2, lg: 4 }} gap={8}>
+            {keyPoints.map((point, index) => (
+              <LazyLoader key={point.title} placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={0.5 + index * 0.1}>
+                  <Card className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <CardContent className="p-6 text-center">
+                      <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r ${point.color} flex items-center justify-center shadow-lg`}>
+                        <point.icon className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                        {point.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">
+                        {point.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            ))}
+          </ResponsiveGrid>
+        </ResponsiveContainer>
+      </section>
+
+      {/* Policy Sections */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+        <ResponsiveContainer maxWidth="6xl">
+          <AnimatedElement animation="fade-in" delay={0.6}>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                Privacy Policy Details
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Comprehensive information about how we handle your data and protect your privacy
+              </p>
+            </div>
+          </AnimatedElement>
+
+          <div className="space-y-6">
             {sections.map((section, index) => (
-              <motion.div
-                key={section.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-                transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
-              >
-                <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl">
-                  <CardHeader>
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
-                        <section.icon className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                          {section.title}
-                        </CardTitle>
-                      </div>
+              <LazyLoader key={section.id} placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="slide-up" delay={0.7 + index * 0.1}>
+                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <CardContent className="p-0">
+                      <button
+                        onClick={() => toggleSection(section.id)}
+                        className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${section.color} flex items-center justify-center shadow-lg`}>
+                            <section.icon className="w-6 h-6 text-white" />
+                          </div>
+                          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                            {section.title}
+                          </h3>
+                        </div>
+                        {expandedSection === section.id ? (
+                          <Minus className="w-5 h-5 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                        ) : (
+                          <Plus className="w-5 h-5 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                        )}
+                      </button>
+                      
+                      {expandedSection === section.id && (
+                        <div className="px-6 pb-6">
+                          <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                            <div className="space-y-6">
+                              {section.content.map((item, itemIndex) => (
+                                <div key={itemIndex} className="space-y-2">
+                                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {item.subtitle}
+                                  </h4>
+                                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                    {item.text}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            ))}
+          </div>
+        </ResponsiveContainer>
+      </section>
+
+      {/* Contact Information */}
+      <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+        <ResponsiveContainer maxWidth="4xl">
+          <AnimatedElement animation="fade-in" delay={0.8}>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                Questions About Privacy?
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Our privacy team is here to help. Contact us with any questions about your data or our privacy practices.
+              </p>
+            </div>
+          </AnimatedElement>
+
+          <ResponsiveGrid cols={{ sm: 1, md: 3 }} gap={8}>
+            <LazyLoader placeholder={<CardSkeleton />}>
+              <AnimatedElement animation="slide-up" delay={0.9}>
+                <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg text-center">
+                  <CardContent className="p-6">
+                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Mail className="w-8 h-8 text-white" />
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {section.content.map((item, itemIndex) => (
-                      <div key={itemIndex} className="space-y-3">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                          {item.subtitle}
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                          {item.text}
-                        </p>
-                      </div>
-                    ))}
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                      Email Us
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                      Send us a detailed message about your privacy concerns
+                    </p>
+                    <Button variant="outline" className="w-full">
+                      <Mail className="w-4 h-4 mr-2" />
+                      privacy@skillsphere.com
+                    </Button>
                   </CardContent>
                 </Card>
-              </motion.div>
-            ))}
+              </AnimatedElement>
+            </LazyLoader>
 
-            {/* Contact Information */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 1.0 }}
-            >
-              <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-0 shadow-2xl">
-                <CardContent className="p-8">
-                  <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold mb-4">Contact Us</h2>
-                    <p className="text-xl text-blue-100">
-                      If you have any questions about this Privacy Policy or our data practices, please contact us.
+            <LazyLoader placeholder={<CardSkeleton />}>
+              <AnimatedElement animation="slide-up" delay={1.0}>
+                <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg text-center">
+                  <CardContent className="p-6">
+                    <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Phone className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                      Call Us
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                      Speak directly with our privacy team
                     </p>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="text-center">
-                      <Mail className="w-8 h-8 mx-auto mb-4 text-blue-200" />
-                      <h3 className="font-semibold mb-2">Email</h3>
-                      <p className="text-blue-200 text-sm mb-4">{contactInfo.email}</p>
-                      <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                        Send Email
-                      </Button>
-                    </div>
-                    
-                    <div className="text-center">
-                      <Phone className="w-8 h-8 mx-auto mb-4 text-blue-200" />
-                      <h3 className="font-semibold mb-2">Phone</h3>
-                      <p className="text-blue-200 text-sm mb-4">{contactInfo.phone}</p>
-                      <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                        Call Now
-                      </Button>
-                    </div>
-                    
-                    <div className="text-center">
-                      <Globe className="w-8 h-8 mx-auto mb-4 text-blue-200" />
-                      <h3 className="font-semibold mb-2">Address</h3>
-                      <p className="text-blue-200 text-sm mb-4">{contactInfo.address}</p>
-                      <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                        View Map
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+                    <Button variant="outline" className="w-full">
+                      <Phone className="w-4 h-4 mr-2" />
+                      +1 (555) 123-4567
+                    </Button>
+                  </CardContent>
+                </Card>
+              </AnimatedElement>
+            </LazyLoader>
 
-            {/* Important Notice */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 1.2 }}
-            >
-              <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <AlertTriangle className="w-6 h-6 text-yellow-600 dark:text-yellow-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-                        Important Notice
-                      </h3>
-                      <p className="text-yellow-700 dark:text-yellow-300">
-                        This Privacy Policy may be updated from time to time. We will notify you of any material changes 
-                        by posting the new Privacy Policy on this page and updating the "Last updated" date. We encourage 
-                        you to review this Privacy Policy periodically for any changes.
-                      </p>
+            <LazyLoader placeholder={<CardSkeleton />}>
+              <AnimatedElement animation="slide-up" delay={1.1}>
+                <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg text-center">
+                  <CardContent className="p-6">
+                    <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <FileText className="w-8 h-8 text-white" />
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </div>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                      Data Request
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                      Request access to or deletion of your data
+                    </p>
+                    <Button variant="outline" className="w-full">
+                      <FileText className="w-4 h-4 mr-2" />
+                      Submit Request
+                    </Button>
+                  </CardContent>
+                </Card>
+              </AnimatedElement>
+            </LazyLoader>
+          </ResponsiveGrid>
+        </ResponsiveContainer>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600">
+        <ResponsiveContainer maxWidth="4xl">
+          <AnimatedElement animation="fade-in" delay={1.2}>
+            <div className="text-center text-white">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                Your Privacy Matters
+              </h2>
+              <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+                We're committed to protecting your data and being transparent about our privacy practices. Have questions? We're here to help.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button size="lg" variant="secondary" asChild>
+                  <a href="/contact">
+                    <Mail className="w-5 h-5 mr-2" />
+                    Contact Privacy Team
+                  </a>
+                </Button>
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+                  <Download className="w-5 h-5 mr-2" />
+                  Download Policy
+                </Button>
+              </div>
+            </div>
+          </AnimatedElement>
+        </ResponsiveContainer>
       </section>
     </div>
   );

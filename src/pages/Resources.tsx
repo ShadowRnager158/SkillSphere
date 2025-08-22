@@ -18,391 +18,755 @@ import {
   Users,
   TrendingUp,
   Bookmark,
-  Share2
+  Share2,
+  Code,
+  Palette,
+  Database,
+  Cloud,
+  Smartphone,
+  Server,
+  Shield,
+  Brain,
+  Rocket,
+  Sparkles,
+  ChevronRight,
+  ChevronLeft,
+  Filter3,
+  Sliders,
+  Settings,
+  Bell,
+  Mail,
+  Phone,
+  Building,
+  Briefcase,
+  GraduationCap,
+  Award,
+  Zap,
+  Target,
+  CheckCircle,
+  ArrowRight,
+  Eye,
+  Heart,
+  MessageCircle,
+  Send,
+  Smile,
+  Frown,
+  Meh,
+  Plus,
+  Minus,
+  Save,
+  Upload,
+  Copy,
+  Link as LinkIcon,
+  Image,
+  Music,
+  Folder,
+  File,
+  BarChart3,
+  PieChart,
+  Activity,
+  Timer,
+  CheckSquare,
+  Square,
+  HelpCircle,
+  Info,
+  AlertCircle,
+  ThumbsUp,
+  ThumbsDown,
+  EyeOff,
+  Edit,
+  Trash2,
+  Grid,
+  List,
+  ChevronDown,
+  Volume2,
+  Calendar
 } from 'lucide-react';
+
+// Enhanced Components
+import { AnimatedElement } from '@/components/Animations';
+import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
+import LazyLoader from '@/components/LazyLoader';
+import { CardSkeleton } from '@/components/LazyLoader';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 interface Resource {
   id: string;
   title: string;
   description: string;
-  type: 'course' | 'video' | 'article' | 'ebook' | 'tutorial';
+  type: 'course' | 'video' | 'article' | 'ebook' | 'tutorial' | 'workshop' | 'podcast';
   category: string;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   duration: string;
+  author: string;
   rating: number;
-  students: number;
-  isFree: boolean;
+  views: number;
   thumbnail: string;
   url: string;
   tags: string[];
+  featured?: boolean;
 }
 
-export default function ResourcesPage() {
+export default function Resources() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
+  const [selectedType, setSelectedType] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const resources: Resource[] = [
-    // ... existing code ...
+    // Video Resources
+    {
+      id: '1',
+      title: 'Complete React Development Course 2024',
+      description: 'Master React from basics to advanced concepts including hooks, context, and modern patterns.',
+      type: 'video',
+      category: 'Frontend Development',
+      difficulty: 'Beginner',
+      duration: '12 hours',
+      author: 'Sarah Chen',
+      rating: 4.9,
+      views: 15420,
+      thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      url: '#',
+      tags: ['React', 'JavaScript', 'Frontend', 'Hooks'],
+      featured: true
+    },
+    {
+      id: '2',
+      title: 'Advanced TypeScript Patterns',
+      description: 'Deep dive into TypeScript advanced features, generics, and design patterns.',
+      type: 'video',
+      category: 'Programming',
+      difficulty: 'Advanced',
+      duration: '8 hours',
+      author: 'David Kim',
+      rating: 4.8,
+      views: 8920,
+      thumbnail: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      url: '#',
+      tags: ['TypeScript', 'Programming', 'Advanced', 'Design Patterns']
+    },
+    {
+      id: '3',
+      title: 'DevOps Best Practices Workshop',
+      description: 'Learn modern DevOps practices, CI/CD pipelines, and cloud deployment strategies.',
+      type: 'workshop',
+      category: 'DevOps',
+      difficulty: 'Intermediate',
+      duration: '6 hours',
+      author: 'Emily Watson',
+      rating: 4.7,
+      views: 6540,
+      thumbnail: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      url: '#',
+      tags: ['DevOps', 'CI/CD', 'Cloud', 'Automation']
+    },
+    // Article Resources
+    {
+      id: '4',
+      title: 'The Future of Web Development in 2024',
+      description: 'Explore emerging trends and technologies shaping the future of web development.',
+      type: 'article',
+      category: 'Web Development',
+      difficulty: 'Intermediate',
+      duration: '15 min read',
+      author: 'Alex Thompson',
+      rating: 4.6,
+      views: 12340,
+      thumbnail: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      url: '#',
+      tags: ['Web Development', 'Trends', 'Technology', 'Future']
+    },
+    {
+      id: '5',
+      title: 'Machine Learning Fundamentals',
+      description: 'Comprehensive guide to machine learning basics and practical applications.',
+      type: 'ebook',
+      category: 'Data Science',
+      difficulty: 'Beginner',
+      duration: '200 pages',
+      author: 'Lisa Park',
+      rating: 4.9,
+      views: 18760,
+      thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      url: '#',
+      tags: ['Machine Learning', 'AI', 'Data Science', 'Fundamentals']
+    },
+    // Course Resources
+    {
+      id: '6',
+      title: 'Full-Stack Development Bootcamp',
+      description: 'Complete bootcamp covering frontend, backend, and database development.',
+      type: 'course',
+      category: 'Full-Stack Development',
+      difficulty: 'Beginner',
+      duration: '20 weeks',
+      author: 'Marcus Rodriguez',
+      rating: 4.8,
+      views: 22340,
+      thumbnail: 'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      url: '#',
+      tags: ['Full-Stack', 'Web Development', 'Bootcamp', 'Complete Course']
+    },
+    {
+      id: '7',
+      title: 'Cybersecurity Fundamentals',
+      description: 'Essential cybersecurity concepts, threats, and protection strategies.',
+      type: 'course',
+      category: 'Cybersecurity',
+      difficulty: 'Beginner',
+      duration: '16 weeks',
+      author: 'Robert Johnson',
+      rating: 4.7,
+      views: 15670,
+      thumbnail: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      url: '#',
+      tags: ['Cybersecurity', 'Security', 'Fundamentals', 'Protection']
+    },
+    // Tutorial Resources
+    {
+      id: '8',
+      title: 'Building REST APIs with Node.js',
+      description: 'Step-by-step tutorial for creating robust REST APIs using Node.js and Express.',
+      type: 'tutorial',
+      category: 'Backend Development',
+      difficulty: 'Intermediate',
+      duration: '4 hours',
+      author: 'Sarah Chen',
+      rating: 4.6,
+      views: 9870,
+      thumbnail: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      url: '#',
+      tags: ['Node.js', 'Express', 'REST API', 'Backend']
+    },
+    {
+      id: '9',
+      title: 'UI/UX Design Principles',
+      description: 'Learn fundamental design principles for creating user-friendly interfaces.',
+      type: 'tutorial',
+      category: 'Design',
+      difficulty: 'Beginner',
+      duration: '3 hours',
+      author: 'Alex Thompson',
+      rating: 4.5,
+      views: 7650,
+      thumbnail: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      url: '#',
+      tags: ['UI/UX', 'Design', 'Principles', 'User Experience']
+    },
+    // Podcast Resources
+    {
+      id: '10',
+      title: 'Tech Talk Weekly Podcast',
+      description: 'Weekly discussions on latest technology trends and industry insights.',
+      type: 'podcast',
+      category: 'Technology',
+      difficulty: 'All Levels',
+      duration: '45 min',
+      author: 'TechSphere Team',
+      rating: 4.8,
+      views: 45670,
+      thumbnail: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      url: '#',
+      tags: ['Podcast', 'Technology', 'Trends', 'Industry']
+    }
   ];
 
-  const categories = ['all', 'Frontend Development', 'Design', 'Data Science', 'DevOps', 'Programming', 'Product Management'];
-  const types = ['all', 'course', 'video', 'article', 'ebook', 'tutorial'];
-  const difficulties = ['all', 'Beginner', 'Intermediate', 'Advanced'];
+  const categories = [
+    'All Categories',
+    'Frontend Development',
+    'Backend Development',
+    'Full-Stack Development',
+    'Mobile Development',
+    'Data Science',
+    'DevOps',
+    'Cybersecurity',
+    'Design',
+    'Programming',
+    'Technology'
+  ];
+
+  const difficulties = ['All Levels', 'Beginner', 'Intermediate', 'Advanced'];
 
   const filteredResources = resources.filter(resource => {
     const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          resource.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesCategory = selectedCategory === 'all' || resource.category === selectedCategory;
     const matchesType = selectedType === 'all' || resource.type === selectedType;
+    const matchesCategory = selectedCategory === 'all' || resource.category === selectedCategory;
     const matchesDifficulty = selectedDifficulty === 'all' || resource.difficulty === selectedDifficulty;
     
-    return matchesSearch && matchesCategory && matchesType && matchesDifficulty;
+    return matchesSearch && matchesType && matchesCategory && matchesDifficulty;
   });
+
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+      />
+    ));
+  };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'course': return <BookOpen className="w-4 h-4" />;
-      case 'video': return <Video className="w-4 h-4" />;
-      case 'article': return <FileText className="w-4 h-4" />;
-      case 'ebook': return <BookOpen className="w-4 h-4" />;
-      case 'tutorial': return <Globe className="w-4 h-4" />;
-      default: return <BookOpen className="w-4 h-4" />;
+      case 'video': return Video;
+      case 'course': return BookOpen;
+      case 'article': return FileText;
+      case 'ebook': return FileText;
+      case 'tutorial': return Code;
+      case 'workshop': return Users;
+      case 'podcast': return Volume2;
+      default: return FileText;
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'course': return 'from-blue-500 to-blue-600';
-      case 'video': return 'from-purple-500 to-purple-600';
-      case 'article': return 'from-green-500 to-green-600';
-      case 'ebook': return 'from-orange-500 to-orange-600';
-      case 'tutorial': return 'from-indigo-500 to-indigo-600';
-      default: return 'from-gray-500 to-gray-600';
-    }
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Beginner': return 'bg-green-100 text-green-700 border-green-200';
-      case 'Intermediate': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
-      case 'Advanced': return 'bg-red-100 text-red-700 border-red-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
-    }
-  };
-
-  const downloadAllPdf = () => {
-    try {
-      const content = filteredResources.map(r => `- ${r.title} (${r.type})`).join('\n');
-      const blob = new Blob([`Resources Summary\n\n${content}`], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'resources-summary.pdf';
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch {
-      window.print();
+      case 'video': return 'from-red-500 to-pink-500';
+      case 'course': return 'from-blue-500 to-indigo-500';
+      case 'article': return 'from-green-500 to-emerald-500';
+      case 'ebook': return 'from-purple-500 to-pink-500';
+      case 'tutorial': return 'from-orange-500 to-red-500';
+      case 'workshop': return 'from-teal-500 to-cyan-500';
+      case 'podcast': return 'from-yellow-500 to-orange-500';
+      default: return 'from-gray-500 to-slate-500';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-8">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
-                  <BookOpen className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <div>Learning Resources</div>
-                  <div className="text-lg font-normal text-gray-600 mt-1">
-                    Expand your skills with curated content
-                  </div>
-                </div>
-              </h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Hero Section */}
+      <ResponsiveContainer maxWidth="7xl" className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+        <AnimatedElement animation="fade-in" className="text-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-6">
+            Learning Resources
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+              & Materials
+            </span>
+          </h1>
+          
+          <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+            Access comprehensive learning materials, video courses, tutorials, and resources to enhance your skills. 
+            From beginner guides to advanced techniques, we've got everything you need to succeed.
+          </p>
+
+          {/* Search and Filters */}
+          <div className="max-w-4xl mx-auto space-y-6">
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="Search for resources, courses, tutorials..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm"
+              />
             </div>
-            <div className="flex items-center gap-3">
-              <div className="text-center p-4 bg-white rounded-xl shadow-lg border border-gray-200">
-                <div className="text-2xl font-bold text-blue-600 mb-1">{resources.length}</div>
-                <div className="text-sm text-gray-600">Resources</div>
-              </div>
-              <div className="text-center p-4 bg-white rounded-xl shadow-lg border border-gray-200">
-                <div className="text-2xl font-bold text-green-600 mb-1">{resources.filter(r => r.isFree).length}</div>
-                <div className="text-sm text-gray-600">Free</div>
-              </div>
-              <Button variant="outline" className="ml-2" onClick={downloadAllPdf}>
-                <Download className="w-4 h-4 mr-2" />
-                Download All as PDF
-              </Button>
-            </div>
-          </div>
-        </div>
 
-{/* Search and Filters */}
-<Card className="border-0 shadow-xl mb-8">
-          <CardContent className="p-6">
-            <div className="space-y-6">
-              {/* Search Bar */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <Input
-                  type="text"
-                  placeholder="Search resources, topics, or skills..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-3 text-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-xl"
-                />
-              </div>
+            {/* Filter Controls */}
+            <div className="flex flex-wrap justify-center gap-4">
+              <Select value={selectedType} onValueChange={setSelectedType}>
+                <SelectTrigger className="w-40 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-2 border-gray-200 dark:border-gray-700 rounded-xl">
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="video">Videos</SelectItem>
+                  <SelectItem value="course">Courses</SelectItem>
+                  <SelectItem value="article">Articles</SelectItem>
+                  <SelectItem value="ebook">E-books</SelectItem>
+                  <SelectItem value="tutorial">Tutorials</SelectItem>
+                  <SelectItem value="workshop">Workshops</SelectItem>
+                  <SelectItem value="podcast">Podcasts</SelectItem>
+                </SelectContent>
+              </Select>
 
-              {/* Filter Controls */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Category Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category === 'all' ? 'All Categories' : category}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-48 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-2 border-gray-200 dark:border-gray-700 rounded-xl">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category === 'All Categories' ? 'all' : category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-                {/* Type Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
-                  <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    {types.map((type) => (
-                      <option key={type} value={type}>
-                        {type === 'all' ? 'All Types' : type.charAt(0).toUpperCase() + type.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
+                <SelectTrigger className="w-40 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-2 border-gray-200 dark:border-gray-700 rounded-xl">
+                  <SelectValue placeholder="Difficulty" />
+                </SelectTrigger>
+                <SelectContent>
+                  {difficulties.map((difficulty) => (
+                    <SelectItem key={difficulty} value={difficulty === 'All Levels' ? 'all' : difficulty}>
+                      {difficulty}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-                {/* Difficulty Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Difficulty</label>
-                  <select
-                    value={selectedDifficulty}
-                    onChange={(e) => setSelectedDifficulty(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    {difficulties.map((difficulty) => (
-                      <option key={difficulty} value={difficulty}>
-                        {difficulty === 'all' ? 'All Levels' : difficulty}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Results Count */}
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-600">
-                  Showing <span className="font-semibold">{filteredResources.length}</span> of <span className="font-semibold">{resources.length}</span> resources
-                </p>
+              {/* View Mode Toggle */}
+              <div className="flex bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-2 border-gray-200 dark:border-gray-700 rounded-xl p-1">
                 <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedCategory('all');
-                    setSelectedType('all');
-                    setSelectedDifficulty('all');
-                  }}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:border-gray-400"
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className="rounded-lg"
                 >
-                  <Filter className="w-4 h-4 mr-2" />
-                  Clear Filters
+                  <Grid className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className="rounded-lg"
+                >
+                  <List className="w-4 h-4" />
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </AnimatedElement>
+      </ResponsiveContainer>
 
-        {/* Resources Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {filteredResources.map((resource) => (
-            <Card key={resource.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2">
-              <div className="relative">
-                <img
-                  src={resource.thumbnail}
-                  alt={resource.title}
-                  className="w-full h-48 object-cover rounded-t-lg group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 left-3">
-                  <Badge className={`bg-gradient-to-r ${getTypeColor(resource.type)} text-white border-0`}>
-                    {getTypeIcon(resource.type)}
-                    <span className="ml-1">{resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}</span>
-                  </Badge>
-                </div>
-                <div className="absolute top-3 right-3">
-                  <Badge className={getDifficultyColor(resource.difficulty)}>
-                    {resource.difficulty}
-                  </Badge>
-                </div>
-                {resource.isFree && (
-                  <div className="absolute bottom-3 left-3">
-                    <Badge className="bg-green-500 text-white border-0">
-                      FREE
-                    </Badge>
-                  </div>
-                )}
-              </div>
-              
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                  {resource.title}
-                </CardTitle>
-                <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
-                  {resource.description}
-                </p>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Meta Info */}
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        <span>{resource.duration}</span>
+      {/* Featured Resources Section */}
+      <ResponsiveContainer maxWidth="7xl" className="pb-16 px-4 sm:px-6 lg:px-8">
+        <AnimatedElement animation="slide-up">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+            Featured Resources
+          </h2>
+          
+          <ResponsiveGrid cols={{ sm: 1, md: 2, lg: 3 }} gap={6}>
+            {resources.filter(r => r.featured).map((resource, index) => (
+              <LazyLoader key={resource.id} placeholder={<CardSkeleton />}>
+                <AnimatedElement animation="scale-in" delay={index * 0.1}>
+                  <Card className="group overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                    {/* Thumbnail */}
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={resource.thumbnail}
+                        alt={resource.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      
+                      {/* Type Badge */}
+                      <div className="absolute top-4 left-4">
+                        <Badge className={`bg-gradient-to-r ${getTypeColor(resource.type)} text-white border-0`}>
+                          {getTypeIcon(resource.type)({ className: 'w-3 h-3 mr-1' })}
+                          {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}
+                        </Badge>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        <span>{resource.students.toLocaleString()}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                      <span>{resource.rating}</span>
-                    </div>
-                  </div>
 
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {resource.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs bg-gray-100 text-gray-600">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-100 hover:border-gray-400"
-                    >
-                      <Bookmark className="w-4 h-4 mr-2" />
-                      Save
-                    </Button>
-                    <Button 
-                      className={`flex-1 ${resource.isFree ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'}`}
-                    >
-                      {resource.type === 'video' ? (
-                        <>
-                          <Play className="w-4 h-4 mr-2" />
-                          Watch
-                        </>
-                      ) : resource.type === 'course' ? (
-                        <>
-                          <BookOpen className="w-4 h-4 mr-2" />
-                          Enroll
-                        </>
-                      ) : resource.type === 'ebook' ? (
-                        <>
-                          <Download className="w-4 h-4 mr-2" />
-                          Download
-                        </>
-                      ) : (
-                        <>
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          View
-                        </>
+                      {/* Play Button for Videos */}
+                      {resource.type === 'video' && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-16 h-16 bg-white/90 dark:bg-gray-800/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <Play className="w-8 h-8 text-blue-600 ml-1" />
+                          </div>
+                        </div>
                       )}
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
 
-        {/* No Results */}
-        {filteredResources.length === 0 && (
-          <Card className="border-0 shadow-lg text-center py-16">
-            <CardContent>
-              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center">
-                <BookOpen className="h-10 w-10 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No resources found</h3>
-              <p className="text-gray-600 mb-6">
-                Try adjusting your filters or search terms to find more learning resources
-              </p>
-              <Button 
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedCategory('all');
-                  setSelectedType('all');
-                  setSelectedDifficulty('all');
-                }}
-                variant="outline"
-                className="border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400"
-              >
-                <Filter className="w-4 h-4 mr-2" />
-                Clear All Filters
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+                      {/* Featured Badge */}
+                      <div className="absolute top-4 right-4">
+                        <Badge variant="secondary" className="bg-yellow-500 text-white border-0">
+                          <Star className="w-3 h-3 mr-1" />
+                          Featured
+                        </Badge>
+                      </div>
+                    </div>
 
-        {/* Call to Action */}
-        <Card className="border-0 shadow-xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-          <CardContent className="p-12 text-center">
-            <div className="w-20 h-20 mx-auto mb-6 bg-white/20 rounded-2xl flex items-center justify-center">
-              <TrendingUp className="h-10 w-10 text-white" />
+                    <CardContent className="p-6">
+                      {/* Title and Description */}
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                        {resource.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                        {resource.description}
+                      </p>
+
+                      {/* Meta Information */}
+                      <div className="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {resource.duration}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Users className="w-4 h-4" />
+                          {resource.views.toLocaleString()}
+                        </span>
+                      </div>
+
+                      {/* Rating */}
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="flex items-center gap-1">
+                          {renderStars(resource.rating)}
+                        </div>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {resource.rating} ({resource.views.toLocaleString()} views)
+                        </span>
+                      </div>
+
+                      {/* Author */}
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                        By <span className="font-medium text-gray-700 dark:text-gray-300">{resource.author}</span>
+                      </p>
+
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {resource.tags.slice(0, 3).map((tag) => (
+                          <Badge key={tag} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <Button 
+                          className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                          size="sm"
+                        >
+                          {resource.type === 'video' ? (
+                            <>
+                              <Play className="w-4 h-4 mr-2" />
+                              Watch Now
+                            </>
+                          ) : resource.type === 'course' ? (
+                            <>
+                              <BookOpen className="w-4 h-4 mr-2" />
+                              Enroll Now
+                            </>
+                          ) : (
+                            <>
+                              <ArrowRight className="w-4 h-4 mr-2" />
+                              Learn More
+                            </>
+                          )}
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Bookmark className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </AnimatedElement>
+              </LazyLoader>
+            ))}
+          </ResponsiveGrid>
+        </AnimatedElement>
+      </ResponsiveContainer>
+
+      {/* All Resources Section */}
+      <ResponsiveContainer maxWidth="7xl" className="pb-20 px-4 sm:px-6 lg:px-8">
+        <AnimatedElement animation="slide-up">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+            All Learning Resources
+          </h2>
+          
+          {viewMode === 'grid' ? (
+            <ResponsiveGrid cols={{ sm: 1, md: 2, lg: 3 }} gap={6}>
+              {filteredResources.map((resource, index) => (
+                <LazyLoader key={resource.id} placeholder={<CardSkeleton />}>
+                  <AnimatedElement animation="slide-up" delay={index * 0.1}>
+                    <Card className="group overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                      {/* Thumbnail */}
+                      <div className="relative h-40 overflow-hidden">
+                        <img
+                          src={resource.thumbnail}
+                          alt={resource.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        
+                        {/* Type Badge */}
+                        <div className="absolute top-3 left-3">
+                          <Badge className={`bg-gradient-to-r ${getTypeColor(resource.type)} text-white border-0 text-xs`}>
+                            {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}
+                          </Badge>
+                        </div>
+
+                        {/* Play Button for Videos */}
+                        {resource.type === 'video' && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-12 h-12 bg-white/90 dark:bg-gray-800/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                              <Play className="w-6 h-6 text-blue-600 ml-1" />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <CardContent className="p-4">
+                        {/* Title and Description */}
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                          {resource.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                          {resource.description}
+                        </p>
+                        
+                        {/* Meta Information */}
+                        <div className="flex items-center justify-between mb-3 text-xs text-gray-500 dark:text-gray-400">
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {resource.duration}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Users className="w-3 h-3" />
+                            {resource.views.toLocaleString()} views
+                          </span>
+                        </div>
+
+                        {/* Rating */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="flex items-center gap-1">
+                            {renderStars(resource.rating)}
+                          </div>
+                          <span className="text-xs text-gray-600 dark:text-gray-400">
+                            {resource.rating}
+                          </span>
+                        </div>
+
+                        {/* Action Button */}
+                        <Button 
+                          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                          size="sm"
+                        >
+                          {resource.type === 'video' ? 'Watch' : resource.type === 'course' ? 'Enroll' : 'Learn More'}
+                          <ArrowRight className="w-3 h-3 ml-2" />
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </AnimatedElement>
+                </LazyLoader>
+              ))}
+            </ResponsiveGrid>
+          ) : (
+            <div className="space-y-4">
+              {filteredResources.map((resource, index) => (
+                <LazyLoader key={resource.id} placeholder={<CardSkeleton />}>
+                  <AnimatedElement animation="slide-up" delay={index * 0.1}>
+                    <Card className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300">
+                      <CardContent className="p-6">
+                        <div className="flex gap-6">
+                          {/* Thumbnail */}
+                          <div className="relative w-32 h-24 overflow-hidden rounded-lg flex-shrink-0">
+                            <img
+                              src={resource.thumbnail}
+                              alt={resource.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                            
+                            {/* Type Badge */}
+                            <div className="absolute top-2 left-2">
+                              <Badge className={`bg-gradient-to-r ${getTypeColor(resource.type)} text-white border-0 text-xs`}>
+                                {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}
+                              </Badge>
+                            </div>
+
+                            {/* Play Button for Videos */}
+                            {resource.type === 'video' && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-8 h-8 bg-white/90 dark:bg-gray-800/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                  <Play className="w-4 h-4 text-blue-600 ml-0.5" />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                              {resource.title}
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                              {resource.description}
+                            </p>
+                            
+                            <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
+                              <span className="flex items-center gap-1">
+                                <Clock className="w-4 h-4" />
+                                {resource.duration}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Users className="w-4 h-4" />
+                                {resource.views.toLocaleString()} views
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Star className="w-4 h-4 text-yellow-400" />
+                                {resource.rating}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                By <span className="font-medium text-gray-700 dark:text-gray-300">{resource.author}</span>
+                              </p>
+                              
+                              <Button 
+                                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                                size="sm"
+                              >
+                                {resource.type === 'video' ? 'Watch' : resource.type === 'course' ? 'Enroll' : 'Learn More'}
+                                <ArrowRight className="w-3 h-3 ml-2" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </AnimatedElement>
+                </LazyLoader>
+              ))}
             </div>
-            <h2 className="text-3xl font-bold mb-4">Ready to Level Up Your Skills?</h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto text-blue-100">
-              Access our curated collection of courses, tutorials, and resources to accelerate 
-              your professional growth and stay ahead in your field.
+          )}
+        </AnimatedElement>
+      </ResponsiveContainer>
+
+      {/* CTA Section */}
+      <ResponsiveContainer maxWidth="4xl" className="pb-20 px-4 sm:px-6 lg:px-8">
+        <AnimatedElement animation="fade-in">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-center text-white">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              Ready to Start Learning?
+            </h2>
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              Join thousands of learners who are already advancing their skills with our comprehensive resources and expert-led content.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg"
-                variant="outline" 
-                className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold rounded-xl backdrop-blur-sm"
+                variant="secondary"
+                className="px-8 py-4 text-lg bg-white text-blue-600 hover:bg-gray-100 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+              >
+                <Rocket className="w-5 h-5 mr-2" />
+                Start Learning Free
+              </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="px-8 py-4 text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
               >
                 <BookOpen className="w-5 h-5 mr-2" />
                 Browse All Resources
               </Button>
-              <Button 
-                size="lg"
-                className="bg-white text-blue-700 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-xl shadow-2xl"
-              >
-                <Share2 className="w-5 h-5 mr-2" />
-                Request Resource
-              </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </AnimatedElement>
+      </ResponsiveContainer>
     </div>
   );
 }
