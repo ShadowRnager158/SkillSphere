@@ -11,18 +11,22 @@ import {
   Eye, 
   EyeOff, 
   ArrowRight,
-  CheckCircle,
-  Star,
+  Chrome,
+  Github,
+  Smartphone,
   Shield,
-  Zap,
+  Sparkles,
   Users,
-  Rocket
+  Rocket,
+  CheckCircle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const { register } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -32,9 +36,11 @@ export default function SignUp() {
     email: '',
     password: '',
     confirmPassword: '',
+    isSkiller: false,
     agreeToTerms: false
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setIsVisible(true);
@@ -47,18 +53,43 @@ export default function SignUp() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate signup process
-    setTimeout(() => {
+    setError('');
+
+    // Validation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
       setIsLoading(false);
+      return;
+    }
+
+    if (!formData.agreeToTerms) {
+      setError('Please agree to the terms and conditions');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const fullName = `${formData.firstName} ${formData.lastName}`;
+      await register(fullName, formData.email, formData.password, formData.isSkiller);
       navigate('/dashboard');
-    }, 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const socialLogins = [
+    { name: 'Google', icon: Chrome, color: 'from-red-500 to-red-600' },
+    { name: 'GitHub', icon: Github, color: 'from-gray-700 to-gray-800' },
+    { name: 'Apple', icon: Smartphone, color: 'from-gray-900 to-black' }
+  ];
 
   const benefits = [
     { icon: Shield, title: 'Secure Platform', description: 'Enterprise-grade security for your data' },
-    { icon: Zap, title: 'Fast Onboarding', description: 'Get started in minutes, not hours' },
-    { icon: Users, title: 'Global Network', description: 'Connect with professionals worldwide' }
+    { icon: Sparkles, title: 'AI-Powered Matching', description: 'Intelligent recommendations for better connections' },
+    { icon: Users, title: 'Global Network', description: 'Connect with professionals worldwide' },
+    { icon: Rocket, title: 'Fast Growth', description: 'Accelerate your career or business' }
   ];
 
   return (
@@ -74,17 +105,23 @@ export default function SignUp() {
           <Card className="w-full max-w-md bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-2xl">
             <CardHeader className="text-center pb-8">
               <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Rocket className="w-8 h-8 text-white" />
+                <Sparkles className="w-8 h-8 text-white" />
               </div>
               <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Create Account
+                Join SkillSphere
               </CardTitle>
               <CardDescription className="text-gray-600 dark:text-gray-400">
-                Join thousands of professionals and start your journey
+                Create your account and start your journey
               </CardDescription>
             </CardHeader>
             
             <CardContent className="space-y-6">
+              {error && (
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                  <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+                </div>
+              )}
+              
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -96,7 +133,7 @@ export default function SignUp() {
                       <Input
                         id="firstName"
                         type="text"
-                        placeholder="John"
+                        placeholder="First name"
                         value={formData.firstName}
                         onChange={(e) => handleInputChange('firstName', e.target.value)}
                         className="pl-10 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -104,26 +141,22 @@ export default function SignUp() {
                       />
                     </div>
                   </div>
-                  
                   <div className="space-y-2">
                     <Label htmlFor="lastName" className="text-gray-700 dark:text-gray-300">
                       Last Name
                     </Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <Input
-                        id="lastName"
-                        type="text"
-                        placeholder="Doe"
-                        value={formData.lastName}
-                        onChange={(e) => handleInputChange('lastName', e.target.value)}
-                        className="pl-10 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        required
-                      />
-                    </div>
+                    <Input
+                      id="lastName"
+                      type="text"
+                      placeholder="Last name"
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      className="bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
                     Email Address
@@ -133,7 +166,7 @@ export default function SignUp() {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="john@example.com"
+                      placeholder="Enter your email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       className="pl-10 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -141,7 +174,7 @@ export default function SignUp() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">
                     Password
@@ -151,7 +184,7 @@ export default function SignUp() {
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Create a strong password"
+                      placeholder="Create a password"
                       value={formData.password}
                       onChange={(e) => handleInputChange('password', e.target.value)}
                       className="pl-10 pr-10 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -166,7 +199,7 @@ export default function SignUp() {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300">
                     Confirm Password
@@ -191,57 +224,92 @@ export default function SignUp() {
                     </button>
                   </div>
                 </div>
-                
-                <div className="flex items-start space-x-2">
-                  <Checkbox
-                    id="terms"
-                    checked={formData.agreeToTerms}
-                    onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked as boolean)}
-                    className="mt-1"
-                  />
-                  <Label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                    I agree to the{' '}
-                    <Link
-                      to="/terms"
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline"
-                    >
-                      Terms of Service
-                    </Link>
-                    {' '}and{' '}
-                    <Link
-                      to="/privacy"
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline"
-                    >
-                      Privacy Policy
-                    </Link>
-                  </Label>
+
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="isSkiller"
+                      checked={formData.isSkiller}
+                      onCheckedChange={(checked) => handleInputChange('isSkiller', checked as boolean)}
+                    />
+                    <Label htmlFor="isSkiller" className="text-sm text-gray-600 dark:text-gray-400">
+                      I'm a professional looking for work opportunities
+                    </Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="agreeToTerms"
+                      checked={formData.agreeToTerms}
+                      onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked as boolean)}
+                    />
+                    <Label htmlFor="agreeToTerms" className="text-sm text-gray-600 dark:text-gray-400">
+                      I agree to the{' '}
+                      <Link
+                        to="/terms-of-service"
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        Terms of Service
+                      </Link>{' '}
+                      and{' '}
+                      <Link
+                        to="/privacy-policy"
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        Privacy Policy
+                      </Link>
+                    </Label>
+                  </div>
                 </div>
-                
+
                 <Button
                   type="submit"
-                  className="w-full group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                  disabled={isLoading || !formData.agreeToTerms}
+                  disabled={isLoading}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      Creating account...
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Creating account...</span>
                     </div>
                   ) : (
-                    <span className="flex items-center gap-2">
-                      Create Account
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </span>
+                    <div className="flex items-center space-x-2">
+                      <span>Create Account</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
                   )}
                 </Button>
               </form>
-              
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-gray-300 dark:border-gray-600" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white/80 dark:bg-gray-800/80 px-2 text-gray-500 dark:text-gray-400">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                {socialLogins.map((social) => (
+                  <Button
+                    key={social.name}
+                    variant="outline"
+                    className="bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                  >
+                    <social.icon className="w-4 h-4" />
+                  </Button>
+                ))}
+              </div>
+
               <div className="text-center">
                 <p className="text-gray-600 dark:text-gray-400">
                   Already have an account?{' '}
                   <Link
                     to="/login"
-                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold"
                   >
                     Sign in
                   </Link>
@@ -258,65 +326,58 @@ export default function SignUp() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="hidden lg:block"
         >
-          <div className="max-w-lg">
-            <div className="mb-8">
-              <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Start Your
-                <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
+          <div className="space-y-8">
+            <div className="text-center lg:text-left">
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Start Your{' '}
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   Success Story
                 </span>
-              </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
-                Join our platform and discover opportunities that match your skills and ambitions.
+              </h1>
+              <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
+                Join thousands of professionals who have transformed their careers and businesses with SkillSphere's AI-powered platform.
               </p>
             </div>
-            
+
             <div className="space-y-6">
               {benefits.map((benefit, index) => (
                 <motion.div
                   key={benefit.title}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-                  transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                  className="flex items-start gap-4"
+                  transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
+                  className="flex items-start space-x-4"
                 >
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
                     <benefit.icon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                       {benefit.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                    <p className="text-gray-600 dark:text-gray-400">
                       {benefit.description}
                     </p>
                   </div>
                 </motion.div>
               ))}
             </div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 1.0 }}
-              className="mt-12 p-6 bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20 rounded-2xl border border-green-200/50 dark:border-green-700/50"
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-6 text-white"
             >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="flex items-center gap-2">
-                  <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white">4.9/5</span>
-                </div>
-                <span className="text-sm text-gray-600 dark:text-gray-400">Average rating from 10,000+ users</span>
+              <div className="flex items-center space-x-3 mb-3">
+                <CheckCircle className="w-6 h-6" />
+                <h3 className="text-lg font-semibold">Why choose SkillSphere?</h3>
               </div>
-              <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Free to start</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>No credit card required</span>
-                </div>
+              <div className="space-y-2 text-green-100">
+                <p>✓ AI-powered talent matching</p>
+                <p>✓ Secure payment protection</p>
+                <p>✓ 24/7 customer support</p>
+                <p>✓ Global professional network</p>
               </div>
             </motion.div>
           </div>

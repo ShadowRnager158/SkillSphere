@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Zap,
+  Sparkles,
   Mail,
   Phone,
   MapPin,
@@ -86,10 +86,10 @@ const Footer = () => {
             >
               <Link to="/" className="flex items-center space-x-2">
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-white" />
+                  <Sparkles className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  TaskFlow
+                  SkillSphere
                 </span>
               </Link>
               <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
@@ -100,7 +100,7 @@ const Footer = () => {
               <div className="space-y-3">
                 <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                   <Mail className="w-5 h-5" />
-                  <span>hello@taskflow.com</span>
+                  <span>hello@skillsphere.com</span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                   <Phone className="w-5 h-5" />
@@ -170,7 +170,7 @@ const Footer = () => {
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
             <div className="max-w-2xl mx-auto text-center">
               <h3 className="text-2xl font-bold mb-4">
-                Stay Updated with TaskFlow
+                Stay Updated with SkillSphere
               </h3>
               <p className="text-blue-100 mb-6">
                 Get the latest updates on new features, success stories, and industry insights delivered to your inbox.
@@ -195,7 +195,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-              <span>© 2024 TaskFlow. Made with</span>
+              <span>© 2024 SkillSphere. Made with</span>
               <Heart className="w-4 h-4 text-red-500 fill-current" />
               <span>for the future of work.</span>
             </div>

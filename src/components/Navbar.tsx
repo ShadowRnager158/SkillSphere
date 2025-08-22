@@ -29,7 +29,7 @@ import {
   BookOpen,
   Shield,
   BarChart3,
-  Zap
+  Sparkles
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -39,7 +39,18 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // Mock notifications data
+  const [notifications] = useState([
+    { id: 1, message: 'New project matching your skills', time: '2m ago', unread: true, type: 'project' },
+    { id: 2, message: 'Client accepted your proposal', time: '1h ago', unread: true, type: 'proposal' },
+    { id: 3, message: 'Payment received for Project X', time: '3h ago', unread: false, type: 'payment' },
+    { id: 4, message: 'New message from John Doe', time: '30m ago', unread: true, type: 'message' },
+  ]);
+
+  const unreadCount = notifications.filter(n => n.unread).length;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,7 +68,7 @@ const Navbar = () => {
 
   const navigationItems = [
     { name: 'Home', href: '/', icon: Home },
-    { name: 'How It Works', href: '/how-it-works', icon: Zap },
+    { name: 'How It Works', href: '/how-it-works', icon: Sparkles },
     { name: 'For Clients', href: '/for-clients', icon: Building },
     { name: 'About', href: '/about', icon: Users },
     { name: 'Resources', href: '/resources', icon: BookOpen },
@@ -94,10 +105,10 @@ const Navbar = () => {
           >
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                TaskFlow
+                SkillSphere
               </span>
             </Link>
           </motion.div>
@@ -140,16 +151,70 @@ const Navbar = () => {
             {isAuthenticated ? (
               <>
                 {/* Notifications */}
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs">
-                    3
-                  </Badge>
-                </motion.button>
+                <div className="relative">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                    className="relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                    {unreadCount > 0 && (
+                      <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs">
+                        {unreadCount}
+                      </Badge>
+                    )}
+                  </motion.button>
+
+                  <AnimatePresence>
+                    {isNotificationsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+                      >
+                        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-semibold text-gray-900 dark:text-white">Notifications</h3>
+                            <Badge variant="secondary" className="text-xs">
+                              {unreadCount} new
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="max-h-96 overflow-y-auto">
+                          {notifications.map((notification) => (
+                            <div
+                              key={notification.id}
+                              className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer ${
+                                notification.unread ? 'bg-blue-50 dark:bg-blue-900/10' : ''
+                              }`}
+                            >
+                              <div className="flex items-start space-x-3">
+                                <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+                                  notification.unread ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
+                                }`} />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                    {notification.message}
+                                  </p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    {notification.time}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="p-3 border-t border-gray-200 dark:border-gray-700">
+                          <button className="w-full text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                            View all notifications
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
                 {/* Profile Dropdown */}
                 <div className="relative">
