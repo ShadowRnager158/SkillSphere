@@ -38,48 +38,10 @@ const Layout = () => {
       setScrollProgress(progress);
     };
 
-    const handleKeyPress = (e: KeyboardEvent) => {
-      // Ctrl/Cmd + K for search
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        const searchInput = document.querySelector('input[placeholder*="Search"]') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }
-      
-      // Ctrl/Cmd + H for home
-      if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
-        e.preventDefault();
-        window.location.href = '/';
-      }
-      
-      // Ctrl/Cmd + M for messages
-      if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
-        e.preventDefault();
-        window.location.href = '/messages';
-      }
-      
-      // Ctrl/Cmd + P for profile
-      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-        e.preventDefault();
-        window.location.href = '/profile';
-      }
-
-      // Ctrl/Cmd + T for scroll to top
-      if ((e.ctrlKey || e.metaKey) && e.key === 't') {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        showNotification('Scrolling to top...');
-      }
-    };
-
     window.addEventListener('scroll', handleScroll);
-    document.addEventListener('keydown', handleKeyPress);
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('keydown', handleKeyPress);
     };
   }, []);
 
@@ -104,8 +66,6 @@ const Layout = () => {
       </main>
       <Footer />
       <ChatWidget />
-      
-      {/* Scroll to Top Button - Removed duplicate, using Footer version instead */}
 
       {/* Floating Action Button */}
       <div className="fixed bottom-32 right-6 sm:bottom-36 sm:right-8 z-40">
@@ -114,7 +74,7 @@ const Layout = () => {
             <button
               onClick={() => handleNavigation('/create-task', 'Redirecting to Post Project...')}
               className="w-12 h-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:via-indigo-600 dark:hover:to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 transition-all duration-500 hover:scale-110 hover:-translate-y-1 flex items-center justify-center group backdrop-blur-sm border border-white/20 dark:border-gray-300/20 relative overflow-hidden"
-              title="Post Project (Ctrl/Cmd + N)"
+              title="Post Project"
             >
               <Briefcase className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 via-indigo-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -122,7 +82,7 @@ const Layout = () => {
             <button
               onClick={() => handleNavigation('/messages', 'Redirecting to Messages...')}
               className="w-12 h-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:via-indigo-600 dark:hover:to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 transition-all duration-500 hover:scale-110 hover:-translate-y-1 flex items-center justify-center group backdrop-blur-sm border border-white/20 dark:border-gray-300/20 relative overflow-hidden"
-              title="Messages (Ctrl/Cmd + M)"
+              title="Messages"
             >
               <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 via-indigo-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -130,7 +90,7 @@ const Layout = () => {
             <button
               onClick={() => handleNavigation('/profile', 'Redirecting to Profile...')}
               className="w-12 h-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:via-indigo-600 dark:hover:to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 transition-all duration-500 hover:scale-110 hover:-translate-y-1 flex items-center justify-center group backdrop-blur-sm border border-white/20 dark:border-gray-300/20 relative overflow-hidden"
-              title="Profile (Ctrl/Cmd + P)"
+              title="Profile"
             >
               <User className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 via-indigo-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -185,23 +145,6 @@ const Layout = () => {
           </div>
         </div>
       )}
-
-      {/* Keyboard Shortcuts Help */}
-      <div className="fixed bottom-6 left-24 z-30 group">
-        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-400 shadow-lg transition-all duration-300 hover:bg-white dark:hover:bg-gray-800 hover:shadow-xl">
-          <div className="flex items-center space-x-4">
-            <span className="font-medium">⌘K: Search</span>
-            <span className="font-medium">⌘H: Home</span>
-            <span className="font-medium">⌘M: Messages</span>
-            <span className="font-medium">⌘P: Profile</span>
-            <span className="font-medium">⌘T: Top</span>
-          </div>
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            Keyboard Shortcuts
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-gray-900 dark:border-b-gray-100"></div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
