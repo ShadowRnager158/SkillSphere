@@ -13,9 +13,6 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
-  Enter,
-  Escape,
-  Tab
 } from 'lucide-react';
 
 interface AccessibilityProps {
@@ -286,19 +283,6 @@ export function AccessibilityMenu({ className = '' }: { className?: string }) {
                   </Button>
                 </div>
               </div>
-
-              {/* Keyboard Shortcuts */}
-              <KeyboardShortcuts
-                shortcuts={[
-                  { key: 'Tab', description: 'Navigate between elements' },
-                  { key: 'Enter', description: 'Activate buttons and links' },
-                  { key: 'Escape', description: 'Close modals and menus' },
-                  { key: 'h', modifier: 'alt', description: 'Go to home page' },
-                  { key: 's', modifier: 'alt', description: 'Open search' },
-                  { key: 'm', modifier: 'alt', description: 'Open menu' },
-                ]}
-                className="pt-4 border-t border-theme-border"
-              />
             </div>
           </div>
         </FocusTrap>

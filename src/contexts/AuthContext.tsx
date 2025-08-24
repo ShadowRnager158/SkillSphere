@@ -1,15 +1,16 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import axios from 'axios';
 import { User } from '@/types';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string, isSkiller: boolean) => Promise<void>;
   register: (name: string, email: string, password: string, isSkiller: boolean) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
   updateUser?: (updates: Partial<User>) => Promise<void>;
-  loginWithGoogle: (googleUser: { id: string; name: string; email: string; avatar: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,165 +23,101 @@ export const useAuth = () => {
   return context;
 };
 
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('skillsphere_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+  // Helper to set user from API token
+  const fetchUser = async (token: string) => {
+    try {
+      const res = await axios.get('/users/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUser(res.data);
+    } catch {
+      setUser(null);
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      fetchUser(token);
+    } else {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
-      const foundUser = users.find((u: User & { password: string }) => u.email === email);
-      
-      if (!foundUser || foundUser.password !== password) {
-        throw new Error('Invalid email or password');
-      }
-      
-      const { password: _, ...userWithoutPassword } = foundUser;
-      setUser(userWithoutPassword);
-      localStorage.setItem('skillsphere_user', JSON.stringify(userWithoutPassword));
+      const res = await axios.post('/auth/login', { email, password });
+      const { access, refresh } = res.data.tokens;
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+      await fetchUser(access); // ensure user is set from fresh token
     } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+      setUser(null);
+      throw new Error('Invalid email or password');
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (name: string, email: string, password: string, isSkiller: boolean) => {
+  const signup = async (name: string, email: string, password: string, isSkiller: boolean) => {
     setLoading(true);
     try {
-      const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
-      
-      if (users.some((user: User & { password: string }) => user.email === email)) {
-        throw new Error('Email already in use');
-      }
-      
-      const newUser: User & { password: string } = {
-        id: crypto.randomUUID(),
+      const res = await axios.post('/auth/signup', {
         name,
-        username: email.split('@')[0],
         email,
-        password, // Added password property
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-        isSkiller,
-        userType: isSkiller ? 'skiller' : 'client',
-        createdAt: new Date().toISOString(),
-        headline: '',
-        dob: '',
-        education: '',
-        gender: '',
-        skills: [],
-        bio: '',
-        location: '',
-        phone: '',
-        resume: '',
-        stats: {
-          projectsCompleted: 0,
-          totalEarnings: 0,
-          clientRating: 0,
-          responseTime: '',
-          skillsVerified: 0,
-          portfolioItems: 0
-        },
-        socialLinks: { linkedin: '', github: '' },
-        isPublic: false,
-        subscription: undefined,
-      };
-      
-      users.push(newUser);
-      localStorage.setItem('skillsphere_users', JSON.stringify(users));
-      
-      const { password: _, ...userWithoutPassword } = newUser;
-      setUser(userWithoutPassword);
-      localStorage.setItem('skillsphere_user', JSON.stringify(userWithoutPassword));
-    } catch (error) {
-      console.error('Registration error:', error);
-      throw error;
+        password,
+        isSkiller
+      });
+      // Handle different possible response structures
+      let accessToken = '';
+      if (res.data.tokens) {
+        accessToken = res.data.tokens.access;
+        localStorage.setItem('access_token', accessToken);
+        localStorage.setItem('refresh_token', res.data.tokens.refresh);
+      } else if (res.data.token) {
+        accessToken = res.data.token;
+        localStorage.setItem('access_token', accessToken);
+      }
+      if (accessToken) {
+        await fetchUser(accessToken); // Fetch user data
+      } else {
+        // If no token, still set user to allow redirect (adjust based on backend)
+        setUser({ email, name, isSkiller } as User);
+      }
+    } catch (error: any) {
+      setUser(null);
+      throw new Error(error?.response?.data?.message || 'Sign up failed');
     } finally {
       setLoading(false);
     }
   };
 
-  const loginWithGoogle = async (googleUser: { id: string; name: string; email: string; avatar: string }) => {
-    setLoading(true);
-    try {
-      const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
-      
-      if (users.some((user: User & { password: string }) => user.email === googleUser.email)) {
-        throw new Error('Email already in use');
-      }
-      
-      const newUser: User = {
-        id: googleUser.id,
-        name: googleUser.name,
-        username: googleUser.email.split('@')[0],
-        email: googleUser.email,
-        avatar: googleUser.avatar,
-        isSkiller: false,
-        userType: 'client',
-        createdAt: new Date().toISOString(),
-        headline: '',
-        dob: '',
-        education: '',
-        gender: '',
-        skills: [],
-        bio: '',
-        location: '',
-        phone: '',
-        resume: '',
-        stats: {
-          projectsCompleted: 0,
-          totalEarnings: 0,
-          clientRating: 0,
-          responseTime: '',
-          skillsVerified: 0,
-          portfolioItems: 0
-        },
-        socialLinks: { linkedin: '', github: '' },
-        isPublic: false,
-        subscription: undefined,
-      };
-      
-      users.push(newUser);
-      localStorage.setItem('skillsphere_users', JSON.stringify(users));
-      setUser(newUser);
-      localStorage.setItem('skillsphere_user', JSON.stringify(newUser));
-    } catch (error) {
-      console.error('Google login error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Alias "register" to "signup" for compatibility with SignUp page
+  const register = signup;
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('skillsphere_user');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
   };
 
   const updateUser = async (updates: Partial<User>) => {
-    setUser((prev) => {
-      if (!prev) return prev;
-      const updated = { ...prev, ...updates };
-      localStorage.setItem('skillsphere_user', JSON.stringify(updated));
-      const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
-      const idx = users.findIndex((u: User & { password: string }) => u.id === updated.id);
-      if (idx >= 0) {
-        users[idx] = { ...users[idx], ...updates };
-        localStorage.setItem('skillsphere_users', JSON.stringify(users));
-      }
-      return updated;
+    const token = localStorage.getItem('access_token');
+    if (!token || !user) return;
+    const res = await axios.patch('/users/me', updates, {
+      headers: { Authorization: `Bearer ${token}` }
     });
+    setUser(res.data);
   };
 
   return (
@@ -188,11 +125,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       user,
       loading,
       login,
+      signup,
       register,
       logout,
       isAuthenticated: !!user,
-      updateUser,
-      loginWithGoogle
+      updateUser
     }}>
       {children}
     </AuthContext.Provider>

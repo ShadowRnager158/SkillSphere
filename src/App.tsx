@@ -62,7 +62,6 @@ const InnerApp = () => {
   }
 
   return (
-    <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
           {/* Public Routes */}
@@ -82,7 +81,10 @@ const InnerApp = () => {
             path="/login"
             element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />}
           />
-          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route
+            path="/sign-up"
+            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage />}
+          />
           <Route path="/tasks" element={<TasksPage />} />
           <Route path="/tasks/:taskId" element={<TaskDetailPage />} />
           <Route path="/for-clients" element={<ForClients />} />
@@ -151,7 +153,6 @@ const InnerApp = () => {
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </BrowserRouter>
   );
 };
 
@@ -174,7 +175,9 @@ const App = () => {
                   <TaskProvider>
                     <TooltipProvider>
                       <Toaster />
-                      {showSplash ? <SplashScreen /> : <InnerApp />}
+                      <BrowserRouter>
+                        {showSplash ? <SplashScreen /> : <InnerApp />}
+                      </BrowserRouter>
                     </TooltipProvider>
                   </TaskProvider>
                 </UserProvider>

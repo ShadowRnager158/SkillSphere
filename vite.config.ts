@@ -1,4 +1,4 @@
-// vite.config.js
+// vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
@@ -20,6 +20,18 @@ export default defineConfig(({ mode }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+  },
+server: {
+  proxy: {
+    '/auth': {
+      target: 'http://localhost:4000',
+      changeOrigin: true,
+    },
+    '/users': {
+      target: 'http://localhost:4000',
+      changeOrigin: true,
+    },
+  },
   },
   build: {
     rollupOptions: {

@@ -157,3 +157,5 @@ vite.config.ts.timestamp-*
 >>>>>>> Incoming (Background Agent changes)
 =======
 >>>>>>> Incoming (Background Agent changes)
+
+/generated/prisma
