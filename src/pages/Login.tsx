@@ -25,6 +25,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
+
   const [isVisible, setIsVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -52,7 +53,7 @@ export default function Login() {
     }
   };
 
-  const socialLogins = [
+  const socialLogins: { name: string; icon: React.ElementType; color: string }[] = [
     { name: 'Google', icon: Chrome, color: 'from-red-500 to-red-600' },
     { name: 'GitHub', icon: Github, color: 'from-gray-700 to-gray-800' },
     { name: 'Apple', icon: Smartphone, color: 'from-gray-900 to-black' }
@@ -67,6 +68,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        
         {/* Left Side - Login Form */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -107,8 +109,8 @@ export default function Login() {
                       placeholder="Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
+                      className="pl-10 bg-white/50 dark:bg-gray-700/50"
                     />
                   </div>
                 </div>
@@ -125,11 +127,12 @@ export default function Login() {
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 pr-10 bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
+                      className="pl-10 pr-10 bg-white/50 dark:bg-gray-700/50"
                     />
                     <button
                       type="button"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     >
@@ -143,7 +146,7 @@ export default function Login() {
                     <Checkbox
                       id="remember"
                       checked={rememberMe}
-                      onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                      onCheckedChange={(checked) => setRememberMe(checked === true)}
                     />
                     <Label htmlFor="remember" className="text-sm text-gray-600 dark:text-gray-400">
                       Remember me
@@ -151,7 +154,7 @@ export default function Login() {
                   </div>
                   <Link
                     to="/forgot-password"
-                    className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     Forgot password?
                   </Link>
@@ -160,7 +163,7 @@ export default function Login() {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold disabled:opacity-50"
                 >
                   {isLoading ? (
                     <div className="flex items-center space-x-2">
@@ -176,6 +179,7 @@ export default function Login() {
                 </Button>
               </form>
 
+              {/* Social Logins */}
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-gray-300 dark:border-gray-600" />
@@ -188,23 +192,27 @@ export default function Login() {
               </div>
 
               <div className="grid grid-cols-3 gap-3">
-                {socialLogins.map((social) => (
-                  <Button
-                    key={social.name}
-                    variant="outline"
-                    className="bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                  >
-                    <social.icon className="w-4 h-4" />
-                  </Button>
-                ))}
+                {socialLogins.map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <Button
+                      key={social.name}
+                      variant="outline"
+                      type="button"
+                      className="bg-white/50 dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    >
+                      <Icon className="w-4 h-4" />
+                    </Button>
+                  );
+                })}
               </div>
 
               <div className="text-center">
                 <p className="text-gray-600 dark:text-gray-400">
-                  Don't have an account?{' '}
+                  Don&apos;t have an account?{' '}
                   <Link
                     to="/sign-up"
-                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold"
+                    className="text-blue-600 dark:text-blue-400 font-semibold hover:underline"
                   >
                     Sign up
                   </Link>
@@ -230,32 +238,33 @@ export default function Login() {
                 </span>
               </h1>
               <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
-                Connect with the world's top professionals. Whether you're hiring talent or showcasing your skills, SkillSphere is your gateway to exceptional results.
+                Connect with the world&apos;s top professionals. Whether you&apos;re hiring talent or showcasing your skills, SkillSphere is your gateway to exceptional results.
               </p>
             </div>
 
             <div className="space-y-6">
-              {features.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-                  transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
-                  className="flex items-start space-x-4"
-                >
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      {feature.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+              {features.map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <motion.div
+                    key={feature.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+                    transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
+                    className="flex items-start space-x-4"
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                        {feature.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400">{feature.description}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
 
             <motion.div
@@ -272,9 +281,7 @@ export default function Login() {
                 Join thousands of professionals who trust SkillSphere for their career growth and project success.
               </p>
               <Link to="/sign-up">
-                <Button className="bg-white text-blue-600 hover:bg-blue-50 transition-colors">
-                  Create Account
-                </Button>
+                <Button className="bg-white text-blue-600 hover:bg-blue-50">Create Account</Button>
               </Link>
             </motion.div>
           </div>

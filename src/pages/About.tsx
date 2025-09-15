@@ -39,34 +39,34 @@ export default function AboutPage() {
       name: "Bello Abdul Rahman",
       title: "CEO & Co-Founder",
       avatar: "BA",
-      bio: "Former AI Research Lead at Google, PhD in Computer Science from MIT",
+      bio: "Undergraduate",
       linkedin: "#",
       twitter: "#",
       gradient: "from-blue-500 to-indigo-600"
     },
     {
-      name: "Michael Chen",
+      name: "Abdul Afeez Adedeji",
       title: "CTO & Co-Founder",
-      avatar: "MC",
-      bio: "Ex-Engineering Director at OpenAI, 15+ years in AI/ML",
+      avatar: "AA",
+      bio: "Undergraduate",
       linkedin: "#",
       twitter: "#",
       gradient: "from-green-500 to-emerald-600"
     },
     {
-      name: "Aisha Patel",
+      name: "Abdul rahman Gbotemi ",
       title: "COO",
-      avatar: "AP",
-      bio: "Former VP of Operations at Stripe, MBA from Harvard Business School",
+      avatar: "AG",
+      bio: "Undergraduate",
       linkedin: "#",
       twitter: "#",
       gradient: "from-purple-500 to-pink-600"
     },
     {
-      name: "David Kim",
+      name: "Al ameen Odusanya",
       title: "Head of AI Research",
-      avatar: "DK",
-      bio: "PhD in AI from Stanford, published 50+ research papers",
+      avatar: "AO",
+      bio: "Undergraduate",
       linkedin: "#",
       twitter: "#",
       gradient: "from-orange-500 to-red-600"
@@ -98,10 +98,10 @@ export default function AboutPage() {
   ];
 
   const stats = [
-    { label: 'AI Specialists', value: '5,000+', icon: Users, color: 'from-blue-500 to-blue-600' },
-    { label: 'Client Companies', value: '2,000+', icon: Briefcase, color: 'from-green-500 to-green-600' },
-    { label: 'Projects Completed', value: '10,000+', icon: CheckCircle, color: 'from-purple-500 to-purple-600' },
-    { label: 'Countries Reached', value: '35+', icon: Globe, color: 'from-orange-500 to-orange-600' }
+    { label: 'AI Specialists', value: '0+', icon: Users, color: 'from-blue-500 to-blue-600' },
+    { label: 'Client Companies', value: '0+', icon: Briefcase, color: 'from-green-500 to-green-600' },
+    { label: 'Projects Completed', value: '0+', icon: CheckCircle, color: 'from-purple-500 to-purple-600' },
+    { label: 'Countries Reached', value: '0+', icon: Globe, color: 'from-orange-500 to-orange-600' }
   ];
 
   const pressLogos = [
@@ -160,7 +160,7 @@ export default function AboutPage() {
                 </h2>
                 <div className="space-y-6 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
                   <p>
-                    SkillSphere AI was founded in 2023 by a team of AI specialists and business leaders who recognized 
+                    SkillSphere AI was founded in 2025 by a team of AI specialists and business leaders who recognized 
                     a growing gap in the market: as AI technologies rapidly evolved, businesses struggled to find qualified 
                     talent to help them implement these transformative tools.
                   </p>

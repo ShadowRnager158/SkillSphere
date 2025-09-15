@@ -121,9 +121,9 @@ export default function Help() {
       category: 'Getting Started',
       tags: ['account', 'profile', 'onboarding'],
       readTime: '5 min read',
-      helpful: 245,
-      notHelpful: 12,
-      views: 1234,
+      helpful: 0,
+      notHelpful: 0,
+      views: 0,
       featured: true
     },
     {
@@ -133,9 +133,9 @@ export default function Help() {
       category: 'Assessments',
       tags: ['assessments', 'skills', 'testing'],
       readTime: '3 min read',
-      helpful: 189,
-      notHelpful: 8,
-      views: 987,
+      helpful: 0,
+      notHelpful: 0,
+      views: 0,
       featured: true
     },
     {
@@ -145,9 +145,9 @@ export default function Help() {
       category: 'Dashboard',
       tags: ['dashboard', 'navigation', 'projects'],
       readTime: '4 min read',
-      helpful: 156,
-      notHelpful: 15,
-      views: 756,
+      helpful: 0,
+      notHelpful: 0,
+      views: 0,
       featured: false
     },
     {
@@ -157,9 +157,9 @@ export default function Help() {
       category: 'Billing',
       tags: ['payment', 'billing', 'subscription'],
       readTime: '6 min read',
-      helpful: 98,
-      notHelpful: 5,
-      views: 432,
+      helpful: 0,
+      notHelpful: 0,
+      views: 0,
       featured: false
     },
     {
@@ -169,9 +169,9 @@ export default function Help() {
       category: 'Projects',
       tags: ['project management', 'best practices', 'delivery'],
       readTime: '8 min read',
-      helpful: 203,
-      notHelpful: 18,
-      views: 654,
+      helpful: 0,
+      notHelpful: 0,
+      views: 0,
       featured: true
     },
     {
@@ -181,9 +181,9 @@ export default function Help() {
       category: 'Communication',
       tags: ['messaging', 'communication', 'clients'],
       readTime: '4 min read',
-      helpful: 134,
-      notHelpful: 9,
-      views: 543,
+      helpful: 0,
+      notHelpful: 0,
+      views: 0,
       featured: false
     }
   ];
@@ -497,7 +497,7 @@ export default function Help() {
                     <Button 
                       variant="outline" 
                       className="border-white/30 text-white hover:bg-white/10"
-                      onClick={() => window.location.href = 'tel:+1-555-123-4567'}
+                      onClick={() => window.location.href = 'tel:+234 8077149657'}
                     >
                       Call Now
                     </Button>

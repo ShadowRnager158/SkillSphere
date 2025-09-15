@@ -139,7 +139,7 @@ export default function ForClientsPage() {
           <div className="border rounded-xl p-8 bg-white shadow-sm hover:shadow-md transition-shadow">
             <div className="mb-6">
               <h3 className="text-xl font-bold mb-2">Startup</h3>
-              <p className="text-3xl font-bold">$1,999<span className="text-base font-normal text-muted-foreground">/month</span></p>
+              <p className="text-3xl font-bold">$10<span className="text-base font-normal text-muted-foreground">/month</span></p>
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-start gap-2">
@@ -159,7 +159,7 @@ export default function ForClientsPage() {
                 <span>Email & chat support</span>
               </li>
             </ul>
-            <Button className="w-full">Get Started</Button>
+            <Button className="w-full bg-blue-600 hover:bg-blue-700">Pay</Button>
           </div>
           
           <div className="border rounded-xl p-8 bg-white shadow-md relative">
@@ -168,7 +168,7 @@ export default function ForClientsPage() {
             </div>
             <div className="mb-6">
               <h3 className="text-xl font-bold mb-2">Business</h3>
-              <p className="text-3xl font-bold">$4,999<span className="text-base font-normal text-muted-foreground">/month</span></p>
+              <p className="text-3xl font-bold">$100<span className="text-base font-normal text-muted-foreground">/month</span></p>
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-start gap-2">
@@ -192,13 +192,13 @@ export default function ForClientsPage() {
                 <span>Custom talent matching</span>
               </li>
             </ul>
-            <Button className="w-full bg-blue-600 hover:bg-blue-700">Contact Sales</Button>
+            <Button className="w-full bg-blue-600 hover:bg-blue-700">Pay</Button>
           </div>
           
           <div className="border rounded-xl p-8 bg-white shadow-sm hover:shadow-md transition-shadow">
             <div className="mb-6">
               <h3 className="text-xl font-bold mb-2">Enterprise</h3>
-              <p className="text-3xl font-bold">Custom</p>
+              <p className="text-3xl font-bold">$500<span className="text-base font-normal text-muted-foreground">/month</span></p>
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-start gap-2">
@@ -226,7 +226,7 @@ export default function ForClientsPage() {
                 <span>Dedicated servers</span>
               </li>
             </ul>
-            <Button variant="outline" className="w-full">Request Quote</Button>
+            <Button className="w-full bg-blue-600 hover:bg-blue-700">Pay</Button>
           </div>
         </div>
       </section>
@@ -248,7 +248,7 @@ export default function ForClientsPage() {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-blue-100 rounded-full"></div>
               <div>
-                <p className="font-semibold">Sarah Johnson</p>
+                <p className="font-semibold">Ibrahim Sunmonnu</p>
                 <p className="text-sm text-muted-foreground">CTO, TechInnovate</p>
               </div>
             </div>
@@ -266,7 +266,7 @@ export default function ForClientsPage() {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-blue-100 rounded-full"></div>
               <div>
-                <p className="font-semibold">Michael Chen</p>
+                <p className="font-semibold">Abdurrahman Adesalu </p>
                 <p className="text-sm text-muted-foreground">Director of Engineering, DataVision</p>
               </div>
             </div>

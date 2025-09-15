@@ -90,34 +90,34 @@ export default function HomePage() {
   const stats = [
     {
       label: 'Active Professionals',
-      value: '100,000+',
+      value: '0+',
       icon: Users,
       description: 'Skilled professionals ready to work',
-      trend: '+15% this month',
+      trend: '+0% this month',
       color: 'text-blue-600 dark:text-blue-400'
     },
     {
       label: 'Countries Served',
-      value: '150+',
+      value: '0+',
       icon: Globe,
       description: 'Global reach and impact',
-      trend: '+8 new countries',
+      trend: '+0 new countries',
       color: 'text-green-600 dark:text-green-400'
     },
     {
       label: 'Projects Completed',
-      value: '500,000+',
+      value: '0+',
       icon: CheckCircle,
       description: 'Successful project deliveries',
-      trend: '+25% completion rate',
+      trend: '+0% completion rate',
       color: 'text-purple-600 dark:text-purple-400'
     },
     {
       label: 'Client Satisfaction',
-      value: '98%',
+      value: '0%',
       icon: Star,
       description: 'Happy and returning clients',
-      trend: '+2% improvement',
+      trend: '+0% improvement',
       color: 'text-orange-600 dark:text-orange-400'
     }
   ];
@@ -150,36 +150,36 @@ export default function HomePage() {
   ];
 
   const categories = [
-    { name: 'Web Development', icon: Code, color: 'from-blue-500 to-cyan-500', count: '15,000+' },
-    { name: 'Design & Creative', icon: Palette, color: 'from-purple-500 to-pink-500', count: '12,000+' },
-    { name: 'Data Science', icon: Database, color: 'from-green-500 to-emerald-500', count: '8,000+' },
-    { name: 'Mobile Development', icon: Smartphone, color: 'from-orange-500 to-red-500', count: '10,000+' },
-    { name: 'Cloud & DevOps', icon: Cloud, color: 'from-indigo-500 to-purple-500', count: '6,000+' },
-    { name: 'Marketing', icon: TrendingUp, color: 'from-pink-500 to-rose-500', count: '9,000+' }
+    { name: 'Web Development', icon: Code, color: 'from-blue-500 to-cyan-500', count: '0+' },
+    { name: 'Design & Creative', icon: Palette, color: 'from-purple-500 to-pink-500', count: '0+' },
+    { name: 'Data Science', icon: Database, color: 'from-green-500 to-emerald-500', count: '0+' },
+    { name: 'Mobile Development', icon: Smartphone, color: 'from-orange-500 to-red-500', count: '0+' },
+    { name: 'Cloud & DevOps', icon: Cloud, color: 'from-indigo-500 to-purple-500', count: '0+' },
+    { name: 'Marketing', icon: TrendingUp, color: 'from-pink-500 to-rose-500', count: '0+' }
   ];
 
   const testimonials = [
     {
-      name: "Sarah Chen",
+      name: "Ibrahim  Sunmonu ",
       role: "CEO, TechStart",
       content: "SkillSphere delivered exceptional results. Our project was completed 2 weeks ahead of schedule with outstanding quality.",
-      avatar: "SC",
+      avatar: "IS",
       rating: 5,
       company: "TechStart"
     },
     {
-      name: "Marcus Rodriguez",
+      name: "ABdul Kareem Adekogbe",
       role: "Product Manager, InnovateCorp",
       content: "The talent pool here is incredible. We found a developer who exceeded all expectations and became a long-term partner.",
-      avatar: "MR",
+      avatar: "AA",
       rating: 5,
       company: "InnovateCorp"
     },
     {
-      name: "Emily Watson",
+      name: "Ibarhim Ismail",
       role: "Freelance Designer",
       content: "As a professional, I've found amazing opportunities and built lasting client relationships. The platform is game-changing.",
-      avatar: "EW",
+      avatar: "II",
       rating: 5,
       company: "Design Studio"
     }

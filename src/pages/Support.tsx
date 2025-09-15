@@ -40,11 +40,10 @@ export default function SupportPage() {
           </p>
         </div>
 
-        <Tabs defaultValue="faq" className="space-y-12">
+        <Tabs defaultValue="faq" className="space-y-20">
           <TabsList className="grid grid-cols-3 max-w-lg mx-auto">
             <TabsTrigger value="faq">FAQ</TabsTrigger>
             <TabsTrigger value="contact">Contact Us</TabsTrigger>
-            <TabsTrigger value="resources">Resources</TabsTrigger>
           </TabsList>
 
           {/* FAQ Tab */}
@@ -367,8 +366,8 @@ export default function SupportPage() {
                       <Phone className="h-5 w-5 text-blue-500 mt-0.5" />
                       <div>
                         <p className="font-medium">Phone Support</p>
-                        <p className="text-sm text-muted-foreground">+1 (555) 123-4567</p>
-                        <p className="text-sm text-muted-foreground">Monday-Friday, 9am-6pm EST</p>
+                        <p className="text-sm text-muted-foreground">+234 8077149657</p>
+                        <p className="text-sm text-muted-foreground">Monday-Friday, 9am-6pm </p>
                       </div>
                     </div>
                     
@@ -398,157 +397,11 @@ export default function SupportPage() {
                   </CardHeader>
                   <CardContent>
                     <p>SkillSphere AI Inc.</p>
-                    <p>123 Tech Plaza</p>
-                    <p>San Francisco, CA 94105</p>
-                    <p>United States</p>
+                    <p>123 Tech Hub</p>
+                    <p>Lagos Nigeria</p>
                   </CardContent>
                 </Card>
               </div>
-            </div>
-          </TabsContent>
-
-          {/* Resources Tab */}
-          <TabsContent value="resources">
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card className="md:col-span-3">
-                <CardHeader>
-                  <CardTitle>Help Center</CardTitle>
-                  <CardDescription>
-                    Explore our comprehensive knowledge base and tutorials
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-secondary/30 p-6 rounded-lg">
-                    <h3 className="text-lg font-medium mb-3">Popular Topics</h3>
-                    <div className="grid md:grid-cols-3 gap-4">
-                      <Button variant="outline" className="justify-start h-auto py-3">
-                        <div className="text-left">
-                          <p className="font-medium">Getting Started Guide</p>
-                          <p className="text-xs text-muted-foreground">
-                            Learn the basics of using SkillSphere
-                          </p>
-                        </div>
-                      </Button>
-                      <Button variant="outline" className="justify-start h-auto py-3">
-                        <div className="text-left">
-                          <p className="font-medium">Project Management</p>
-                          <p className="text-xs text-muted-foreground">
-                            Tips for successful project completion
-                          </p>
-                        </div>
-                      </Button>
-                      <Button variant="outline" className="justify-start h-auto py-3">
-                        <div className="text-left">
-                          <p className="font-medium">Payment & Billing</p>
-                          <p className="text-xs text-muted-foreground">
-                            Information about transactions and fees
-                          </p>
-                        </div>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Video Tutorials</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="aspect-video bg-gray-100 rounded-md flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                    </svg>
-                  </div>
-                  <h3 className="font-medium">Platform Walkthrough</h3>
-                  <p className="text-sm text-muted-foreground">
-                    A comprehensive guide to navigating and using the SkillSphere platform effectively.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Guides & Tutorials</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    <li>
-                      <a href="#" className="flex items-center gap-2 text-blue-600 hover:underline">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                          <line x1="16" y1="13" x2="8" y2="13"></line>
-                          <line x1="16" y1="17" x2="8" y2="17"></line>
-                          <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        Creating a Standout Profile
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="flex items-center gap-2 text-blue-600 hover:underline">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                          <line x1="16" y1="13" x2="8" y2="13"></line>
-                          <line x1="16" y1="17" x2="8" y2="17"></line>
-                          <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        How to Write Winning Proposals
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="flex items-center gap-2 text-blue-600 hover:underline">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                          <line x1="16" y1="13" x2="8" y2="13"></line>
-                          <line x1="16" y1="17" x2="8" y2="17"></line>
-                          <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        Managing Client Expectations
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="flex items-center gap-2 text-blue-600 hover:underline">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                          <line x1="16" y1="13" x2="8" y2="13"></line>
-                          <line x1="16" y1="17" x2="8" y2="17"></line>
-                          <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        Dispute Resolution Process
-                      </a>
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Webinars & Events</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="border-b pb-3">
-                      <p className="font-medium">AI Skills in Demand</p>
-                      <p className="text-sm text-muted-foreground">August 15, 2025 • 2:00 PM EST</p>
-                      <Button variant="link" className="p-0 h-auto mt-1">Register Now</Button>
-                    </div>
-                    <div className="border-b pb-3">
-                      <p className="font-medium">Client Success Stories</p>
-                      <p className="text-sm text-muted-foreground">August 22, 2025 • 1:00 PM EST</p>
-                      <Button variant="link" className="p-0 h-auto mt-1">Register Now</Button>
-                    </div>
-                    <div>
-                      <p className="font-medium">Platform Updates & Features</p>
-                      <p className="text-sm text-muted-foreground">September 5, 2025 • 11:00 AM EST</p>
-                      <Button variant="link" className="p-0 h-auto mt-1">Register Now</Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </TabsContent>
         </Tabs>

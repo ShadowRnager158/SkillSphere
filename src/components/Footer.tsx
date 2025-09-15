@@ -100,15 +100,15 @@ const Footer = () => {
               <div className="space-y-3">
                 <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                   <Mail className="w-5 h-5" />
-                  <span>hello@skillsphere.com</span>
+                  <span>skillsphere.ai.hub@gmail.com</span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                   <Phone className="w-5 h-5" />
-                  <span>+1 (555) 123-4567</span>
+                  <span>+234 8077149657</span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                   <MapPin className="w-5 h-5" />
-                  <span>San Francisco, CA</span>
+                  <span>Lagos, Nigeria </span>
                 </div>
               </div>
 
@@ -195,7 +195,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-              <span>© 2024 SkillSphere. Made with</span>
+              <span>© 2025 SkillSphere. Made with</span>
               <Heart className="w-4 h-4 text-red-500 fill-current" />
               <span>for the future of work.</span>
             </div>

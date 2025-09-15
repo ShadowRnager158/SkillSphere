@@ -158,8 +158,8 @@ export default function Community() {
       title: 'Best practices for AI-powered talent matching',
       content: 'I\'ve been working with SkillSphere\'s AI matching system for the past 6 months and wanted to share some insights...',
       author: {
-        name: 'Sarah Johnson',
-        avatar: 'SJ',
+        name: 'Ibrahim Sunmonu',
+        avatar: 'IS',
         role: 'Senior Product Manager',
         company: 'TechCorp'
       },
@@ -178,7 +178,7 @@ export default function Community() {
       title: 'How to build effective remote teams',
       content: 'With the rise of remote work, I\'ve found some key strategies that really help with team collaboration...',
       author: {
-        name: 'Michael Chen',
+        name: 'Khalaf Musa',
         avatar: 'MC',
         role: 'Engineering Director',
         company: 'RemoteFirst'
@@ -198,7 +198,7 @@ export default function Community() {
       title: 'Freelancer success stories - Share yours!',
       content: 'Let\'s celebrate our wins! Share your most successful project or career milestone...',
       author: {
-        name: 'Lisa Rodriguez',
+        name: 'Mandela Bello',
         avatar: 'LR',
         role: 'UX Designer',
         company: 'Freelance'
@@ -229,11 +229,11 @@ export default function Community() {
       maxAttendees: 200,
       price: 'Free',
       organizer: {
-        name: 'Dr. Emily Watson',
-        avatar: 'EW',
+        name: 'Bello Abdulrahman',
+        avatar: 'BA',
         company: 'SkillSphere AI'
       },
-      speakers: ['Dr. Emily Watson', 'Mark Johnson', 'Sarah Chen'],
+      speakers: ['Bello Abdul Rahman', 'Luqman Molumo', 'Ibarhim Ismail'],
       tags: ['AI', 'Talent Acquisition', 'Future of Work'],
       isFeatured: true
     },
@@ -244,18 +244,18 @@ export default function Community() {
       type: 'Meetup',
       date: '2024-02-20',
       time: '18:00 - 21:00',
-      location: 'San Francisco, CA',
+      location: 'Lagos, Nigeria',
       isOnline: false,
       attendees: 45,
       maxAttendees: 60,
       price: '$15',
       organizer: {
-        name: 'Alex Thompson',
-        avatar: 'AT',
+        name: 'Safwan Ibrahim',
+        avatar: 'SI',
         company: 'SF Tech Community'
       },
-      speakers: ['Alex Thompson', 'Maria Garcia'],
-      tags: ['Networking', 'Tech', 'San Francisco'],
+      speakers: ['Safwan Ibrahim', 'Kolade Adenuga'],
+      tags: ['Networking', 'Tech', 'Nigeria'],
       isFeatured: false
     },
     {
@@ -271,11 +271,11 @@ export default function Community() {
       maxAttendees: 100,
       price: '$25',
       organizer: {
-        name: 'David Kim',
-        avatar: 'DK',
+        name: 'Abdul Kareem Adekogbe',
+        avatar: 'AA',
         company: 'Remote Leadership Institute'
       },
-      speakers: ['David Kim'],
+      speakers: ['Abdul Kareem Adekogbe'],
       tags: ['Remote Work', 'Leadership', 'Workshop'],
       isFeatured: true
     }
@@ -284,42 +284,42 @@ export default function Community() {
   const communityMembers: CommunityMember[] = [
     {
       id: '1',
-      name: 'Sarah Johnson',
-      avatar: 'SJ',
+      name: 'Ibrahim Sunmonu',
+      avatar: 'IS',
       role: 'Senior Product Manager',
       company: 'TechCorp',
-      location: 'San Francisco, CA',
+      location: 'Lagos, Nigeria',
       skills: ['Product Management', 'AI/ML', 'User Research'],
-      projects: 12,
-      connections: 234,
+      projects: 0,
+      connections: 0,
       isOnline: true,
       isVerified: true,
       joinedDate: '2023-01-15'
     },
     {
       id: '2',
-      name: 'Michael Chen',
-      avatar: 'MC',
+      name: 'Khalaf Musa',
+      avatar: 'KM',
       role: 'Engineering Director',
       company: 'RemoteFirst',
       location: 'New York, NY',
       skills: ['Software Engineering', 'Team Leadership', 'Architecture'],
-      projects: 8,
-      connections: 189,
+      projects: 0,
+      connections: 0,
       isOnline: true,
       isVerified: true,
       joinedDate: '2023-03-22'
     },
     {
       id: '3',
-      name: 'Lisa Rodriguez',
-      avatar: 'LR',
+      name: 'Mandela Bello',
+      avatar: 'MB',
       role: 'UX Designer',
       company: 'Freelance',
       location: 'Austin, TX',
       skills: ['UX Design', 'UI Design', 'User Research'],
-      projects: 25,
-      connections: 156,
+      projects: 0,
+      connections: 0,
       isOnline: false,
       isVerified: true,
       joinedDate: '2023-02-10'

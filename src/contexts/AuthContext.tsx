@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
+import axios from 'axios'; // Reverted to axios due to resolution error
 import { User } from '@/types';
 
 interface AuthContextType {
@@ -30,7 +30,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Helper to set user from API token
   const fetchUser = async (token: string) => {
     try {
-      const res = await axios.get('/users/me', {
+      // Using axios.post as requested
+      const res = await axios.post('/users/me', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUser(res.data);
@@ -56,11 +57,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
+      // Using axios directly
       const res = await axios.post('/auth/login', { email, password });
       const { access, refresh } = res.data.tokens;
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
-      await fetchUser(access); // ensure user is set from fresh token
+      await fetchUser(access);
     } catch (error) {
       setUser(null);
       throw new Error('Invalid email or password');
@@ -71,14 +73,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = async (name: string, email: string, password: string, isSkiller: boolean) => {
     setLoading(true);
+    const role = isSkiller ? 'skiller' : 'learner';
     try {
+      // Using axios directly
       const res = await axios.post('/auth/signup', {
         name,
         email,
         password,
-        isSkiller
+        role 
       });
-      // Handle different possible response structures
       let accessToken = '';
       if (res.data.tokens) {
         accessToken = res.data.tokens.access;
@@ -89,10 +92,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem('access_token', accessToken);
       }
       if (accessToken) {
-        await fetchUser(accessToken); // Fetch user data
+        await fetchUser(accessToken);
       } else {
-        // If no token, still set user to allow redirect (adjust based on backend)
-        setUser({ email, name, isSkiller } as User);
+        // Create a temporary user object that conforms to the User type
+        setUser({
+          id: '', // Placeholder for missing properties
+          avatar: '',
+          createdAt: new Date().toISOString(),
+          userType: role,
+          name,
+          email,
+          isSkiller,
+        } as User);
       }
     } catch (error: any) {
       setUser(null);
@@ -102,7 +113,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Alias "register" to "signup" for compatibility with SignUp page
   const register = signup;
 
   const logout = () => {
@@ -114,6 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const updateUser = async (updates: Partial<User>) => {
     const token = localStorage.getItem('access_token');
     if (!token || !user) return;
+    // Using axios directly
     const res = await axios.patch('/users/me', updates, {
       headers: { Authorization: `Bearer ${token}` }
     });

@@ -21,17 +21,23 @@ export default defineConfig(({ mode }) => ({
       '@': path.resolve(__dirname, './src'),
     },
   },
-server: {
-  proxy: {
-    '/auth': {
-      target: 'http://localhost:4000',
-      changeOrigin: true,
+  server: {
+    proxy: {
+      '/auth': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
+      '/users': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
+      // Added proxy for /api endpoint
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // Remove /api prefix when forwarding
+      },
     },
-    '/users': {
-      target: 'http://localhost:4000',
-      changeOrigin: true,
-    },
-  },
   },
   build: {
     rollupOptions: {

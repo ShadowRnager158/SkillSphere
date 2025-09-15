@@ -113,7 +113,7 @@ export default function Press() {
       readTime: '3 min read',
       featured: true,
       image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-      author: 'Sarah Chen',
+      author: 'Ibrahim Sunmonu',
       tags: ['Funding', 'AI', 'Growth', 'Investment']
     },
     {
@@ -125,7 +125,7 @@ export default function Press() {
       readTime: '2 min read',
       featured: false,
       image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-      author: 'Marcus Rodriguez',
+      author: 'Abdul Kareem Adekogbe',
       tags: ['AI', 'Technology', 'Innovation', 'Product']
     },
     {
@@ -137,7 +137,7 @@ export default function Press() {
       readTime: '2 min read',
       featured: false,
       image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-      author: 'Emily Watson',
+      author: 'Azyzah Asafa',
       tags: ['Growth', 'Milestone', 'Community', 'Success']
     },
     {
@@ -149,7 +149,7 @@ export default function Press() {
       readTime: '4 min read',
       featured: false,
       image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-      author: 'Alex Thompson',
+      author: 'Khalaf Musa',
       tags: ['Partnership', 'Education', 'Talent', 'Innovation']
     },
     {
@@ -161,7 +161,7 @@ export default function Press() {
       readTime: '3 min read',
       featured: false,
       image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-      author: 'David Kim',
+      author: 'Abdurrahman Gbotemi',
       tags: ['Product', 'Project Management', 'Collaboration', 'Tools']
     },
     {
@@ -173,7 +173,7 @@ export default function Press() {
       readTime: '2 min read',
       featured: false,
       image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-      author: 'Lisa Park',
+      author: 'Razan Shadare',
       tags: ['Expansion', 'Europe', 'International', 'Growth']
     }
   ];
@@ -224,10 +224,10 @@ export default function Press() {
   };
 
   const stats = [
-    { label: 'Active Professionals', value: '100,000+', icon: Users, color: 'text-blue-600 dark:text-blue-400' },
-    { label: 'Countries Served', value: '150+', icon: Globe, color: 'text-green-600 dark:text-green-400' },
-    { label: 'Projects Completed', value: '500,000+', icon: Award, color: 'text-purple-600 dark:text-purple-400' },
-    { label: 'Client Satisfaction', value: '98%', icon: TrendingUp, color: 'text-orange-600 dark:text-orange-400' }
+    { label: 'Active Professionals', value: '0+', icon: Users, color: 'text-blue-600 dark:text-blue-400' },
+    { label: 'Countries Served', value: '0+', icon: Globe, color: 'text-green-600 dark:text-green-400' },
+    { label: 'Projects Completed', value: '0+', icon: Award, color: 'text-purple-600 dark:text-purple-400' },
+    { label: 'Client Satisfaction', value: '0%', icon: TrendingUp, color: 'text-orange-600 dark:text-orange-400' }
   ];
 
   const categories = [

@@ -117,7 +117,7 @@ import { AnimatedElement } from '@/components/Animations';
 import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
 import LazyLoader from '@/components/LazyLoader';
 import { CardSkeleton } from '@/components/LazyLoader';
-import { getQuestionsForAssessment, calculateScore, Question } from '@/data/assessmentQuestions';
+import { getQuestionsForAssessment, calculateScore, getDetailedResults, Question } from '@/data/assessmentQuestions';
 
 interface Assessment {
   id: string;
@@ -157,9 +157,26 @@ export default function Assessment() {
   const [assessmentResults, setAssessmentResults] = useState<Record<string, any>>({});
   const [showDetailedResults, setShowDetailedResults] = useState(false);
   const [missedQuestions, setMissedQuestions] = useState<any[]>([]);
+  const [questionStartTime, setQuestionStartTime] = useState<number>(0);
+  const [questionTimes, setQuestionTimes] = useState<Record<number, number>>({});
+  const [showHint, setShowHint] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [maxStreak, setMaxStreak] = useState(0);
 
   useEffect(() => {
     setIsVisible(true);
+    
+    // Load previous assessment results
+    try {
+      const savedResults = JSON.parse(localStorage.getItem('skillsphere_assessment_results') || '[]');
+      const resultsMap: Record<string, any> = {};
+      savedResults.forEach((result: any) => {
+        resultsMap[result.assessmentId] = result;
+      });
+      setAssessmentResults(resultsMap);
+    } catch (error) {
+      console.error('Error loading assessment results:', error);
+    }
   }, []);
 
   useEffect(() => {
@@ -188,7 +205,7 @@ export default function Assessment() {
       description: 'Test your knowledge of JavaScript basics, ES6+ features, and modern development practices.',
       category: 'skill',
       duration: 30,
-      questions: 50,
+      questions: 20,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -206,7 +223,7 @@ export default function Assessment() {
       description: 'Assess your React skills including hooks, components, state management, and best practices.',
       category: 'skill',
       duration: 45,
-      questions: 50,
+      questions: 20,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -241,8 +258,8 @@ export default function Assessment() {
       title: 'UI/UX Design',
       description: 'Test your understanding of design principles, user experience, and visual design concepts.',
       category: 'skill',
-      duration: 35,
-      questions: 20,
+      duration: 30,
+      questions: 15,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -259,7 +276,7 @@ export default function Assessment() {
       title: 'Data Science',
       description: 'Assess your knowledge of data analysis, machine learning, and statistical concepts.',
       category: 'skill',
-      duration: 50,
+      duration: 45,
       questions: 20,
       difficulty: 'hard',
       isCompleted: false,
@@ -277,8 +294,8 @@ export default function Assessment() {
       title: 'DevOps & Cloud',
       description: 'Test your understanding of DevOps practices, cloud platforms, and infrastructure management.',
       category: 'skill',
-      duration: 40,
-      questions: 20,
+      duration: 35,
+      questions: 15,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -295,8 +312,8 @@ export default function Assessment() {
       title: 'Mobile Development',
       description: 'Assess your mobile app development skills across iOS and Android platforms.',
       category: 'skill',
-      duration: 45,
-      questions: 20,
+      duration: 35,
+      questions: 15,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -332,7 +349,7 @@ export default function Assessment() {
       description: 'Discover your leadership approach and how you work with teams and projects.',
       category: 'personality',
       duration: 25,
-      questions: 20,
+      questions: 15,
       difficulty: 'easy',
       isCompleted: false,
       maxScore: 100,
@@ -368,7 +385,7 @@ export default function Assessment() {
       description: 'Test your analytical thinking and problem-solving approach to complex challenges.',
       category: 'aptitude',
       duration: 30,
-      questions: 20,
+      questions: 15,
       difficulty: 'medium',
       isCompleted: false,
       maxScore: 100,
@@ -403,8 +420,8 @@ export default function Assessment() {
       title: 'Career Interests',
       description: 'Explore your professional interests and find the best career path for your skills.',
       category: 'career',
-      duration: 20,
-      questions: 20,
+      duration: 25,
+      questions: 15,
       difficulty: 'easy',
       isCompleted: false,
       maxScore: 100,
@@ -417,7 +434,7 @@ export default function Assessment() {
       exceedScore: 80
     },
     {
-      id: '14',
+      id: '30',
       title: 'Work Style',
       description: 'Understand your preferred work environment and collaboration style.',
       category: 'personality',
@@ -435,7 +452,7 @@ export default function Assessment() {
       exceedScore: 75
     },
     {
-      id: '15',
+      id: '31',
       title: 'Creativity Assessment',
       description: 'Measure your creative thinking and innovative problem-solving abilities.',
       category: 'aptitude',
@@ -453,7 +470,7 @@ export default function Assessment() {
       exceedScore: 85
     },
     {
-      id: '16',
+      id: '32',
       title: 'Stress Management',
       description: 'Evaluate how you handle pressure and stressful situations in the workplace.',
       category: 'personality',
@@ -471,7 +488,7 @@ export default function Assessment() {
       exceedScore: 80
     },
     {
-      id: '17',
+      id: '33',
       title: 'Time Management',
       description: 'Assess your ability to prioritize tasks and manage time effectively.',
       category: 'aptitude',
@@ -489,7 +506,7 @@ export default function Assessment() {
       exceedScore: 80
     },
     {
-      id: '18',
+      id: '34',
       title: 'Team Collaboration',
       description: 'Test your ability to work effectively in team environments and group projects.',
       category: 'personality',
@@ -507,7 +524,7 @@ export default function Assessment() {
       exceedScore: 80
     },
     {
-      id: '19',
+      id: '35',
       title: 'Adaptability',
       description: 'Measure your flexibility and ability to adapt to changing circumstances.',
       category: 'personality',
@@ -613,6 +630,96 @@ export default function Assessment() {
       completionRate: 80,
       needScore: 70,
       exceedScore: 85
+    },
+    {
+      id: '25',
+      title: 'Cybersecurity',
+      description: 'Test your knowledge of cybersecurity fundamentals, threats, and protection methods.',
+      category: 'skill',
+      duration: 25,
+      questions: 15,
+      difficulty: 'medium',
+      isCompleted: false,
+      maxScore: 100,
+      tags: ['Security', 'Cybersecurity', 'Protection'],
+      icon: Shield,
+      color: 'from-red-500 to-pink-500',
+      popularity: 92,
+      completionRate: 75,
+      needScore: 70,
+      exceedScore: 85
+    },
+    {
+      id: '26',
+      title: 'Database Management',
+      description: 'Assess your database design, SQL, and data management skills.',
+      category: 'skill',
+      duration: 30,
+      questions: 15,
+      difficulty: 'medium',
+      isCompleted: false,
+      maxScore: 100,
+      tags: ['Database', 'SQL', 'Data Management'],
+      icon: Database,
+      color: 'from-orange-500 to-red-500',
+      popularity: 85,
+      completionRate: 78,
+      needScore: 70,
+      exceedScore: 85
+    },
+    {
+      id: '27',
+      title: 'Cloud Computing',
+      description: 'Test your understanding of cloud platforms, virtualization, and cloud services.',
+      category: 'skill',
+      duration: 25,
+      questions: 15,
+      difficulty: 'medium',
+      isCompleted: false,
+      maxScore: 100,
+      tags: ['Cloud', 'Virtualization', 'Infrastructure'],
+      icon: Cloud,
+      color: 'from-blue-500 to-indigo-500',
+      popularity: 90,
+      completionRate: 72,
+      needScore: 70,
+      exceedScore: 85
+    },
+    {
+      id: '28',
+      title: 'Artificial Intelligence',
+      description: 'Evaluate your AI knowledge including machine learning and neural networks.',
+      category: 'skill',
+      duration: 30,
+      questions: 15,
+      difficulty: 'hard',
+      isCompleted: false,
+      maxScore: 100,
+      tags: ['AI', 'Machine Learning', 'Neural Networks'],
+      icon: Brain,
+      color: 'from-purple-500 to-pink-500',
+      popularity: 94,
+      completionRate: 68,
+      needScore: 75,
+      exceedScore: 90
+    },
+    {
+      id: '29',
+      title: 'Web Development',
+      description: 'Test your web development skills including HTML, CSS, and JavaScript.',
+      category: 'skill',
+      duration: 25,
+      questions: 15,
+      difficulty: 'medium',
+      isCompleted: false,
+      maxScore: 100,
+      tags: ['Web Development', 'HTML', 'CSS', 'JavaScript'],
+      icon: Code,
+      color: 'from-green-500 to-emerald-500',
+      popularity: 88,
+      completionRate: 80,
+      needScore: 70,
+      exceedScore: 85
     }
   ];
 
@@ -647,10 +754,33 @@ export default function Assessment() {
     setAnswers({});
     setIsTakingAssessment(true);
     setShowResults(false);
+    setQuestionStartTime(Date.now());
+    setQuestionTimes({});
+    setStreak(0);
+    setMaxStreak(0);
+    setShowHint(false);
   };
 
   const handleAnswerQuestion = (answerIndex: number) => {
+    const currentTime = Date.now();
+    const timeSpent = Math.round((currentTime - questionStartTime) / 1000);
+    
+    setQuestionTimes(prev => ({ ...prev, [currentQuestionIndex]: timeSpent }));
     setAnswers(prev => ({ ...prev, [currentQuestionIndex]: answerIndex }));
+    
+    // Check if answer is correct and update streak
+    if (selectedAssessment && currentQuestionData) {
+      const isCorrect = answerIndex === currentQuestionData.correctAnswer;
+      if (isCorrect) {
+        setStreak(prev => {
+          const newStreak = prev + 1;
+          setMaxStreak(prevMax => Math.max(prevMax, newStreak));
+          return newStreak;
+        });
+      } else {
+        setStreak(0);
+      }
+    }
   };
 
   const handleNextQuestion = () => {
@@ -658,6 +788,8 @@ export default function Assessment() {
       const questions = getQuestionsForAssessment(selectedAssessment.id);
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setQuestionStartTime(Date.now());
+        setShowHint(false);
       } else {
         // Assessment completed
         const score = calculateScore(answers, questions);
@@ -689,13 +821,28 @@ export default function Assessment() {
         completedAt: new Date().toISOString(),
         missedQuestions: missed.length,
         totalQuestions: questions.length,
-        percentage: Math.round((score / selectedAssessment.maxScore) * 100)
+        percentage: Math.round((score / selectedAssessment.maxScore) * 100),
+        timeSpent: Math.floor((selectedAssessment.duration * 60 - timeLeft) / 60),
+        bestStreak: maxStreak,
+        averageTimePerQuestion: Math.round(Object.values(questionTimes).reduce((sum, time) => sum + time, 0) / Object.keys(questionTimes).length || 0),
+        questionTimes,
+        difficulty: selectedAssessment.difficulty,
+        category: selectedAssessment.category
       };
       
       setAssessmentResults(prev => ({
         ...prev,
         [selectedAssessment.id]: result
       }));
+      
+      // Save to localStorage for persistence
+      try {
+        const existingResults = JSON.parse(localStorage.getItem('skillsphere_assessment_results') || '[]');
+        existingResults.push(result);
+        localStorage.setItem('skillsphere_assessment_results', JSON.stringify(existingResults));
+      } catch (error) {
+        console.error('Error saving assessment result:', error);
+      }
       
       setShowResults(true);
       setIsTakingAssessment(false);
@@ -727,6 +874,17 @@ export default function Assessment() {
     }
   };
 
+  const toggleHint = () => {
+    setShowHint(!showHint);
+  };
+
+  const getTimeColor = (timeLeft: number, totalTime: number) => {
+    const percentage = (timeLeft / totalTime) * 100;
+    if (percentage > 60) return 'text-green-600';
+    if (percentage > 30) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
   if (isTakingAssessment && selectedAssessment && currentQuestionData) {
     const questions = getQuestionsForAssessment(selectedAssessment.id);
     const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
@@ -744,23 +902,80 @@ export default function Assessment() {
                 <p className="text-gray-600 dark:text-gray-400">
                   Question {currentQuestionIndex + 1} of {questions.length}
                 </p>
+                <div className="flex items-center space-x-4 mt-2">
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
+                    <Target className="w-3 h-3 mr-1" />
+                    {currentQuestionData.difficulty} Difficulty
+                  </Badge>
+                  <Badge variant="outline" className="bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300">
+                    <Star className="w-3 h-3 mr-1" />
+                    {currentQuestionData.category}
+                  </Badge>
+                </div>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                <div className={`text-2xl font-bold ${getTimeColor(timeLeft, selectedAssessment.duration * 60)}`}>
                   {formatTime(timeLeft)}
                 </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">Time Remaining</div>
+                {timeLeft <= 300 && timeLeft > 0 && (
+                  <div className="mt-2">
+                    <Badge className="bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 animate-pulse">
+                      <Clock className="w-3 h-3 mr-1" />
+                      Time is running out!
+                    </Badge>
+                  </div>
+                )}
+                {streak > 0 && (
+                  <div className="mt-2">
+                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                      <Zap className="w-3 h-3 mr-1" />
+                      {streak} in a row!
+                    </Badge>
+                  </div>
+                )}
               </div>
             </div>
-            <Progress value={progress} className="h-2" />
+            <div className="space-y-3">
+              <Progress value={progress} className="h-2" />
+              <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                <span>Progress: {currentQuestionIndex + 1} of {questions.length}</span>
+                <span>Answered: {Object.keys(answers).length} of {questions.length}</span>
+              </div>
+            </div>
           </div>
 
           {/* Question */}
           <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl mb-8">
             <CardContent className="p-8">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                {currentQuestionData.question}
-              </h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  {currentQuestionData.question}
+                </h2>
+                {currentQuestionData.explanation && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleHint}
+                    className="flex items-center space-x-2"
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    {showHint ? 'Hide Hint' : 'Show Hint'}
+                  </Button>
+                )}
+              </div>
+
+              {showHint && currentQuestionData.explanation && (
+                <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Info className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+                    <span className="font-medium text-yellow-800 dark:text-yellow-200">Hint</span>
+                  </div>
+                  <p className="text-yellow-700 dark:text-yellow-300 text-sm">
+                    {currentQuestionData.explanation}
+                  </p>
+                </div>
+              )}
               
               <div className="space-y-4">
                 {currentQuestionData.options.map((option, index) => (
@@ -788,28 +1003,53 @@ export default function Assessment() {
                   </button>
                 ))}
               </div>
+
+              {questionTimes[currentQuestionIndex] && (
+                <div className="mt-6 text-center">
+                  <Badge variant="outline" className="bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                    <Clock className="w-3 h-3 mr-1" />
+                    Time spent: {questionTimes[currentQuestionIndex]}s
+                  </Badge>
+                </div>
+              )}
             </CardContent>
           </Card>
 
           {/* Navigation */}
-          <div className="flex justify-between">
-            <Button
-              variant="outline"
-              onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
-              disabled={currentQuestionIndex === 0}
-              className="flex items-center space-x-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Previous</span>
-            </Button>
-            
-            <Button
-              onClick={currentQuestionIndex === questions.length - 1 ? handleFinishAssessment : handleNextQuestion}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center space-x-2"
-            >
-              <span>{currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}</span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
+                disabled={currentQuestionIndex === 0}
+                className="flex items-center space-x-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Previous</span>
+              </Button>
+              
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="font-medium">{currentQuestionIndex + 1}</span> of {questions.length} questions
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              {answers[currentQuestionIndex] !== undefined && (
+                <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  Answered
+                </Badge>
+              )}
+              
+              <Button
+                onClick={currentQuestionIndex === questions.length - 1 ? handleFinishAssessment : handleNextQuestion}
+                disabled={answers[currentQuestionIndex] === undefined}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center space-x-2"
+              >
+                <span>{currentQuestionIndex === questions.length - 1 ? 'Finish Assessment' : 'Next Question'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -989,6 +1229,22 @@ export default function Assessment() {
                     <div className="text-sm text-gray-500 dark:text-gray-400">Total Questions</div>
                   </div>
                 </div>
+
+                {/* Performance Highlights */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                      {maxStreak}
+                    </div>
+                    <div className="text-sm text-green-700 dark:text-green-300">Best Streak</div>
+                  </div>
+                  <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                      {Math.round(Object.values(questionTimes).reduce((sum, time) => sum + time, 0) / Object.keys(questionTimes).length || 0)}s
+                    </div>
+                    <div className="text-sm text-blue-700 dark:text-blue-300">Avg Time/Question</div>
+                  </div>
+                </div>
                 
                 {/* Detailed Results */}
                 <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -1017,6 +1273,48 @@ export default function Assessment() {
                       <span className="font-semibold text-gray-900 dark:text-white">
                         {Math.floor((selectedAssessment.duration * 60 - timeLeft) / 60)}m {(selectedAssessment.duration * 60 - timeLeft) % 60}s
                       </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Question Summary */}
+                <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-3">📊 Question Summary</h3>
+                  <div className="grid grid-cols-5 gap-2">
+                    {Array.from({ length: selectedAssessment.questions }, (_, index) => {
+                      const isAnswered = answers[index] !== undefined;
+                      const isCorrect = isAnswered && answers[index] === getQuestionsForAssessment(selectedAssessment.id)[index]?.correctAnswer;
+                      const timeSpent = questionTimes[index] || 0;
+                      
+                      return (
+                        <div
+                          key={index}
+                          className={`p-2 rounded-lg text-center text-xs font-medium ${
+                            !isAnswered
+                              ? 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                              : isCorrect
+                              ? 'bg-green-200 dark:bg-green-700 text-green-800 dark:text-green-200'
+                              : 'bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200'
+                          }`}
+                          title={`Question ${index + 1}: ${isAnswered ? (isCorrect ? 'Correct' : 'Incorrect') : 'Not answered'}${timeSpent ? ` (${timeSpent}s)` : ''}`}
+                        >
+                          {index + 1}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="flex items-center justify-center space-x-4 mt-3 text-xs text-blue-700 dark:text-blue-300">
+                    <div className="flex items-center space-x-1">
+                      <div className="w-3 h-3 bg-green-200 dark:bg-green-700 rounded"></div>
+                      <span>Correct</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-3 h-3 bg-red-200 dark:bg-red-700 rounded"></div>
+                      <span>Incorrect</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                      <span>Unanswered</span>
                     </div>
                   </div>
                 </div>
@@ -1127,9 +1425,9 @@ export default function Assessment() {
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  20
+                  Varies
                 </div>
-                <div className="text-gray-600 dark:text-gray-400">Questions Each</div>
+                <div className="text-gray-600 dark:text-gray-400">Questions Range</div>
               </div>
             </div>
           </motion.div>
@@ -1261,13 +1559,37 @@ export default function Assessment() {
                         </div>
                       </div>
                       
-                      <Button
-                        onClick={() => handleStartAssessment(assessment)}
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 group-hover:scale-105 transition-transform"
-                      >
-                        <span>Start Assessment</span>
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
+                      {assessmentResults[assessment.id] ? (
+                        <div className="space-y-3">
+                          <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-green-700 dark:text-green-300 font-medium">Previous Score:</span>
+                              <span className="text-green-800 dark:text-green-400 font-bold">
+                                {assessmentResults[assessment.id].percentage}%
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between text-xs text-green-600 dark:text-green-400 mt-1">
+                              <span>Best Streak: {assessmentResults[assessment.id].bestStreak || 0}</span>
+                              <span>Time: {assessmentResults[assessment.id].timeSpent || 0}m</span>
+                            </div>
+                          </div>
+                          <Button
+                            onClick={() => handleStartAssessment(assessment)}
+                            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 group-hover:scale-105 transition-transform"
+                          >
+                            <span>Retake Assessment</span>
+                            <RefreshCw className="w-4 h-4 ml-2" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          onClick={() => handleStartAssessment(assessment)}
+                          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 group-hover:scale-105 transition-transform"
+                        >
+                          <span>Start Assessment</span>
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

@@ -199,10 +199,10 @@ export default function HowItWorksPage() {
   ];
 
   const stats = [
-    { label: "Projects Completed", value: "50,000+", icon: CheckSquare },
-    { label: "Active Users", value: "25,000+", icon: Users },
-    { label: "Success Rate", value: "98.5%", icon: TrendingUp },
-    { label: "Countries", value: "45+", icon: Globe }
+    { label: "Projects Completed", value: "0+", icon: CheckSquare },
+    { label: "Active Users", value: "0+", icon: Users },
+    { label: "Success Rate", value: "0%", icon: TrendingUp },
+    { label: "Countries", value: "0+", icon: Globe }
   ];
 
   return (

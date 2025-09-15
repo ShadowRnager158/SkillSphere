@@ -86,11 +86,11 @@ export default function SuccessStories() {
       id: 1,
       title: "E-commerce Platform Redesign",
       client: "TechStart Inc.",
-      skiller: "Sarah Chen",
+      skiller: "Ibrahim Sunmonu",
       category: "Web Development",
       budget: "$15,000",
       duration: "6 weeks",
-      location: "San Francisco, CA",
+      location: "Lagos, Nigeria",
       rating: 5,
       description: "Complete redesign of an e-commerce platform resulting in 40% increase in conversion rates and 25% improvement in user engagement.",
       results: [
@@ -99,18 +99,18 @@ export default function SuccessStories() {
         "Mobile-first responsive design",
         "SEO optimization implementation"
       ],
-      testimonial: "Sarah exceeded all our expectations. The new platform not only looks amazing but performs exceptionally well. Our customers love the improved user experience.",
+      testimonial: "Ibrahim exceeded all our expectations. The new platform not only looks amazing but performs exceptionally well. Our customers love the improved user experience.",
       image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
     },
     {
       id: 2,
       title: "Mobile App for Food Delivery",
       client: "FreshBite",
-      skiller: "Marcus Rodriguez",
+      skiller: "Abdul Kareem Adekogbe ",
       category: "Mobile Development",
       budget: "$25,000",
       duration: "8 weeks",
-      location: "New York, NY",
+      location: "Lagos, Nigeria",
       rating: 5,
       description: "Development of a comprehensive food delivery mobile app with real-time tracking, payment integration, and restaurant management system.",
       results: [
@@ -119,18 +119,18 @@ export default function SuccessStories() {
         "Real-time order tracking",
         "Secure payment processing"
       ],
-      testimonial: "Marcus delivered a world-class app that perfectly matches our vision. The technical implementation is flawless and our users are extremely satisfied.",
+      testimonial: "Abdul Kareem  delivered a world-class app that perfectly matches our vision. The technical implementation is flawless and our users are extremely satisfied.",
       image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
     },
     {
       id: 3,
       title: "AI-Powered Analytics Dashboard",
       client: "DataFlow Solutions",
-      skiller: "Emily Watson",
+      skiller: "Bello AbdulRahman",
       category: "Data Science",
       budget: "$30,000",
       duration: "10 weeks",
-      location: "Austin, TX",
+      location: "Lagos, Nigeria",
       rating: 5,
       description: "Advanced analytics dashboard with machine learning capabilities for business intelligence and predictive analytics.",
       results: [
@@ -139,18 +139,18 @@ export default function SuccessStories() {
         "Real-time data visualization",
         "Automated reporting system"
       ],
-      testimonial: "Emily's expertise in AI and data science transformed our business intelligence capabilities. The insights we're getting are invaluable.",
+      testimonial: "Bello's expertise in AI and data science transformed our business intelligence capabilities. The insights we're getting are invaluable.",
       image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
     },
     {
       id: 4,
       title: "Brand Identity & Marketing Campaign",
       client: "GreenTech Innovations",
-      skiller: "Alex Thompson",
+      skiller: "Khalaf Musa",
       category: "Design & Marketing",
       budget: "$12,000",
       duration: "4 weeks",
-      location: "Seattle, WA",
+      location: "Lagos, Nigeria",
       rating: 5,
       description: "Complete brand identity redesign and comprehensive marketing campaign for a sustainable technology startup.",
       results: [
@@ -159,18 +159,18 @@ export default function SuccessStories() {
         "Consistent brand messaging",
         "Professional visual identity"
       ],
-      testimonial: "Alex captured our vision perfectly and created a brand that truly represents our mission. The marketing campaign exceeded our expectations.",
+      testimonial: "Khalaf captured our vision perfectly and created a brand that truly represents our mission. The marketing campaign exceeded our expectations.",
       image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
     },
     {
       id: 5,
       title: "Cloud Infrastructure Migration",
       client: "ScaleTech Solutions",
-      skiller: "David Kim",
+      skiller: "Ibrahim Ismail",
       category: "DevOps & Cloud",
       budget: "$45,000",
       duration: "12 weeks",
-      location: "Chicago, IL",
+      location: "Lagos, Nigeria",
       rating: 5,
       description: "Complete migration from on-premise infrastructure to cloud-based solution with automated scaling and monitoring.",
       results: [
@@ -179,18 +179,18 @@ export default function SuccessStories() {
         "Automated scaling implementation",
         "Enhanced security measures"
       ],
-      testimonial: "David's expertise in cloud architecture transformed our infrastructure. The migration was seamless and the performance improvements are remarkable.",
+      testimonial: "Ibrahim's expertise in cloud architecture transformed our infrastructure. The migration was seamless and the performance improvements are remarkable.",
       image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
     },
     {
       id: 6,
       title: "Cybersecurity Implementation",
       client: "SecureBank Corp",
-      skiller: "Lisa Park",
+      skiller: "Abdurrahman Adesalu",
       category: "Cybersecurity",
       budget: "$35,000",
       duration: "8 weeks",
-      location: "Boston, MA",
+      location: "Lagos, Nigeria",
       rating: 5,
       description: "Comprehensive cybersecurity assessment and implementation of advanced security measures for financial institution.",
       results: [
@@ -199,25 +199,25 @@ export default function SuccessStories() {
         "Advanced threat detection system",
         "Employee security training program"
       ],
-      testimonial: "Lisa's cybersecurity expertise gave us peace of mind. The implementation was thorough and our security posture is now industry-leading.",
+      testimonial: "Abdurrahman's cybersecurity expertise gave us peace of mind. The implementation was thorough and our security posture is now industry-leading.",
       image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
     }
   ];
 
   const stats = [
-    { label: 'Projects Completed', value: '2,500+', icon: CheckCircle, color: 'text-green-600 dark:text-green-400' },
-    { label: 'Success Rate', value: '98.5%', icon: TrendingUp, color: 'text-blue-600 dark:text-blue-400' },
-    { label: 'Happy Clients', value: '1,200+', icon: Users, color: 'text-purple-600 dark:text-purple-400' },
-    { label: 'Total Value', value: '$45M+', icon: DollarSign, color: 'text-orange-600 dark:text-orange-400' }
+    { label: 'Projects Completed', value: '0+', icon: CheckCircle, color: 'text-green-600 dark:text-green-400' },
+    { label: 'Success Rate', value: '0%', icon: TrendingUp, color: 'text-blue-600 dark:text-blue-400' },
+    { label: 'Happy Clients', value: '0+', icon: Users, color: 'text-purple-600 dark:text-purple-400' },
+    { label: 'Total Value', value: '$0+', icon: DollarSign, color: 'text-orange-600 dark:text-orange-400' }
   ];
 
   const categories = [
-    { name: 'Web Development', icon: Code, count: 45, color: 'from-blue-500 to-blue-600' },
-    { name: 'Mobile Development', icon: Smartphone, count: 38, color: 'from-green-500 to-green-600' },
-    { name: 'UI/UX Design', icon: Palette, count: 32, color: 'from-purple-500 to-purple-600' },
-    { name: 'Data Science', icon: Database, count: 28, color: 'from-orange-500 to-orange-600' },
-    { name: 'DevOps & Cloud', icon: Cloud, count: 25, color: 'from-indigo-500 to-indigo-600' },
-    { name: 'Cybersecurity', icon: Shield, count: 22, color: 'from-red-500 to-red-600' }
+    { name: 'Web Development', icon: Code, count: 0, color: 'from-blue-500 to-blue-600' },
+    { name: 'Mobile Development', icon: Smartphone, count: 0, color: 'from-green-500 to-green-600' },
+    { name: 'UI/UX Design', icon: Palette, count: 0, color: 'from-purple-500 to-purple-600' },
+    { name: 'Data Science', icon: Database, count: 0, color: 'from-orange-500 to-orange-600' },
+    { name: 'DevOps & Cloud', icon: Cloud, count: 0, color: 'from-indigo-500 to-indigo-600' },
+    { name: 'Cybersecurity', icon: Shield, count: 0, color: 'from-red-500 to-red-600' }
   ];
 
   return (

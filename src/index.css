@@ -63,6 +63,24 @@
     box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
   }
 
+  /* Fix for -webkit-text-size-adjust: add text-size-adjust */
+  .qJTHM {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  /* Fix for user-select: add -webkit-user-select for Safari */
+ [data-sonner-toast][data-swiped=true] {
+  user-select: none;
+  -webkit-user-select: none;
+  }
+
+
+
+/* meta[name=theme-color] issue in Firefox cannot be fixed with CSS.
+Workaround: add Mozilla-specific meta tag in your <head>:
+<meta name="theme-color" content="#3b82f6" media="(prefers-color-scheme: light)">
+Firefox does not fully support theme-color globally, but this ensures consistency. */
+
   /* Enhanced Selection Styles */
   ::selection {
     background-color: color-mix(in srgb, var(--theme-accent) 20%, transparent);

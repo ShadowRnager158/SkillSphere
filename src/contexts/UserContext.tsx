@@ -1,5 +1,6 @@
+// src/context/UserContext.tsx
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import type { User } from '@/types';
+import type { User } from '@/types'; // Assuming '@/types' defines the User interface
 
 interface UserContextType {
   user: User | null;
@@ -10,7 +11,7 @@ interface UserContextType {
   logout: () => void;
   isAuthenticated: boolean;
   updateUser?: (updates: Partial<User>) => Promise<void>;
-  getUserRole: () => 'skiller' | 'user' | null;  // Added: Simple role getter
+  getUserRole: () => 'skiller' | 'user' | null;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -28,7 +29,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for user in localStorage on initial load
     const storedUser = localStorage.getItem('skillsphere_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -53,7 +53,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // simulated login with localStorage
       const users = JSON.parse(localStorage.getItem('skillsphere_users') || '[]');
       const foundUser = users.find((u: User & { password: string }) => u.email === email);
 
@@ -64,8 +63,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const { password: _, ...userWithoutPassword } = foundUser;
       setUser(userWithoutPassword);
       localStorage.setItem('skillsphere_user', JSON.stringify(userWithoutPassword));
-
-      // remember last used credentials
       saveLastCredentials(email, password);
     } catch (error) {
       console.error('Login error:', error);
@@ -122,7 +119,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         id: crypto.randomUUID(),
         name,
         email,
-        password, // simulated storage
+        password,
         isSkiller,
         createdAt: new Date().toISOString(),
         avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
@@ -143,8 +140,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const { password: _, ...userWithoutPassword } = newUser as any;
       setUser(userWithoutPassword);
       localStorage.setItem('skillsphere_user', JSON.stringify(userWithoutPassword));
-
-      // remember last used credentials
       saveLastCredentials(email, password);
     } catch (error) {
       console.error('Registration error:', error);
@@ -175,7 +170,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const getUserRole = () => {  // Added: Returns role based on isSkiller
+  const getUserRole = () => {
     if (!user) return null;
     return user.isSkiller ? 'skiller' : 'user';
   };

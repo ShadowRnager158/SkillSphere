@@ -20,7 +20,7 @@ import {
 
 export default function PrivacyPolicy() {
   const [isVisible, setIsVisible] = useState(false);
-  const [lastUpdated] = useState('March 15, 2024');
+  const [lastUpdated] = useState('August 15, 2025');
 
   useEffect(() => {
     setIsVisible(true);
@@ -141,8 +141,8 @@ export default function PrivacyPolicy() {
 
   const contactInfo = {
     email: 'privacy@skillsphere.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Innovation Drive, San Francisco, CA 94105, USA'
+    phone: '+234 8077149657',
+    address: '123 Tech Hub, Lagos, Nigeria'
   };
 
   return (

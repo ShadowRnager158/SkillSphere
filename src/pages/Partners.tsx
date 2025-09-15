@@ -94,10 +94,10 @@ export default function Partners() {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const partnerCategories = [
-    { value: 'all', label: 'All Partners', count: 25 },
-    { value: 'technology', label: 'Technology', count: 12 },
-    { value: 'education', label: 'Education', count: 8 },
-    { value: 'enterprise', label: 'Enterprise', count: 5 }
+    { value: 'all', label: 'All Partners', count: 6 },
+    { value: 'technology', label: 'Technology', count: 2 },
+    { value: 'education', label: 'Education', count: 3 },
+    { value: 'enterprise', label: 'Enterprise', count: 1 }
   ];
 
   const partners = [
@@ -110,7 +110,7 @@ export default function Partners() {
       partnership: 'Strategic Technology Partner',
       benefits: ['Azure Cloud Credits', 'Developer Tools', 'Training Programs'],
       status: 'active',
-      joinedDate: '2023-01-15',
+      joinedDate: '2025-01-15',
       projects: 150,
       rating: 4.9
     },
@@ -123,7 +123,7 @@ export default function Partners() {
       partnership: 'Academic Research Partner',
       benefits: ['Research Collaboration', 'Student Programs', 'Innovation Labs'],
       status: 'active',
-      joinedDate: '2023-03-20',
+      joinedDate: '2025-03-20',
       projects: 75,
       rating: 4.8
     },
@@ -136,7 +136,7 @@ export default function Partners() {
       partnership: 'Cloud Infrastructure Partner',
       benefits: ['GCP Credits', 'Technical Support', 'Co-marketing'],
       status: 'active',
-      joinedDate: '2023-02-10',
+      joinedDate: '2025-02-10',
       projects: 200,
       rating: 4.7
     },
@@ -149,7 +149,7 @@ export default function Partners() {
       partnership: 'Innovation Partner',
       benefits: ['Research Grants', 'Student Internships', 'Technology Transfer'],
       status: 'active',
-      joinedDate: '2023-04-05',
+      joinedDate: '2025-04-05',
       projects: 60,
       rating: 4.9
     },
@@ -162,7 +162,7 @@ export default function Partners() {
       partnership: 'Enterprise Solutions Partner',
       benefits: ['CRM Integration', 'Sales Training', 'Enterprise Support'],
       status: 'active',
-      joinedDate: '2023-05-12',
+      joinedDate: '2025-05-12',
       projects: 120,
       rating: 4.6
     },
@@ -175,17 +175,17 @@ export default function Partners() {
       partnership: 'Business Education Partner',
       benefits: ['Case Studies', 'Executive Programs', 'Alumni Network'],
       status: 'active',
-      joinedDate: '2023-06-18',
+      joinedDate: '2025-06-18',
       projects: 45,
       rating: 4.8
     }
   ];
 
   const stats = [
-    { label: 'Active Partnerships', value: '25+', icon: Handshake, color: 'text-blue-600 dark:text-blue-400' },
+    { label: 'Active Partnerships', value: '6+', icon: Handshake, color: 'text-blue-600 dark:text-blue-400' },
     { label: 'Joint Projects', value: '650+', icon: Briefcase, color: 'text-green-600 dark:text-green-400' },
     { label: 'Partner Satisfaction', value: '96%', icon: Star, color: 'text-purple-600 dark:text-purple-400' },
-    { label: 'Revenue Growth', value: '+45%', icon: TrendingUp, color: 'text-orange-600 dark:text-orange-400' }
+    { label: 'Revenue Growth', value: '+0%', icon: TrendingUp, color: 'text-orange-600 dark:text-orange-400' }
   ];
 
   const benefits = [

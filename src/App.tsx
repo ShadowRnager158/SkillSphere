@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -38,6 +38,7 @@ import Community from './pages/Community';
 import Status from './pages/Status';
 import SettingsPage from './pages/Settings';
 import PaymentPage from './pages/PaymentPage';
+import NewsletterForm from '@/components/NewsletterForm';
 
 // Context
 import { AuthProvider } from './contexts/AuthContext';
@@ -108,6 +109,7 @@ const InnerApp = () => {
           <Route path="/help" element={<Help />} />
           <Route path="/community" element={<Community />} />
           <Route path="/status" element={<Status />} />
+          <Route path="/newsletter" element={<NewsletterForm />} />
 
           {/* Protected Routes */}
           <Route

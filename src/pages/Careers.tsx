@@ -77,7 +77,7 @@ export default function Careers() {
       id: 'senior-frontend-engineer',
       title: 'Senior Frontend Engineer',
       department: 'Engineering',
-      location: 'San Francisco, CA',
+      location: 'Lagos, Nigeria',
       type: 'Full-time',
       experience: '5+ years',
       salary: '$120,000 - $180,000',
@@ -105,7 +105,7 @@ export default function Careers() {
       id: 'ui-ux-designer',
       title: 'Senior UI/UX Designer',
       department: 'Design',
-      location: 'New York, NY',
+      location: 'Lagos, Nigeria',
       type: 'Full-time',
       experience: '4+ years',
       salary: '$100,000 - $150,000',
@@ -161,7 +161,7 @@ export default function Careers() {
       id: 'product-manager',
       title: 'Product Manager',
       department: 'Product',
-      location: 'Austin, TX',
+      location: 'Lagos, Nigeria',
       type: 'Full-time',
       experience: '4+ years',
       salary: '$130,000 - $180,000',
@@ -183,7 +183,7 @@ export default function Careers() {
       postedDate: '1 week ago',
       isRemote: false,
       isUrgent: false,
-      tags: ['Product Management', 'Strategy', 'B2B', 'Austin']
+      tags: ['Product Management', 'Strategy', 'B2B', 'Nigeria']
     },
     {
       id: 'marketing-manager',
@@ -217,7 +217,7 @@ export default function Careers() {
       id: 'sales-representative',
       title: 'Enterprise Sales Representative',
       department: 'Sales',
-      location: 'Chicago, IL',
+      location: 'Lagos, Nigeria',
       type: 'Full-time',
       experience: '2+ years',
       salary: '$80,000 - $120,000 + Commission',
@@ -239,7 +239,7 @@ export default function Careers() {
       postedDate: '1 week ago',
       isRemote: false,
       isUrgent: true,
-      tags: ['Sales', 'Enterprise', 'B2B', 'Chicago']
+      tags: ['Sales', 'Enterprise', 'B2B', 'Nigeria']
     }
   ];
 

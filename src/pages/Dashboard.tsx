@@ -3,10 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { 
-  TrendingUp, 
-  Users, 
-  DollarSign, 
+import {
+  TrendingUp,
+  Users,
+  DollarSign,
   Target,
   CheckCircle,
   Clock,
@@ -50,15 +50,16 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '@/contexts/UserContext'; // Import useUser hook
 
-// Enhanced Components
+// Assuming these enhanced components are available at the specified paths
 import { AnimatedElement } from '@/components/Animations';
 import { ResponsiveContainer, ResponsiveGrid } from '@/components/ResponsiveDesign';
-import LazyLoader from '@/components/LazyLoader';
-import { CardSkeleton } from '@/components/LazyLoader';
+import LazyLoader, { CardSkeleton } from '@/components/LazyLoader'; // Destructure CardSkeleton
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { user, loading, isAuthenticated } = useUser(); // Get user, loading, and isAuthenticated from context
   const [isVisible, setIsVisible] = useState(false);
   const [showAddProject, setShowAddProject] = useState(false);
   const [newProject, setNewProject] = useState({
@@ -73,6 +74,31 @@ export default function Dashboard() {
     setIsVisible(true);
   }, []);
 
+  // Redirect if not authenticated and loading is complete
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      navigate('/login'); // Redirect to login if not authenticated
+    }
+  }, [loading, isAuthenticated, navigate]);
+
+  // Render loading state while user context is loading
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="flex flex-col items-center space-y-4">
+          <Sparkles className="w-16 h-16 text-blue-600 dark:text-blue-400 animate-pulse" />
+          <p className="text-xl text-gray-700 dark:text-gray-300">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If loading is complete and still not authenticated, this means a redirect has occurred.
+  // This check is mainly for TS, as the useEffect above handles the actual navigation.
+  if (!isAuthenticated) {
+    return null;
+  }
+
   const stats = [
     { label: 'Total Projects', value: '24', icon: Briefcase, color: 'from-blue-500 to-indigo-600', change: '+12%', link: '/projects' },
     { label: 'Active Projects', value: '12', icon: Activity, color: 'from-green-500 to-emerald-600', change: '+8%', link: '/projects' },
@@ -81,34 +107,34 @@ export default function Dashboard() {
   ];
 
   const projects = [
-    { 
+    {
       id: 1,
-      title: 'E-commerce Platform', 
-      progress: 75, 
-      status: 'active', 
-      budget: '$25K', 
+      title: 'E-commerce Platform',
+      progress: 75,
+      status: 'active',
+      budget: '$25K',
       team: ['SJ', 'MC', 'LR'],
       description: 'Modern e-commerce platform with AI-powered recommendations',
       deadline: '2024-04-15',
       priority: 'high'
     },
-    { 
+    {
       id: 2,
-      title: 'Mobile App Development', 
-      progress: 45, 
-      status: 'active', 
-      budget: '$35K', 
+      title: 'Mobile App Development',
+      progress: 45,
+      status: 'active',
+      budget: '$35K',
       team: ['AT', 'DK', 'EW'],
       description: 'Cross-platform mobile application for fitness tracking',
       deadline: '2024-05-20',
       priority: 'medium'
     },
-    { 
+    {
       id: 3,
-      title: 'AI Chatbot Integration', 
-      progress: 100, 
-      status: 'completed', 
-      budget: '$15K', 
+      title: 'AI Chatbot Integration',
+      progress: 100,
+      status: 'completed',
+      budget: '$15K',
       team: ['JD', 'MG'],
       description: 'Intelligent chatbot for customer support automation',
       deadline: '2024-02-10',
@@ -187,7 +213,8 @@ export default function Dashboard() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-                <p className="text-gray-600 dark:text-gray-400">Welcome back, Sarah!</p>
+                {/* Dynamically display user's name */}
+                <p className="text-gray-600 dark:text-gray-400">Welcome back, {user?.name || 'Guest'}!</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -299,13 +326,13 @@ export default function Dashboard() {
         <div className="container mx-auto px-4">
           <ResponsiveGrid cols={{ sm: 1, md: 2, lg: 4 }} gap="lg" className="mb-8">
             {stats.map((stat, index) => (
-              <AnimatedElement 
+              <AnimatedElement
                 key={stat.label}
-                animation="scale-in" 
-                trigger="scroll" 
+                animation="scale-in"
+                trigger="scroll"
                 delay={index * 100}
               >
-                <Card 
+                <Card
                   className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer group"
                   onClick={() => handleViewStats(stat.link)}
                 >
@@ -346,9 +373,9 @@ export default function Dashboard() {
           {/* Main Content Grid */}
           <ResponsiveGrid cols={{ sm: 1, lg: 3 }} gap="xl">
             {/* Projects */}
-            <AnimatedElement 
-              animation="slide-up" 
-              trigger="scroll" 
+            <AnimatedElement
+              animation="slide-up"
+              trigger="scroll"
               delay={200}
               className="lg:col-span-2"
             >
@@ -416,9 +443,9 @@ export default function Dashboard() {
             </AnimatedElement>
 
             {/* Sidebar */}
-            <AnimatedElement 
-              animation="slide-up" 
-              trigger="scroll" 
+            <AnimatedElement
+              animation="slide-up"
+              trigger="scroll"
               delay={400}
               className="space-y-6"
             >

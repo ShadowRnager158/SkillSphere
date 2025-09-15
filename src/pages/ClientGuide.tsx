@@ -141,7 +141,7 @@ For more details, visit our help center.
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'SkillSphere-Client-Guide-2025.txt';
+    a.download = 'SkillSphere-Client-Guide-2025.pdf';
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
@@ -249,8 +249,8 @@ For more details, visit our help center.
       duration: '15:30',
       thumbnail: '🎥',
       category: 'Basics',
-      instructor: 'Sarah Johnson',
-      views: 12450,
+      instructor: 'Ikram Ayinla',
+      views: 0,
       rating: 4.8
     },
     {
@@ -260,8 +260,8 @@ For more details, visit our help center.
       duration: '22:15',
       thumbnail: '🤖',
       category: 'AI Features',
-      instructor: 'Dr. Michael Chen',
-      views: 8920,
+      instructor: 'AL ameen Odunsanya',
+      views: 0,
       rating: 4.9
     },
     {
@@ -271,8 +271,8 @@ For more details, visit our help center.
       duration: '28:45',
       thumbnail: '📊',
       category: 'Management',
-      instructor: 'Lisa Rodriguez',
-      views: 15670,
+      instructor: 'Abdul Afeez Adedeji',
+      views: 0,
       rating: 4.7
     },
     {
@@ -282,8 +282,8 @@ For more details, visit our help center.
       duration: '12:20',
       thumbnail: '🔒',
       category: 'Security',
-      instructor: 'David Kim',
-      views: 6780,
+      instructor: 'Safwan Ibrahim',
+      views: 0,
       rating: 4.6
     }
   ];

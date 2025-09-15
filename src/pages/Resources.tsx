@@ -31,7 +31,6 @@ import {
   Sparkles,
   ChevronRight,
   ChevronLeft,
-  Filter3,
   Sliders,
   Settings,
   Bell,
@@ -132,7 +131,7 @@ export default function ResourcesPage() {
       thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
       url: '#',
       tags: ['React', 'JavaScript', 'Frontend', 'Web Development'],
-      author: 'Sarah Chen',
+      author: 'Ikram Ayinla',
       lastUpdated: '2024-01-15',
       language: 'English'
     },
@@ -150,7 +149,7 @@ export default function ResourcesPage() {
       thumbnail: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
       url: '#',
       tags: ['UI/UX', 'Design', 'Figma', 'User Experience'],
-      author: 'Alex Thompson',
+      author: 'Azyzah Asafa',
       lastUpdated: '2024-01-10',
       language: 'English'
     },
@@ -168,7 +167,7 @@ export default function ResourcesPage() {
       thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
       url: '#',
       tags: ['Python', 'Machine Learning', 'AI', 'Data Science'],
-      author: 'Dr. Emily Watson',
+      author: 'Zaynab Akintunde',
       lastUpdated: '2024-01-20',
       language: 'English'
     },
@@ -186,7 +185,7 @@ export default function ResourcesPage() {
       thumbnail: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
       url: '#',
       tags: ['DevOps', 'Docker', 'Kubernetes', 'CI/CD'],
-      author: 'Marcus Rodriguez',
+      author: 'Maryam Adebola',
       lastUpdated: '2024-01-12',
       language: 'English'
     },
@@ -204,7 +203,7 @@ export default function ResourcesPage() {
       thumbnail: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
       url: '#',
       tags: ['Cybersecurity', 'Security', 'Threat Detection', 'Best Practices'],
-      author: 'Lisa Park',
+      author: 'Razan Sadare',
       lastUpdated: '2024-01-18',
       language: 'English'
     },
@@ -222,7 +221,7 @@ export default function ResourcesPage() {
       thumbnail: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
       url: '#',
       tags: ['Flutter', 'Dart', 'Mobile', 'Cross-platform'],
-      author: 'David Kim',
+      author: 'Hafsoh MOlumo',
       lastUpdated: '2024-01-14',
       language: 'English'
     },
